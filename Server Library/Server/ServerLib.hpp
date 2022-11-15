@@ -1,5 +1,5 @@
-#ifndef _SERVER_NOSNET_HPP_
-#define _SERVER_NOSNET_HPP_
+#ifndef _SERVER_LIBRARY_NOSNET_HPP_
+#define _SERVER_LIBRARY_NOSNET_HPP_
 
 namespace ServerLib
 {

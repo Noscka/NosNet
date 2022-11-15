@@ -173,6 +173,9 @@
   <ItemGroup>
     <ClCompile Include="Client\ClientLib.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client\ClientLauncherLib.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
