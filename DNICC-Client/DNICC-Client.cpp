@@ -1,6 +1,7 @@
 #include <boost/asio.hpp>
 
 #include <NosStdLib/Console.hpp>
+#include <NosStdLib/String.hpp>
 
 #include <iostream>
 #include <conio.h>
@@ -9,7 +10,7 @@ int main()
 {
     NosStdLib::Console::InitializeModifiers::EnableUnicode();
     NosStdLib::Console::InitializeModifiers::EnableANSI();
-    NosStdLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DNIC Client");
+    NosStdLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DNICC Client");
     NosStdLib::Console::InitializeModifiers::InitializeEventHandler();
 
     boost::asio::io_context io_context;
@@ -35,7 +36,7 @@ int main()
     }
     catch (std::exception& e)
     {
-        std::wcerr << e.what() << std::endl;
+        std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
 
     wprintf(L"Press any button to continue"); _getch();

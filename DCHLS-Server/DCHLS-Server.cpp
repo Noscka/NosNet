@@ -3,6 +3,8 @@
 
 #include <NosStdLib/Console.hpp>
 
+#include <Central/CentralLib.hpp>
+
 #include <iostream>
 #include <conio.h>
 
@@ -22,9 +24,7 @@ public:
 
     void start()
     {
-        //wprintf(std::format(L"Client Connected from {}\n", GlobalFunction::ReturnAddress(socket.local_endpoint())).c_str());
-        wprintf(L"Client Connected\n");
-
+        wprintf(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(connectionSocket.local_endpoint())).c_str());
 
         try
         {
@@ -32,8 +32,11 @@ public:
         }
         catch (std::exception& e)
         {
-            std::cerr << e.what() << std::endl;
+            std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
         }
+
+        wprintf(std::format(L"Connection with {} Terminated\n", CentralLib::ReturnAddress(connectionSocket.local_endpoint())).c_str());
+        delete this;
     }
 };
 
@@ -41,7 +44,7 @@ int main()
 {
     NosStdLib::Console::InitializeModifiers::EnableUnicode();
     NosStdLib::Console::InitializeModifiers::EnableANSI();
-    NosStdLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DHIPS Server");
+    NosStdLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DCHLS Server");
     NosStdLib::Console::InitializeModifiers::InitializeEventHandler();
 
     try
@@ -67,7 +70,7 @@ int main()
     }
     catch (std::exception& e)
     {
-        std::cerr << e.what() << std::endl;
+        std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
 
     wprintf(L"Press any button to continue"); _getch();
