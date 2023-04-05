@@ -1,16 +1,16 @@
-#include <NosStdLib/Global.hpp>
-
 #include <boost/asio.hpp>
+
+#include <NosStdLib/Console.hpp>
 
 #include <iostream>
 #include <conio.h>
 
-#include ""
-
 int main()
 {
-    NosStdLib::Global::Console::InitializeModifiers::EnableUnicode();
-    NosStdLib::Global::Console::InitializeModifiers::EnableANSI();
+    NosStdLib::Console::InitializeModifiers::EnableUnicode();
+    NosStdLib::Console::InitializeModifiers::EnableANSI();
+    NosStdLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DNIC Client");
+    NosStdLib::Console::InitializeModifiers::InitializeEventHandler();
 
     boost::asio::io_context io_context;
 
@@ -27,7 +27,7 @@ int main()
         Host - Hostname/Ip address
         Service - Service(Hostname for ports)/Port number
         */
-        boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(HostName, ClientLib::Constants::DefaultPort));
+        boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(HostName, "58233"));
 
         wprintf(L"Connected to server\n");
 

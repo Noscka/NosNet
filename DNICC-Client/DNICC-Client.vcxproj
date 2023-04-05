@@ -18,11 +18,14 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DNICC-Client.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3ac9ec2a-0822-422c-857f-9f0f7e603f6b}</ProjectGuid>
-    <RootNamespace>DNICClient</RootNamespace>
+    <ProjectGuid>{6e6f8690-9836-47c7-b45b-93df2c46818a}</ProjectGuid>
+    <RootNamespace>DNICC_Client</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -162,9 +165,6 @@
       <AdditionalLibraryDirectories>D:\Libraries\NosStdLib\Build\NosStdLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="DNIC-Client.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,7 +1,7 @@
-#include <NosStdLib/Global.hpp>
-
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+
+#include <NosStdLib/Console.hpp>
 
 #include <iostream>
 #include <conio.h>
@@ -23,6 +23,8 @@ public:
     void start()
     {
         //wprintf(std::format(L"Client Connected from {}\n", GlobalFunction::ReturnAddress(socket.local_endpoint())).c_str());
+        wprintf(L"Client Connected\n");
+
 
         try
         {
@@ -37,15 +39,15 @@ public:
 
 int main()
 {
-    NosStdLib::Global::Console::InitializeModifiers::EnableUnicode();
-    NosStdLib::Global::Console::InitializeModifiers::EnableANSI();
+    NosStdLib::Console::InitializeModifiers::EnableUnicode();
+    NosStdLib::Console::InitializeModifiers::EnableANSI();
+    NosStdLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DHIPS Server");
+    NosStdLib::Console::InitializeModifiers::InitializeEventHandler();
 
     try
     {
         boost::asio::io_context io_context;
         boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 58233));
-
-        //SetConsoleTitle(std::wstring(L"File Server at " + GlobalFunction::ReturnAddress(acceptor.local_endpoint())).c_str());
 
         wprintf(L"Server started\n");
 

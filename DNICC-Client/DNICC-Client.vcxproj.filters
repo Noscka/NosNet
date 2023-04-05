@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DNIC-Client.cpp">
+    <ClCompile Include="DNICC-Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

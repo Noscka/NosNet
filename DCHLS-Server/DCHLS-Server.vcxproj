@@ -18,11 +18,14 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DCHLS-Server.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{eed7b7b2-ef0b-43d7-a3ca-888a31759f3a}</ProjectGuid>
-    <RootNamespace>DHIPSServer</RootNamespace>
+    <ProjectGuid>{6df4f942-e6a1-4c0a-9480-363312d7c800}</ProjectGuid>
+    <RootNamespace>DCHLS_Server</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -162,9 +165,6 @@
       <AdditionalLibraryDirectories>D:\Libraries\NosStdLib\Build\NosStdLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="DHIPS-Server.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
