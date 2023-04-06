@@ -34,7 +34,7 @@ int main()
 
         
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
         std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }

@@ -2,8 +2,10 @@
 #include <boost/thread.hpp>
 
 #include <NosStdLib/Console.hpp>
+#include <NosStdLib/DynamicArray.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Server/ServerLib.hpp>
 
 #include <iostream>
 #include <conio.h>
@@ -11,32 +13,38 @@
 class tcp_connection_handle
 {
 private:
-    boost::asio::ip::tcp::socket connectionSocket;
+    boost::asio::ip::tcp::socket ConnectionSocket;
+    ServerLib::ClientManagement::ClientTracker* ClientTrackerAttached;
 
-    tcp_connection_handle(boost::asio::io_context& io_context) : connectionSocket(io_context) {}
+    tcp_connection_handle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 public:
     static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }
 
     boost::asio::ip::tcp::socket& GetSocket()
     { 
-        return connectionSocket;
+        return ConnectionSocket;
     }
 
     void start()
     {
-        wprintf(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(connectionSocket.local_endpoint())).c_str());
+        wprintf(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())).c_str());
+
+        wprintf(L"Creating profile and adding to array\n");
+
+        /* Create ClientTracker Object and attach it to current session */
+        ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(L"Default name !!CHANGE!!", ServerLib::ClientManagement::ClientTracker::ClientStatus::Online, &ConnectionSocket);
 
         try
         {
 
         }
-        catch (std::exception& e)
+        catch (const std::exception& e)
         {
             std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
         }
 
-        wprintf(std::format(L"Connection with {} Terminated\n", CentralLib::ReturnAddress(connectionSocket.local_endpoint())).c_str());
-        delete this;
+        wprintf(std::format(L"Connection with {} Terminated\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())).c_str());
+        delete this; /* commit suicide if the connection ends as the object won't get used/deleted otherwise */
     }
 };
 
@@ -68,7 +76,7 @@ int main()
             if (!error) { boost::thread* ClientThread = new boost::thread(boost::bind(&tcp_connection_handle::start, newConSim)); }
         }
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
         std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
