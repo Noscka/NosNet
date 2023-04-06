@@ -3,6 +3,9 @@
 #include <NosStdLib/Console.hpp>
 #include <NosStdLib/String.hpp>
 
+#include <Central/CentralLib.hpp>
+#include <Client/ClientLib.hpp>
+
 #include <iostream>
 #include <conio.h>
 
@@ -19,16 +22,20 @@ int main()
 
     try
     {
-        wprintf(L"Type in hostname: ");
-        std::string HostName;
-        std::getline(std::cin, HostName);
+        wprintf(L"(DEBUGGING) Type in hostname: ");
+        std::string hostName;
+        std::getline(std::cin, hostName);
+        if (hostName.empty())
+        {
+            hostName = ClientLib::Constants::DefaultHostname;
+        }
 
         /*
         Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
         Host - Hostname/Ip address
         Service - Service(Hostname for ports)/Port number
         */
-        boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(HostName, "58233"));
+        boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
 
         wprintf(L"Connected to server\n");
 
