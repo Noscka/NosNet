@@ -3,10 +3,17 @@
 
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
+#include <string.h>
+#include <string>
 
 #include <boost/asio.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/serialization.hpp>
 
 #include <NosStdLib/DynamicArray.hpp>
+#include <NosStdLib/String.hpp>
 
 namespace ServerLib
 {
@@ -24,6 +31,27 @@ namespace ServerLib
 				Online = 1,
 			};
 		private:
+			friend boost::serialization::access;
+
+			template<class Archive>
+			void serialize(Archive& archive, const unsigned int version)
+			{
+				for (ClientTracker* entry : ClientArray)
+				{
+					archive& entry->ClientUsername;
+					archive& entry->ClientCurrentStatus;
+
+					std::wstring ipString = NosStdLib::String::ConvertString<wchar_t, char>(entry->SessionConnectionSocket->remote_endpoint().address().to_v4().to_string());
+
+					archive& ipString; /* TODO: Figure out direct serialization */
+				}
+			}
+
+			template<class Archive>
+			void deserialize(Archive& archive, const unsigned int version)
+			{
+			}
+
 			static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
 
 			std::wstring ClientUsername; /* Client's name which they choose */
@@ -54,8 +82,24 @@ namespace ServerLib
 			{
 				return new ClientTracker(clientUsername, clientCurrentStatus, sessionConnectionSocket);
 			}
+
+			void serializeObject(std::streambuf* Streambuf)
+			{
+				boost::archive::binary_oarchive oa(*Streambuf);
+				oa&* (this);
+			}
+
+			void DeserializeObject(boost::asio::streambuf* Streambuf)
+			{
+				boost::archive::binary_iarchive ia(*Streambuf);
+				ia&* (this);
+			}
 		};
 
+	}
+
+	namespace Communications
+	{
 	}
 }
 #endif

@@ -6,6 +6,7 @@
 
 #include <NosStdLib/Console.hpp>
 #include <NosStdLib/DynamicArray.hpp>
+#include <NosStdLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
 #include <Server/ServerLib.hpp>
@@ -38,8 +39,11 @@ public:
         ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(L"Default name !!CHANGE!!", ServerLib::ClientManagement::ClientTracker::ClientStatus::Online, &ConnectionSocket);
 
         try
-        {
-
+		{
+            boost::asio::streambuf streamBuffer;
+            ClientTrackerAttached->serializeObject(&streamBuffer);
+			boost::asio::write(ConnectionSocket, streamBuffer);
+			boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
         }
         catch (const std::exception& e)
         {

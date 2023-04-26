@@ -40,6 +40,10 @@ int main()
         */
         boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
 
+        boost::asio::streambuf ContentBuffer;
+
+        boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
+
         wprintf(L"Connected to server\n");
 
         
