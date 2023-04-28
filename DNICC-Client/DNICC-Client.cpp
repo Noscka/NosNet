@@ -7,6 +7,7 @@
 #include <NosStdLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Server/ServerLib.hpp>
 #include <Client/ClientLib.hpp>
 
 #include <iostream>
@@ -43,6 +44,9 @@ int main()
         boost::asio::streambuf ContentBuffer;
 
         boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
+
+        ServerLib::ClientManagement::ClientTracker ClientTrackerAttached;
+
 
         wprintf(L"Connected to server\n");
 

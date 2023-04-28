@@ -36,20 +36,19 @@ namespace ServerLib
 			template<class Archive>
 			void serialize(Archive& archive, const unsigned int version)
 			{
-				for (ClientTracker* entry : ClientArray)
-				{
-					archive& entry->ClientUsername;
-					archive& entry->ClientCurrentStatus;
+				int arraySize = ClientArray.GetArrayIndexPointer();
 
-					std::wstring ipString = NosStdLib::String::ConvertString<wchar_t, char>(entry->SessionConnectionSocket->remote_endpoint().address().to_v4().to_string());
+				archive& arraySize;
+
+				for (int i = 0; i < arraySize; i++)
+				{
+					archive& ClientArray[i]->ClientUsername;
+					archive& ClientArray[i]->ClientCurrentStatus;
+
+					std::wstring ipString = NosStdLib::String::ConvertString<wchar_t, char>(ClientArray[i]->SessionConnectionSocket->remote_endpoint().address().to_v4().to_string());
 
 					archive& ipString; /* TODO: Figure out direct serialization */
 				}
-			}
-
-			template<class Archive>
-			void deserialize(Archive& archive, const unsigned int version)
-			{
 			}
 
 			static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
