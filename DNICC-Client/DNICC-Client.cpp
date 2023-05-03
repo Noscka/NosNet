@@ -45,11 +45,9 @@ int main()
 
 		boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
 
-		//CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
+		CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
 
-         CentralLib::ArraySendingTest::DeserializeArray(&ContentBuffer);
-
-         CentralLib::ArraySendingTest::ListArray();
+        wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
     }
     catch (const std::exception& e)
     {

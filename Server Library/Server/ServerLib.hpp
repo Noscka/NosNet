@@ -22,25 +22,19 @@ namespace ServerLib
 {
 	namespace ClientManagement
 	{
-		class ClientTracker //: public CentralLib::ClientInterfacing::StrippedClientTracker
+		class ClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
 		{
-		public:
-		 /// <summary>
-		 /// Emun which is used to define the clients last known status
-		 /// </summary>
-			enum ClientStatus : UINT8
-			{
-				Offline = 0,
-				Online = 1,
-			};
-
 		private:
 			friend boost::serialization::access;
+			template<class Archive>
+			void serialize(Archive& archive, const unsigned int version)
+			{
+				// serialize base class information
+				archive& boost::serialization::base_object<CentralLib::ClientInterfacing::StrippedClientTracker>(*this);
+			}
 
-			static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
+			//static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
 
-			std::wstring ClientUsername; /* Client's name which they choose */
-			ClientStatus ClientCurrentStatus; /* Client's status on if they are online, offline and etc */
 			boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
 
 			/// <summary>
@@ -51,6 +45,9 @@ namespace ServerLib
 				ClientUsername = clientUsername;
 				ClientCurrentStatus = clientCurrentStatus;
 				SessionConnectionSocket = sessionConnectionSocket;
+
+				boost::asio::ip::tcp::endpoint* tempPointer = new boost::asio::ip::tcp::endpoint(sessionConnectionSocket->remote_endpoint());
+				TargetEndpoint = tempPointer;
 
 				ClientArray.Append(this);
 			}
