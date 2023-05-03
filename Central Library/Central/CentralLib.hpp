@@ -29,8 +29,10 @@ namespace CentralLib
 	{
 	private:
 		std::wstring Name;
-		float* FloatArray;
-		int FloatArrayCount;
+		float PersonalizedID;
+
+		static inline ArraySendingTest* Collection[10];
+		static inline int CollectionCount;
     protected:
 		friend boost::serialization::access;
 
@@ -38,14 +40,7 @@ namespace CentralLib
 		void serialize(Archive& archive, const unsigned int version)
 		{
 			archive& Name;
-			archive& FloatArrayCount;
-			if (Archive::is_loading::value)
-			{
-				assert(FloatArray == nullptr);
-				FloatArray = new float[FloatArrayCount];
-			}
-			archive& boost::serialization::make_array<float>(FloatArray, FloatArrayCount);
-
+			archive& PersonalizedID;
 		}
 
 	public:
@@ -54,26 +49,24 @@ namespace CentralLib
 
 		}
 
-		ArraySendingTest(std::wstring name, int count)
+		ArraySendingTest(std::wstring name)
 		{
 			Name = name;
-			FloatArrayCount = count;
 
-			FloatArray = new float[count];
+			PersonalizedID = 0.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - 0.0f)));
 
-			for (int i = 0; i < count; i++)
-			{
-				FloatArray[i] = 0.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - 0.0f)));
-			}
+			Collection[CollectionCount] = this;
+			CollectionCount++;
 		}
 
-		void ListArray()
+		static void ListArray()
 		{
-			for (int i = 0; i < FloatArrayCount; i++)
+			for (int i = 0; i < CollectionCount; i++)
 			{
-				wprintf(L"float: %f\n", FloatArray[i]);
+				wprintf(L"ID: %f\n", Collection[i]->PersonalizedID);
 			}
 		}
+
 
 		void SerializeObject(std::streambuf* Streambuf)
 		{
@@ -86,6 +79,30 @@ namespace CentralLib
 			boost::archive::binary_iarchive ia(*Streambuf);
 			ia&* (this);
 		}
+
+		static void SerializeArray(std::streambuf* Streambuf)
+		{
+			boost::archive::binary_oarchive oa(*Streambuf);
+
+			oa& CollectionCount;
+
+			for (int i = 0; i < CollectionCount; i++)
+			{
+				oa& Collection[i];
+			}
+		}
+
+		static void DeserializeArray(std::streambuf* Streambuf)
+		{
+			boost::archive::binary_iarchive ia(*Streambuf);
+			ia& CollectionCount;
+
+			for (int i = 0; i < CollectionCount; i++)
+			{
+				ia& Collection[i];
+			}
+		}
+
 	};
 
     namespace ClientInterfacing

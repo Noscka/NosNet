@@ -46,11 +46,15 @@ public:
 			//boost::asio::write(ConnectionSocket, streamBuffer);
 
 			boost::asio::streambuf streamBuffer;
-			CentralLib::ArraySendingTest testObject(L"some name", 10);
+			CentralLib::ArraySendingTest testObject(L"some name");
+			CentralLib::ArraySendingTest ab(L"Another Name");
+			CentralLib::ArraySendingTest ass(L"Johny");
+			CentralLib::ArraySendingTest dgdg(L"Bitch");
 
-            testObject.ListArray();
+            CentralLib::ArraySendingTest::ListArray();
 
-            testObject.SerializeObject(&streamBuffer);
+            CentralLib::ArraySendingTest::SerializeArray(&streamBuffer);
+
 			boost::asio::write(ConnectionSocket, streamBuffer);
 			boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
         }

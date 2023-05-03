@@ -47,13 +47,9 @@ int main()
 
 		//CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
 
-        CentralLib::ArraySendingTest testObject;
+         CentralLib::ArraySendingTest::DeserializeArray(&ContentBuffer);
 
-		testObject.DeserializeObject(&ContentBuffer);
-
-		testObject.ListArray();
-
-        
+         CentralLib::ArraySendingTest::ListArray();
     }
     catch (const std::exception& e)
     {
