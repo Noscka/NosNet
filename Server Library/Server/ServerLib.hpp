@@ -15,47 +15,19 @@
 #include <NosStdLib/DynamicArray.hpp>
 #include <NosStdLib/String.hpp>
 
+#include "../../Central Library/Central/CentralLib.hpp"
+
+
 namespace ServerLib
 {
 	namespace ClientManagement
 	{
-		class ClientTracker
+		class ClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
 		{
-		public:
-			/// <summary>
-			/// Emun which is used to define the clients last known status
-			/// </summary>
-			enum ClientStatus : UINT8
-			{
-				Offline = 0,
-				Online = 1,
-			};
 		private:
 			friend boost::serialization::access;
 
-			template<class Archive>
-			void serialize(Archive& archive, const unsigned int version)
-			{
-				int arraySize = ClientArray.GetArrayIndexPointer();
-
-				archive& arraySize;
-
-				for (int i = 0; i < arraySize; i++)
-				{
-					archive& ClientArray[i]->ClientUsername;
-					archive& ClientArray[i]->ClientCurrentStatus;
-
-					std::wstring ipString = NosStdLib::String::ConvertString<wchar_t, char>(ClientArray[i]->SessionConnectionSocket->remote_endpoint().address().to_v4().to_string());
-
-					archive& ipString; /* TODO: Figure out direct serialization */
-				}
-			}
-
 			static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
-
-			std::wstring ClientUsername; /* Client's name which they choose */
-			ClientStatus ClientCurrentStatus; /* Client's status on if they are online, offline and etc */
-			boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
 
 			/// <summary>
 			/// Constructor
@@ -80,18 +52,6 @@ namespace ServerLib
 			static ClientTracker* RegisterClient(const std::wstring& clientUsername, const ClientStatus& clientCurrentStatus, boost::asio::ip::tcp::socket* sessionConnectionSocket)
 			{
 				return new ClientTracker(clientUsername, clientCurrentStatus, sessionConnectionSocket);
-			}
-
-			void serializeObject(std::streambuf* Streambuf)
-			{
-				boost::archive::binary_oarchive oa(*Streambuf);
-				oa&* (this);
-			}
-
-			void DeserializeObject(boost::asio::streambuf* Streambuf)
-			{
-				boost::archive::binary_iarchive ia(*Streambuf);
-				ia&* (this);
 			}
 		};
 

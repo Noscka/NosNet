@@ -14,6 +14,8 @@
 
 #include <string.h>
 #include <format>
+#include <iostream>
+#include <fstream>
 
 namespace Definition
 {
@@ -43,19 +45,11 @@ namespace CentralLib
             template<class Archive>
             void serialize(Archive& archive, const unsigned int version)
             {
-                int arraySize = ClientArray.GetArrayIndexPointer();
+                archive& ClientUsername;
+                archive& ClientCurrentStatus;
+                std::wstring ipString = NosStdLib::String::ConvertString<wchar_t, char>(SessionConnectionSocket->remote_endpoint().address().to_v4().to_string());
 
-                archive& arraySize;
-
-                for (int i = 0; i < arraySize; i++)
-                {
-                    archive& ClientArray[i]->ClientUsername;
-                    archive& ClientArray[i]->ClientCurrentStatus;
-
-                    std::wstring ipString = NosStdLib::String::ConvertString<wchar_t, char>(ClientArray[i]->SessionConnectionSocket->remote_endpoint().address().to_v4().to_string());
-
-                    archive& ipString; /* TODO: Figure out direct serialization */
-                }
+                archive& ipString; /* TODO: Figure out direct serialization */
             }
 
             static inline NosStdLib::DynamicArray<StrippedClientTracker*> ClientArray; /* Array of all clients that have joined */
@@ -66,16 +60,32 @@ namespace CentralLib
             boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
 
         public:
-            void serializeObject(std::streambuf* Streambuf)
+            void serializeArray(std::streambuf* Streambuf)
             {
-                boost::archive::binary_iarchive ia(*Streambuf);
-                ia&* (this);
+                boost::archive::binary_oarchive oa(*Streambuf);
+                oa& ClientArray.GetArrayIndexPointer();
+                for (int i = 0; i < ClientArray.GetArrayIndexPointer() - 1; i++)
+                {
+                    oa&* ClientArray[i];
+                }
             }
 
-            void DeserializeObject(boost::asio::streambuf* Streambuf)
+            void DeserializeArray(boost::asio::streambuf* Streambuf)
             {
                 boost::archive::binary_iarchive ia(*Streambuf);
-                ia&* (this);
+                int arraySize;
+                ia& arraySize;
+
+                ia& boost::serialization::make_array<StrippedClientTracker*>(ClientArray.GetArray(), arraySize);
+
+                for (int i = 0; i < arraySize - 1; i++)
+                {
+                    StrippedClientTracker* clientAdding = new StrippedClientTracker();
+
+                    ia&* clientAdding;
+
+                    ClientArray.Append(clientAdding);
+                }
             }
         };
     }

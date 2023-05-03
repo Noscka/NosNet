@@ -41,7 +41,7 @@ public:
         try
 		{
             boost::asio::streambuf streamBuffer;
-            ClientTrackerAttached->serializeObject(&streamBuffer);
+            ClientTrackerAttached->serializeArray(&streamBuffer);
 			boost::asio::write(ConnectionSocket, streamBuffer);
 			boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
         }
