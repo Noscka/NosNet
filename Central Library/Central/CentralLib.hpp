@@ -31,8 +31,7 @@ namespace CentralLib
 		std::wstring Name;
 		float PersonalizedID;
 
-		static inline ArraySendingTest* Collection[10];
-		static inline int CollectionCount;
+		static inline NosStdLib::DynamicArray<ArraySendingTest*> Collection;
     protected:
 		friend boost::serialization::access;
 
@@ -55,39 +54,27 @@ namespace CentralLib
 
 			PersonalizedID = 0.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (100.0f - 0.0f)));
 
-			Collection[CollectionCount] = this;
-			CollectionCount++;
+			Collection.Append(this);
 		}
 
 		static void ListArray()
 		{
-			for (int i = 0; i < CollectionCount; i++)
+			for (ArraySendingTest* entry : Collection)
 			{
-				wprintf(L"ID: %f\n", Collection[i]->PersonalizedID);
+				wprintf(L"ID: %f\n", entry->PersonalizedID);
 			}
-		}
-
-
-		void SerializeObject(std::streambuf* Streambuf)
-		{
-			boost::archive::binary_oarchive oa(*Streambuf);
-			oa&* (this);
-		}
-
-		void DeserializeObject(boost::asio::streambuf* Streambuf)
-		{
-			boost::archive::binary_iarchive ia(*Streambuf);
-			ia&* (this);
 		}
 
 		static void SerializeArray(std::streambuf* Streambuf)
 		{
 			boost::archive::binary_oarchive oa(*Streambuf);
+			int arraySize = Collection.GetArrayIndexPointer();
+			oa& arraySize;
+			wprintf(L"array size: %d\n", arraySize);
 
-			oa& CollectionCount;
-
-			for (int i = 0; i < CollectionCount; i++)
+			for (int i = 0; i < Collection.GetArrayIndexPointer(); i++)
 			{
+				wprintf(L"index: %d\n", i);
 				oa& Collection[i];
 			}
 		}
@@ -95,10 +82,14 @@ namespace CentralLib
 		static void DeserializeArray(std::streambuf* Streambuf)
 		{
 			boost::archive::binary_iarchive ia(*Streambuf);
-			ia& CollectionCount;
+			int arraySize;
+			ia& arraySize;
+			wprintf(L"array size: %d\n", arraySize);
 
-			for (int i = 0; i < CollectionCount; i++)
+			for (int i = 0; i < arraySize; i++)
 			{
+				wprintf(L"index: %d\n", i);
+				Collection.Append(new ArraySendingTest());
 				ia& Collection[i];
 			}
 		}
