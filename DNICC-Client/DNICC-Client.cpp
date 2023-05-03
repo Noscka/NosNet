@@ -39,15 +39,19 @@ int main()
         Service - Service(Hostname for ports)/Port number
         */
         boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
-
-        boost::asio::streambuf ContentBuffer;
-
-        boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
-
-        CentralLib::ClientInterfacing::StrippedClientTracker ClientTrackerAttached;
-
-
         wprintf(L"Connected to server\n");
+
+		boost::asio::streambuf ContentBuffer;
+
+		boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
+
+		//CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
+
+        CentralLib::ArraySendingTest testObject;
+
+		testObject.DeserializeObject(&ContentBuffer);
+
+		testObject.ListArray();
 
         
     }

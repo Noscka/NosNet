@@ -18,7 +18,8 @@ class tcp_connection_handle
 {
 private:
     boost::asio::ip::tcp::socket ConnectionSocket;
-    ServerLib::ClientManagement::ClientTracker* ClientTrackerAttached;
+    //ServerLib::ClientManagement::ClientTracker* ClientTrackerAttached;
+    CentralLib::ClientInterfacing::StrippedClientTracker* ClientTrackerAttached;
 
     tcp_connection_handle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 public:
@@ -36,12 +37,20 @@ public:
         wprintf(L"Creating profile and adding to array\n");
 
         /* Create ClientTracker Object and attach it to current session */
-        ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(L"Default name !!CHANGE!!", ServerLib::ClientManagement::ClientTracker::ClientStatus::Online, &ConnectionSocket);
+        ClientTrackerAttached = CentralLib::ClientInterfacing::StrippedClientTracker::RegisterClient(L"Default name !!CHANGE!!", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
 
         try
 		{
-            boost::asio::streambuf streamBuffer;
-            ClientTrackerAttached->serializeArray(&streamBuffer);
+            //boost::asio::streambuf streamBuffer;
+            //ClientTrackerAttached->serializeArray(&streamBuffer);
+			//boost::asio::write(ConnectionSocket, streamBuffer);
+
+			boost::asio::streambuf streamBuffer;
+			CentralLib::ArraySendingTest testObject(L"some name", 10);
+
+            testObject.ListArray();
+
+            testObject.SerializeObject(&streamBuffer);
 			boost::asio::write(ConnectionSocket, streamBuffer);
 			boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
         }

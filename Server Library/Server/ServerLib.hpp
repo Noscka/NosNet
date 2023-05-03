@@ -22,12 +22,26 @@ namespace ServerLib
 {
 	namespace ClientManagement
 	{
-		class ClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
+		class ClientTracker //: public CentralLib::ClientInterfacing::StrippedClientTracker
 		{
+		public:
+		 /// <summary>
+		 /// Emun which is used to define the clients last known status
+		 /// </summary>
+			enum ClientStatus : UINT8
+			{
+				Offline = 0,
+				Online = 1,
+			};
+
 		private:
 			friend boost::serialization::access;
 
 			static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
+
+			std::wstring ClientUsername; /* Client's name which they choose */
+			ClientStatus ClientCurrentStatus; /* Client's status on if they are online, offline and etc */
+			boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
 
 			/// <summary>
 			/// Constructor
