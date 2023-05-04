@@ -24,7 +24,7 @@ private:
 
     ~tcp_connection_handle()
     {
-        delete ClientTrackerAttached;
+        //delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
     }
 public:
     static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }

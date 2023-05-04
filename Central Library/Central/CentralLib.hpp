@@ -109,7 +109,7 @@ namespace CentralLib
                 std::wstring output;
                 for (StrippedClientTracker* entry : ClientArray)
                 {
-                    output += CentralLib::ReturnAddress(*(entry->TargetEndpoint)) + L"\n";
+                    output += std::format(L"{} : {}\n", entry->ClientUsername, CentralLib::ReturnAddress(*(entry->TargetEndpoint)));
                 }
                 return output;
 			}
