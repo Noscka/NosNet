@@ -15,8 +15,7 @@
 #include <NosStdLib/DynamicArray.hpp>
 #include <NosStdLib/String.hpp>
 
-#include "../../Central Library/Central/CentralLib.hpp"
-
+#include <Central/CentralLib.hpp>
 
 namespace ServerLib
 {
@@ -70,6 +69,10 @@ namespace ServerLib
 
 	namespace Communications
 	{
+		class ServerResponse
+		{
+
+		};
 	}
 }
 #endif
