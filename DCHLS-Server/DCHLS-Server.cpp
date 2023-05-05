@@ -42,7 +42,10 @@ public:
 
         /* Create ClientTracker Object and attach it to current session */
         
-        ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(L"Default name !!CHANGE!!", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
+        boost::asio::streambuf ContentBuffer;
+        size_t lenght = boost::asio::read_until(ConnectionSocket, ContentBuffer, Definition::Delimiter);
+
+        ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(CentralLib::streamBufferToWstring(&ContentBuffer, lenght), CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
 
         try
 		{

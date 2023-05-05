@@ -41,8 +41,16 @@ int main()
         boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
         wprintf(L"Connected to server\n");
 
-		boost::asio::streambuf ContentBuffer;
+        /* ADD VERIFICATION */
+        wprintf(L"Type in a username: ");
+        std::string username;
+        std::getline(std::cin, username);
+        /* ADD VERIFICATION */
 
+        boost::asio::write(socket, boost::asio::buffer(username));
+        boost::asio::write(socket, boost::asio::buffer(Definition::Delimiter));
+
+		boost::asio::streambuf ContentBuffer;
 		boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
 
 		CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
