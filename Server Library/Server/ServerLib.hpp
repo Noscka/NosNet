@@ -53,6 +53,14 @@ namespace ServerLib
 
 		public:
 			/// <summary>
+			/// Changes clients status
+			/// </summary>
+			void ChangeStatus(const ClientStatus& newClientStatus)
+			{
+				ClientCurrentStatus = newClientStatus;
+			}
+
+			/// <summary>
 			/// Static contructor as the created object *NEED* to be created with the "new" keyword to stay alive
 			/// </summary>
 			/// <param name="clientUsername">- The client defined username</param>
@@ -69,9 +77,14 @@ namespace ServerLib
 
 	namespace Communications
 	{
-		class ServerResponse
+		class ServerResponse : public CentralLib::Communications::CentralizedServerResponse
 		{
-
+		public:
+			ServerResponse(const InformationCodes& informationCode, const std::wstring& additionalInformation)
+			{
+				InformationCode = informationCode;
+				AdditionalInformation = additionalInformation;
+			}
 		};
 	}
 }

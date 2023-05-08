@@ -24,6 +24,8 @@ private:
 
     ~tcp_connection_handle()
     {
+        ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::Offline);
+
         //delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
     }
 public:
@@ -40,15 +42,35 @@ public:
 
         wprintf(L"Creating profile and adding to array\n");
 
-        /* Create ClientTracker Object and attach it to current session */
-        
-        boost::asio::streambuf ContentBuffer;
-        size_t lenght = boost::asio::read_until(ConnectionSocket, ContentBuffer, Definition::Delimiter);
-
-        ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(CentralLib::streamBufferToWstring(&ContentBuffer, lenght), CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
-
         try
 		{
+            bool initialValidation = true;
+            while(initialValidation)
+            { /* Scoped to delete usernameBuffer after use */
+                /* Get Username from Client */
+				boost::asio::streambuf usernameBuffer;
+				size_t lenght = boost::asio::read_until(ConnectionSocket, usernameBuffer, Definition::Delimiter);
+
+                std::wstring clientsUsername = CentralLib::streamBufferToWstring(&usernameBuffer, lenght);
+
+				boost::asio::streambuf responseBuffer;
+
+                if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
+                {
+					/* Create ClientTracker Object and attach it to current session */
+					ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
+                    initialValidation = false;
+					ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
+                }
+                else /* username isn't valid */
+                {
+					ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
+                }
+
+				boost::asio::write(ConnectionSocket, responseBuffer);
+				boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
+            }
+            
             wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
 
 			boost::asio::streambuf streamBuffer;

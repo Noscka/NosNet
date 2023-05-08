@@ -165,5 +165,77 @@ namespace CentralLib
             }
         };
     }
+
+    namespace Communications
+    {
+        class CentralizedServerResponse /* Centralized as in only including things that the client would need to understand the response */
+        {
+        public:
+            enum InformationCodes : uint8_t
+            {
+                Successful = 0,
+                Accepted = 1,
+                NotAccepted = 2,
+            };
+        protected:
+			friend class boost::serialization::access;
+			template<class Archive>
+			void serialize(Archive& archive, const unsigned int version)
+			{
+				archive& InformationCode;
+				archive& AdditionalInformation;
+			}
+
+            InformationCodes InformationCode;
+            std::wstring AdditionalInformation;
+        public:
+            CentralizedServerResponse(){}
+
+            InformationCodes GetInformationCode()
+            {
+                return InformationCode;
+            }
+
+            std::wstring GetAdditionalInformation()
+            {
+                return AdditionalInformation;
+            }
+
+			void serializeObject(std::streambuf* Streambuf)
+			{
+				boost::archive::binary_oarchive oa(*Streambuf);
+				oa& *this;
+			}
+
+			void DeserializeObject(boost::asio::streambuf* Streambuf)
+			{
+				boost::archive::binary_iarchive ia(*Streambuf);
+				ia& *this;
+			}
+        };
+    }
+
+    namespace Validation
+    {
+        /// <summary>
+        /// Validates usernames (central so changes are global)
+        /// </summary>
+        /// <param name="username">- username to validate</param>
+        /// <returns>true if valid, False if invalid</returns>
+        bool ValidateUsername(const std::wstring& username)
+        {
+            /*
+			Current requirements:
+				- Not empty
+				- Not longer then 30 characters
+			*/
+            if (username.empty() || username.length() >= 30)
+            {
+                return false;
+            }
+
+            return true;
+        }
+    }
 }
 #endif

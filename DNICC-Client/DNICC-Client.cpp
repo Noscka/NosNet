@@ -41,14 +41,58 @@ int main()
         boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
         wprintf(L"Connected to server\n");
 
-        /* ADD VERIFICATION */
-        wprintf(L"Type in a username: ");
-        std::string username;
-        std::getline(std::cin, username);
-        /* ADD VERIFICATION */
+		std::string username;
 
-        boost::asio::write(socket, boost::asio::buffer(username));
-        boost::asio::write(socket, boost::asio::buffer(Definition::Delimiter));
+        { /* scoped to destroy bool */
+            bool gatheringUsername = true;
+
+            while (gatheringUsername) /* Client side Verifications */
+            {
+				wprintf(L"Type in a username: ");
+				std::getline(std::cin, username);
+
+                /*
+                Current requirements:
+                 - Not empty
+                 - Not longer then 30 characters
+                */
+                if (CentralLib::Validation::ValidateUsername(NosStdLib::String::ConvertString<wchar_t, char>(username)))
+                {
+					gatheringUsername = false;
+
+                    /* If valid, send username to server */
+					boost::asio::write(socket, boost::asio::buffer(username));
+					boost::asio::write(socket, boost::asio::buffer(Definition::Delimiter));
+
+                    /* Wait for server response on if it accepted the username */
+					boost::asio::streambuf serverReponseBuffer;
+					boost::asio::read_until(socket, serverReponseBuffer, Definition::Delimiter);
+
+					CentralLib::Communications::CentralizedServerResponse serverReponse;
+					serverReponse.DeserializeObject(&serverReponseBuffer);
+
+					if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::Accepted) /* if server accepts username too, continue as normal */
+					{
+						wprintf((serverReponse.GetAdditionalInformation() + L"\n").c_str());
+					}
+					else if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::NotAccepted) /* if server doesn't accept username, don't exit loop */
+					{
+						wprintf((serverReponse.GetAdditionalInformation() + L"\n").c_str());
+						gatheringUsername = true;
+					}
+					else /* if server sends an unexpected response, exit because client and server are out of sync */
+					{
+						wprintf(L"server sent an unexpected response\nExiting...\n");
+						Sleep(1000);
+						exit(-1);
+					}
+				}
+                else
+                {
+					wprintf(L"Username cannot be empty and cannot be longer then 30 characters\n");
+				}
+            }
+        }
 
 		boost::asio::streambuf ContentBuffer;
 		boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
