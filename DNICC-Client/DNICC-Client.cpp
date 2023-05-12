@@ -7,7 +7,7 @@
 #include <NosStdLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
-#include <Client/ClientLib.hpp>
+#include <Client/MainClient/ClientLib.hpp>
 
 #include <iostream>
 #include <conio.h>
@@ -51,11 +51,6 @@ int main()
 				wprintf(L"Type in a username: ");
 				std::getline(std::cin, username);
 
-                /*
-                Current requirements:
-                 - Not empty
-                 - Not longer then 30 characters
-                */
                 if (CentralLib::Validation::ValidateUsername(NosStdLib::String::ConvertString<wchar_t, char>(username)))
                 {
 					gatheringUsername = false;

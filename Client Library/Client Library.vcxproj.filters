@@ -15,12 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Client\ClientLib.hpp">
+    <ClCompile Include="Client\MainClient\ClientLib.hpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client\ClientLauncherLib.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Client\MainClient\ClientHosting.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
