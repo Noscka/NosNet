@@ -33,6 +33,32 @@ int main()
             hostName = ClientLib::Constants::DefaultHostname;
         }
 
+
+        { /* scoped to destroy bool */
+            bool gatheringModeChoice = true;
+            while (gatheringModeChoice)
+            {
+                std::string modeString;
+                wprintf(L"What mode would you like to run in?\n1) Normal (connect to others)\n2) Host (others connect to you)\n: "); /* Make more advanced Choosing */
+                std::getline(std::cin, modeString);
+                int mode;
+
+                if (sscanf_s(modeString.c_str(), "%d", &mode) != 1)
+                { /* Conversion failed */
+                    wprintf(L"Invalid arguement, please input again\n");
+                    continue;
+                }
+
+                if (mode > 2 || mode < 0)
+                { /* out of range */
+                    wprintf(L"input was out of range\n");
+                    continue;
+                }
+
+                gatheringModeChoice = false; /* if it passed all the checks, set gatheringModeChoice to false as to not check for mode anymore */
+            }
+        }
+
         /*
         Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
         Host - Hostname/Ip address
