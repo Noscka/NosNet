@@ -21,7 +21,7 @@ int main()
 
     boost::asio::io_context io_context;
 
-    boost::asio::ip::tcp::socket socket(io_context);
+    boost::asio::ip::tcp::socket connectionSocket(io_context);
 
     try
     {
@@ -33,90 +33,22 @@ int main()
             hostName = ClientLib::Constants::DefaultHostname;
         }
 
+        int clientMode = ClientLib::StartUp::GatherClientMode();
 
-        { /* scoped to destroy bool */
-            bool gatheringModeChoice = true;
-            while (gatheringModeChoice)
-            {
-                std::string modeString;
-                wprintf(L"What mode would you like to run in?\n1) Normal (connect to others)\n2) Host (others connect to you)\n: "); /* Make more advanced Choosing */
-                std::getline(std::cin, modeString);
-                int mode;
-
-                if (sscanf_s(modeString.c_str(), "%d", &mode) != 1)
-                { /* Conversion failed */
-                    wprintf(L"Invalid argument, please input again\n");
-                    continue;
-                }
-
-                if (mode > 2 || mode < 0)
-                { /* out of range */
-                    wprintf(L"input was out of range\n");
-                    continue;
-                }
-
-                gatheringModeChoice = false; /* if it passed all the checks, set gatheringModeChoice to false as to not check for mode anymore */
-            }
-        }
+        std::wcout << L"Client chose: " << clientMode << std::endl;
 
         /*
         Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
         Host - Hostname/Ip address
         Service - Service(Hostname for ports)/Port number
         */
-        boost::asio::connect(socket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
+        boost::asio::connect(connectionSocket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
         wprintf(L"Connected to server\n");
 
-		std::string username;
-
-        { /* scoped to destroy bool */
-            bool gatheringUsername = true;
-
-            while (gatheringUsername) /* Client side Verifications */
-            {
-				wprintf(L"Type in a username: ");
-				std::getline(std::cin, username);
-
-                if (CentralLib::Validation::ValidateUsername(NosStdLib::String::ConvertString<wchar_t, char>(username)))
-                {
-					gatheringUsername = false;
-
-                    /* If valid, send username to server */
-					boost::asio::write(socket, boost::asio::buffer(username));
-					boost::asio::write(socket, boost::asio::buffer(Definition::Delimiter));
-
-                    /* Wait for server response on if it accepted the username */
-					boost::asio::streambuf serverReponseBuffer;
-					boost::asio::read_until(socket, serverReponseBuffer, Definition::Delimiter);
-
-					CentralLib::Communications::CentralizedServerResponse serverReponse;
-					serverReponse.DeserializeObject(&serverReponseBuffer);
-
-					if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::Accepted) /* if server accepts username too, continue as normal */
-					{
-						wprintf((serverReponse.GetAdditionalInformation() + L"\n").c_str());
-					}
-					else if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::NotAccepted) /* if server doesn't accept username, don't exit loop */
-					{
-						wprintf((serverReponse.GetAdditionalInformation() + L"\n").c_str());
-						gatheringUsername = true;
-					}
-					else /* if server sends an unexpected response, exit because client and server are out of sync */
-					{
-						wprintf(L"server sent an unexpected response\nExiting...\n");
-						Sleep(1000);
-						exit(-1);
-					}
-				}
-                else
-                {
-					wprintf(L"Username cannot be empty and cannot be longer then 30 characters\n");
-				}
-            }
-        }
+        ClientLib::StartUp::GatherUsername(&connectionSocket);
 
 		boost::asio::streambuf ContentBuffer;
-		boost::asio::read_until(socket, ContentBuffer, Definition::Delimiter);
+		boost::asio::read_until(connectionSocket, ContentBuffer, Definition::Delimiter);
 
 		CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
 

@@ -51,7 +51,7 @@ namespace CentralLib
             /// <summary>
             /// Emun which is used to define the clients last known status
             /// </summary>
-            enum ClientStatus : UINT8
+            enum class ClientStatus : uint8_t
             {
                 Offline = 0,
                 Online = 1,
@@ -171,7 +171,7 @@ namespace CentralLib
         class CentralizedServerResponse /* Centralized as in only including things that the client would need to understand the response */
         {
         public:
-            enum InformationCodes : uint8_t
+            enum class InformationCodes : uint8_t
             {
                 Successful = 0,
                 Accepted = 1,

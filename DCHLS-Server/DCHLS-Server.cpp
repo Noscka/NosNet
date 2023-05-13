@@ -24,7 +24,7 @@ private:
 
     ~tcp_connection_handle()
     {
-        ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::Offline);
+        ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Offline);
 
         //delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
     }
