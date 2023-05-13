@@ -7,7 +7,7 @@
 #include <NosStdLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
-#include <Client/MainClient/ClientLib.hpp>
+#include "Header/ClientLib.hpp"
 
 #include <iostream>
 #include <conio.h>
@@ -45,7 +45,7 @@ int main()
 
                 if (sscanf_s(modeString.c_str(), "%d", &mode) != 1)
                 { /* Conversion failed */
-                    wprintf(L"Invalid arguement, please input again\n");
+                    wprintf(L"Invalid argument, please input again\n");
                     continue;
                 }
 
