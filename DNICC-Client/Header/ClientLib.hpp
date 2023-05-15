@@ -17,6 +17,9 @@ namespace ClientLib
         /* Connection info for update service */
         inline const std::string UpdateServiceHostName = DefaultHostname;
         inline const std::string UpdateServicePort = DefaultPort;
+
+		/* Default Client host info */
+		inline const std::string DefaultClientHostPort = "58234";
     }
 
 	namespace Mode
