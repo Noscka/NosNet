@@ -8,6 +8,7 @@
 
 #include <Central/CentralLib.hpp>
 #include "Header/ClientLib.hpp"
+#include "Header/Logging.hpp"
 
 #include <iostream>
 #include <conio.h>
@@ -43,7 +44,7 @@ int main()
         Service - Service(Hostname for ports)/Port number
         */
         boost::asio::connect(connectionSocket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
-        wprintf(L"Connected to server\n");
+        wprintf(ClientLib::Logging::LogMessage<wchar_t>(L"Connected to server\n").c_str());
 
         ClientLib::StartUp::GatherUsername(&connectionSocket);
 
