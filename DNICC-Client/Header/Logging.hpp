@@ -15,27 +15,39 @@ namespace ClientLib
 	{
 		namespace
 		{
-			struct MessageLog
+			class MessageLog
 			{
+			private:
 				std::wstring Message;
-				std::chrono::time_point<std::chrono::system_clock> LogTimestamp;
+				std::chrono::system_clock::time_point LogTimestamp;
 
-				MessageLog(const std::wstring& message, const std::chrono::time_point<std::chrono::system_clock>& logTimestamp)
+			public:
+				MessageLog(){ }
+
+				MessageLog(const std::wstring& message)
 				{
 					Message = message;
-					LogTimestamp = logTimestamp;
+					LogTimestamp = std::chrono::system_clock::now();
+				}
+
+				std::wstring ConvertToLog()
+				{
+					// %d/%m/%Y for date too
+
+					return std::format(L"{:%X}  {}", std::chrono::zoned_time(std::chrono::current_zone(), LogTimestamp), Message);
 				}
 			};
 
-			NosStdLib::DynamicArray<MessageLog> LoggedMessages;
+			NosStdLib::DynamicArray<MessageLog*> LoggedMessages;
 		}
 
 		template<typename CharType>
-		std::basic_string<CharType>& LogMessage(const std::basic_string<CharType>& strIn)
+		void LogMessage(const std::basic_string<CharType>& strIn)
 		{
-			LoggedMessages.Append(MessageLog(strIn, std::chrono::system_clock::now));
-			wprintf(strIn.c_str());
-			return strIn;
+			MessageLog* messageLogObject = new MessageLog(NosStdLib::String::ConvertString<wchar_t, CharType>(strIn));
+			LoggedMessages.Append(messageLogObject);
+			wprintf(messageLogObject->ConvertToLog().c_str());
+			return;
 		}
 	}
 }

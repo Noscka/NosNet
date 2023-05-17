@@ -44,7 +44,7 @@ int main()
         Service - Service(Hostname for ports)/Port number
         */
         boost::asio::connect(connectionSocket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
-        wprintf(ClientLib::Logging::LogMessage<wchar_t>(L"Connected to server\n").c_str());
+        ClientLib::Logging::LogMessage<wchar_t>(L"Connected to server\n");
 
         ClientLib::StartUp::GatherUsername(&connectionSocket);
 
