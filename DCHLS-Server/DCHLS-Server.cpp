@@ -19,7 +19,7 @@ class tcp_connection_handle
 {
 private:
     boost::asio::ip::tcp::socket ConnectionSocket;
-    ServerLib::ClientManagement::ClientTracker* ClientTrackerAttached;
+    CentralLib::ClientManagement::ClientTracker* ClientTrackerAttached;
 
     tcp_connection_handle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 
@@ -59,7 +59,7 @@ public:
                 if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
                 {
 					/* Create ClientTracker Object and attach it to current session */
-					ClientTrackerAttached = ServerLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
+					ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
                     initialValidation = false;
 					ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
                 }
@@ -81,6 +81,7 @@ public:
         }
         catch (const std::exception& e)
         {
+            CentralLib::Logging::LogMessage<wchar_t>(NosStdLib::String::ConvertString<wchar_t, char>(e.what()), true);
             std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
         }
 

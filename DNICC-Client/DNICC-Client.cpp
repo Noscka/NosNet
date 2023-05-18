@@ -57,6 +57,7 @@ int main()
     }
     catch (const std::exception& e)
     {
+        CentralLib::Logging::LogMessage<wchar_t>(NosStdLib::String::ConvertString<wchar_t, char>(e.what()), true);
         std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
 

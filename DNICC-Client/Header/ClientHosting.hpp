@@ -18,12 +18,63 @@ namespace ClientLib
 {
 	namespace Hosting
 	{
+		class tcp_connection_handle
+		{
+		private:
+			boost::asio::ip::tcp::socket ConnectionSocket;
+			CentralLib::ClientManagement::ClientTracker* ClientTrackerAttached;
+
+			tcp_connection_handle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
+
+			~tcp_connection_handle()
+			{
+				ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Offline);
+
+				//delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
+			}
+		public:
+			static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }
+
+			boost::asio::ip::tcp::socket& GetSocket()
+			{
+				return ConnectionSocket;
+			}
+
+			void start()
+			{
+				CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
+
+				CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
+			}
+		};
+
 		void StartServer()
 		{
-			boost::asio::io_context io_context;
-			boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
+			try
+			{
+				boost::asio::io_context io_context;
+				boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
 
-			CentralLib::Logging::LogMessage<wchar_t>(L"Client Server started\n", true);
+				CentralLib::Logging::LogMessage<wchar_t>(L"Client Server started\n", true);
+
+				while (true)
+				{
+					/* tcp_connection object which allows for managed of multiple users */
+					tcp_connection_handle* newConSim = tcp_connection_handle::create(io_context);
+
+					boost::system::error_code error;
+
+					/* accept incoming connection and assigned it to the tcp_connection object socket */
+					acceptor.accept(newConSim->GetSocket(), error);
+
+					/* if no errors, create thread for the new connection */
+					if (!error) { boost::thread* ClientThread = new boost::thread(boost::bind(&tcp_connection_handle::start, newConSim)); }
+				}
+			}
+			catch (const std::exception& e)
+			{
+				std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
+			}
 		}
 	}
 }
