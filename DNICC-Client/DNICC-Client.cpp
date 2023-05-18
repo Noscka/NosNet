@@ -7,8 +7,8 @@
 #include <NosStdLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Central/Logging.hpp>
 #include "Header/ClientLib.hpp"
-#include "Header/Logging.hpp"
 
 #include <iostream>
 #include <conio.h>
@@ -31,7 +31,7 @@ int main()
         std::getline(std::cin, hostName);
         if (hostName.empty())
         {
-            hostName = ClientLib::Constants::DefaultHostname;
+            hostName = Constants::DefaultHostname;
         }
 
         int clientMode = ClientLib::StartUp::GatherClientMode();
@@ -43,8 +43,8 @@ int main()
         Host - Hostname/Ip address
         Service - Service(Hostname for ports)/Port number
         */
-        boost::asio::connect(connectionSocket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, ClientLib::Constants::DefaultPort));
-        ClientLib::Logging::LogMessage<wchar_t>(L"Connected to server\n");
+        boost::asio::connect(connectionSocket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, Constants::DefaultPort));
+        CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
 
         ClientLib::StartUp::GatherUsername(&connectionSocket);
 

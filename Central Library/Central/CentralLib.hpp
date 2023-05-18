@@ -25,6 +25,20 @@ namespace Definition
 	typedef unsigned char byte;
 }
 
+namespace Constants
+{
+    /* Default Connection info */
+    inline const std::string DefaultPort = "58233";
+    inline const std::string DefaultHostname = "localhost";
+
+    /* Connection info for update service */
+    inline const std::string UpdateServiceHostName = DefaultHostname;
+    inline const std::string UpdateServicePort = DefaultPort;
+
+    /* Default Client host info */
+    inline const std::string DefaultClientHostPort = "58234";
+}
+
 namespace CentralLib
 {
 	std::wstring ReturnAddress(const boost::asio::ip::tcp::endpoint& Endpoint)

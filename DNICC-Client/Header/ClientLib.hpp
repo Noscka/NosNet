@@ -8,20 +8,6 @@
 
 namespace ClientLib
 {
-    namespace Constants
-    {
-        /* Default Connection info */
-        inline const std::string DefaultPort = "58233";
-        inline const std::string DefaultHostname = "localhost";
-
-        /* Connection info for update service */
-        inline const std::string UpdateServiceHostName = DefaultHostname;
-        inline const std::string UpdateServicePort = DefaultPort;
-
-		/* Default Client host info */
-		inline const std::string DefaultClientHostPort = "58234";
-    }
-
 	namespace Mode
 	{
 		enum class ClientMode : uint8_t
@@ -53,7 +39,7 @@ namespace ClientLib
 
 				if (!CentralLib::Validation::ValidateUsername(NosStdLib::String::ConvertString<wchar_t, char>(username)))
 				{ /* if username didn't pass username requirements */
-					wprintf(L"Username cannot be empty and cannot be longer then 30 characters\n");
+					CentralLib::Logging::LogMessage<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", true);
 					continue;
 				}
 
@@ -72,16 +58,16 @@ namespace ClientLib
 
 				if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted) /* if server accepts username too, continue as normal */
 				{
-					wprintf((serverReponse.GetAdditionalInformation() + L"\n").c_str());
+					CentralLib::Logging::LogMessage<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), true);
 				}
 				else if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted) /* if server doesn't accept username, don't exit loop */
 				{
-					wprintf((serverReponse.GetAdditionalInformation() + L"\n").c_str());
+					CentralLib::Logging::LogMessage<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), true);
 					gatheringUsername = true;
 				}
 				else /* if server sends an unexpected response, exit because client and server are out of sync */
 				{
-					wprintf(L"server sent an unexpected response\nExiting...\n");
+					CentralLib::Logging::LogMessage<wchar_t>(L"server sent an unexpected response\nExiting...\n", true);
 					Sleep(1000);
 					exit(-1);
 				}

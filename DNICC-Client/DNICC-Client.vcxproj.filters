@@ -26,8 +26,5 @@
     <ClInclude Include="Header\ClientLib.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Logging.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

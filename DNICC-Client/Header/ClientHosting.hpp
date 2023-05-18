@@ -10,7 +10,9 @@
 #include <NosStdLib/DynamicArray.hpp>
 #include <NosStdLib/String.hpp>
 
-#include "Logging.hpp"
+#include <Central/CentralLib.hpp>
+#include <Central/Logging.hpp>
+
 
 namespace ClientLib
 {
@@ -19,9 +21,9 @@ namespace ClientLib
 		void StartServer()
 		{
 			boost::asio::io_context io_context;
-			boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 58233));
+			boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
 
-			ClientLib::Logging::LogMessage<wchar_t>(L"Client Server started\n");
+			CentralLib::Logging::LogMessage<wchar_t>(L"Client Server started\n", true);
 		}
 	}
 }

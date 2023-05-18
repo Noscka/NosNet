@@ -24,7 +24,6 @@
   <ItemGroup>
     <ClInclude Include="Header\ClientHosting.hpp" />
     <ClInclude Include="Header\ClientLib.hpp" />
-    <ClInclude Include="Header\Logging.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

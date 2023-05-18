@@ -9,7 +9,7 @@
 
 #include <chrono>
 
-namespace ClientLib
+namespace CentralLib
 {
 	namespace Logging
 	{
@@ -42,11 +42,14 @@ namespace ClientLib
 		}
 
 		template<typename CharType>
-		void LogMessage(const std::basic_string<CharType>& strIn)
+		void LogMessage(const std::basic_string<CharType>& strIn, const bool& printLog)
 		{
 			MessageLog* messageLogObject = new MessageLog(NosStdLib::String::ConvertString<wchar_t, CharType>(strIn));
 			LoggedMessages.Append(messageLogObject);
-			wprintf(messageLogObject->ConvertToLog().c_str());
+			if (printLog)
+			{
+				wprintf(messageLogObject->ConvertToLog().c_str());
+			}
 			return;
 		}
 	}

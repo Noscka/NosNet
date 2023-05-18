@@ -9,6 +9,7 @@
 #include <NosStdLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Central/Logging.hpp>
 #include "Header/ServerLib.hpp"
 
 #include <iostream>
@@ -38,9 +39,9 @@ public:
 
     void start()
     {
-        wprintf(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())).c_str());
+        CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
 
-        wprintf(L"Creating profile and adding to array\n");
+        CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
 
         try
 		{
@@ -98,7 +99,7 @@ int main()
     try
     {
         boost::asio::io_context io_context;
-        boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 58233));
+        boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultPort)));
 
         wprintf(L"Server started\n");
 
