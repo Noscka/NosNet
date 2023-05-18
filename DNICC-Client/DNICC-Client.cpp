@@ -9,6 +9,7 @@
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
 #include "Header/ClientLib.hpp"
+#include "Header/ClientHosting.hpp"
 
 #include <iostream>
 #include <conio.h>
@@ -34,9 +35,16 @@ int main()
             hostName = Constants::DefaultHostname;
         }
 
-        int clientMode = ClientLib::StartUp::GatherClientMode();
+        switch (ClientLib::StartUp::GatherClientMode())
+        {
+        case ClientLib::StartUp::ClientMode::Normal:
+            /* For now, just continue down. later convert to a seperate function */
+            break;
 
-        std::wcout << L"Client chose: " << clientMode << std::endl;
+        case ClientLib::StartUp::ClientMode::Hosting:
+            ClientLib::Hosting::StartServer();
+            break;
+        }
 
         /*
         Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)

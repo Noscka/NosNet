@@ -45,6 +45,8 @@ public:
 
         try
 		{
+            /* Check what path the user takes and take 2 paths */
+
             bool initialValidation = true;
             while(initialValidation)
             { /* Scoped to delete usernameBuffer after use */

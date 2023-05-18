@@ -53,8 +53,7 @@ namespace ClientLib
 				boost::asio::streambuf serverReponseBuffer;
 				boost::asio::read_until((*connectionSocket), serverReponseBuffer, Definition::Delimiter);
 
-				CentralLib::Communications::CentralizedServerResponse serverReponse;
-				serverReponse.DeserializeObject(&serverReponseBuffer);
+				CentralLib::Communications::CentralizedServerResponse serverReponse(&serverReponseBuffer);
 
 				if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted) /* if server accepts username too, continue as normal */
 				{
@@ -76,14 +75,20 @@ namespace ClientLib
 			return username;
         }
 
-		int GatherClientMode()
+		enum ClientMode : uint8_t
+		{
+			Normal = 0,
+			Hosting = 1,
+		};
+
+		ClientMode GatherClientMode()
 		{
 			bool gatheringModeChoice = true;
 			int mode;
 			while (gatheringModeChoice)
 			{
 				std::string modeString;
-				wprintf(L"What mode would you like to run in?\n1) Normal (connect to others)\n2) Host (others connect to you)\n: "); /* Make more advanced Choosing */
+				wprintf(L"What mode would you like to run in?\n0) Normal (connect to others)\n1) Host (others connect to you)\n: "); /* Make more advanced Choosing */
 				std::getline(std::cin, modeString);
 
 				if (sscanf_s(modeString.c_str(), "%d", &mode) != 1)
@@ -92,7 +97,7 @@ namespace ClientLib
 					continue;
 				}
 
-				if (mode > 2 || mode < 0)
+				if (mode > 1 || mode < 0)
 				{ /* out of range */
 					wprintf(L"input was out of range\n");
 					continue;
@@ -100,7 +105,7 @@ namespace ClientLib
 
 				gatheringModeChoice = false; /* if it passed all the checks, set gatheringModeChoice to false as to not check for mode anymore */
 			}
-			return mode;
+			return (ClientMode)mode;
 		}
     }
 }

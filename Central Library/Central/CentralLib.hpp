@@ -260,6 +260,11 @@ namespace CentralLib
         public:
             CentralizedServerResponse(){}
 
+            CentralizedServerResponse(boost::asio::streambuf* Streambuf)
+            {
+                DeserializeObject(Streambuf);
+            }
+
             InformationCodes GetInformationCode()
             {
                 return InformationCode;
@@ -281,6 +286,56 @@ namespace CentralLib
 				boost::archive::binary_iarchive ia(*Streambuf);
 				ia& *this;
 			}
+        };
+
+        class CentralizedClientResponse
+        {
+        public:
+            enum class InformationCodes : uint8_t
+            {
+                GoingNormalPath = 0,
+                GoingHostingPath = 1,
+            };
+        protected:
+            friend class boost::serialization::access;
+            template<class Archive>
+            void serialize(Archive& archive, const unsigned int version)
+            {
+                archive& InformationCode;
+                archive& AdditionalInformation;
+            }
+
+            InformationCodes InformationCode;
+            std::wstring AdditionalInformation;
+        public:
+            CentralizedClientResponse() {}
+
+            CentralizedClientResponse(boost::asio::streambuf* Streambuf)
+            {
+                DeserializeObject(Streambuf);
+            }
+
+            InformationCodes GetInformationCode()
+            {
+                return InformationCode;
+            }
+
+            std::wstring GetAdditionalInformation()
+            {
+                return AdditionalInformation;
+            }
+
+            void serializeObject(std::streambuf* Streambuf)
+            {
+                boost::archive::binary_oarchive oa(*Streambuf);
+                oa&* this;
+            }
+
+            void DeserializeObject(boost::asio::streambuf* Streambuf)
+            {
+                boost::archive::binary_iarchive ia(*Streambuf);
+                ia&* this;
+            }
         };
     }
 
