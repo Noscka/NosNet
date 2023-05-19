@@ -108,5 +108,18 @@ namespace ClientLib
 			return (ClientMode)mode;
 		}
     }
+
+	namespace Communications
+	{
+		class ClientResponse : public CentralLib::Communications::CentralizedClientResponse
+		{
+		public:
+			ClientResponse(const InformationCodes& informationCode, const std::wstring& additionalInformation)
+			{
+				InformationCode = informationCode;
+				AdditionalInformation = additionalInformation;
+			}
+		};
+	}
 }
 #endif

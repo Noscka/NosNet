@@ -42,6 +42,11 @@ int main()
             break;
 
         case ClientLib::StartUp::ClientMode::Hosting:
+            boost::asio::streambuf responseBuffer;
+            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"aaa").serializeObject(&responseBuffer);
+            /* Tell server which path going down */
+            boost::asio::write(connectionSocket, responseBuffer);
+            boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
             ClientLib::Hosting::StartServer();
             break;
         }
