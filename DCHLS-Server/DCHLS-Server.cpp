@@ -29,57 +29,66 @@ private:
 
         //delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
     }
-public:
-    static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }
 
-    boost::asio::ip::tcp::socket& GetSocket()
-    { 
-        return ConnectionSocket;
-    }
-
-    void start()
+    void Start()
     {
         CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
 
         CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
 
         try
-		{
-            /* Check what path the user takes and take 2 paths */
+        {
+            /* Check what path the user takes */
+            boost::asio::streambuf serverReponseBuffer;
+            boost::asio::read_until(ConnectionSocket, serverReponseBuffer, Definition::Delimiter);
+
+            CentralLib::Communications::CentralizedClientResponse clientReponse(&serverReponseBuffer);
+
+            switch (clientReponse.GetInformationCode())
+            {
+            case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingNormalPath:
+                break;
+
+            case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
+                ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Hosting, &ConnectionSocket);
+                return; /* For now just return */
+                break;
+            }
+
 
             bool initialValidation = true;
-            while(initialValidation)
+            while (initialValidation)
             { /* Scoped to delete usernameBuffer after use */
                 /* Get Username from Client */
-				boost::asio::streambuf usernameBuffer;
-				size_t lenght = boost::asio::read_until(ConnectionSocket, usernameBuffer, Definition::Delimiter);
+                boost::asio::streambuf usernameBuffer;
+                size_t lenght = boost::asio::read_until(ConnectionSocket, usernameBuffer, Definition::Delimiter);
 
                 std::wstring clientsUsername = CentralLib::streamBufferToWstring(&usernameBuffer, lenght);
 
-				boost::asio::streambuf responseBuffer;
+                boost::asio::streambuf responseBuffer;
 
                 if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
                 {
-					/* Create ClientTracker Object and attach it to current session */
-					ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
+                    /* Create ClientTracker Object and attach it to current session */
+                    ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
                     initialValidation = false;
-					ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
+                    ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
                 }
                 else /* username isn't valid */
                 {
-					ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
+                    ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
                 }
 
-				boost::asio::write(ConnectionSocket, responseBuffer);
-				boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
+                boost::asio::write(ConnectionSocket, responseBuffer);
+                boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
             }
-            
+
             wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
 
-			boost::asio::streambuf streamBuffer;
+            boost::asio::streambuf streamBuffer;
             CentralLib::ClientInterfacing::StrippedClientTracker::SerializeArray(&streamBuffer, *(ClientTrackerAttached->GetArrayPositionPointer()));
-			boost::asio::write(ConnectionSocket, streamBuffer);
-			boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
+            boost::asio::write(ConnectionSocket, streamBuffer);
+            boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
         }
         catch (const std::exception& e)
         {
@@ -88,6 +97,18 @@ public:
         }
 
         wprintf(std::format(L"Connection with {} Terminated\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())).c_str());
+    }
+public:
+    static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }
+
+    boost::asio::ip::tcp::socket& GetSocket()
+    { 
+        return ConnectionSocket;
+    }
+
+    void StartPublic()
+    {
+        Start(); /* Run function and make sure it gets deleted */
         delete this; /* commit suicide if the connection ends as the object won't get used/deleted otherwise */
     }
 };
@@ -117,7 +138,7 @@ int main()
             acceptor.accept(newConSim->GetSocket(), error);
 
             /* if no errors, create thread for the new connection */
-            if (!error) { boost::thread* ClientThread = new boost::thread(boost::bind(&tcp_connection_handle::start, newConSim)); }
+            if (!error) { boost::thread* ClientThread = new boost::thread(boost::bind(&tcp_connection_handle::StartPublic, newConSim)); }
         }
     }
     catch (const std::exception& e)

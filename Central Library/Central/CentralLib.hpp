@@ -69,6 +69,7 @@ namespace CentralLib
             {
                 Offline = 0,
                 Online = 1,
+                Hosting = 2,
             };
 
         private:
@@ -148,11 +149,25 @@ namespace CentralLib
             static void SerializeArray(std::streambuf* Streambuf, const int& positionToIngore = -1)
             {
                 boost::archive::binary_oarchive oa(*Streambuf);
-                oa& (ClientArray.GetArrayIndexPointer() - (positionToIngore != -1 ? 1 : 0));
+                int clientHostingCount = 0;
+                for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++) /* Count */
+                {
+                    if (ClientArray[i]->ClientCurrentStatus == ClientStatus::Hosting)
+                    {
+                        clientHostingCount++;
+                    }
+                }
+
+                oa& (clientHostingCount - (positionToIngore != -1 && ClientArray[positionToIngore]->ClientCurrentStatus == ClientStatus::Hosting ? 1 : 0));
 
                 for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++)
                 {
                     if (positionToIngore == i) /* if the index is the same as positionToIgnore, then ignore it */
+                    {
+                        continue;
+                    }
+
+                    if (ClientArray[i]->ClientCurrentStatus != ClientStatus::Hosting)
                     {
                         continue;
                     }
@@ -193,7 +208,7 @@ namespace CentralLib
                 archive& boost::serialization::base_object<CentralLib::ClientInterfacing::StrippedClientTracker>(*this);
             }
 
-            //static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
+            static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
 
             boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
 

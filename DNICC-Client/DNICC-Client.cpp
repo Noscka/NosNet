@@ -35,22 +35,6 @@ int main()
             hostName = Constants::DefaultHostname;
         }
 
-        switch (ClientLib::StartUp::GatherClientMode())
-        {
-        case ClientLib::StartUp::ClientMode::Normal:
-            /* For now, just continue down. later convert to a seperate function */
-            break;
-
-        case ClientLib::StartUp::ClientMode::Hosting:
-            boost::asio::streambuf responseBuffer;
-            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"aaa").serializeObject(&responseBuffer);
-            /* Tell server which path going down */
-            boost::asio::write(connectionSocket, responseBuffer);
-            boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
-            ClientLib::Hosting::StartServer();
-            break;
-        }
-
         /*
         Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
         Host - Hostname/Ip address
@@ -59,14 +43,40 @@ int main()
         boost::asio::connect(connectionSocket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, Constants::DefaultPort));
         CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
 
-        ClientLib::StartUp::GatherUsername(&connectionSocket);
+        switch (ClientLib::StartUp::GatherClientMode())
+        {
+        case ClientLib::StartUp::ClientMode::Normal:
+        {
+            CentralLib::Logging::LogMessage<wchar_t>(L"Client is normal\n", true);
+            boost::asio::streambuf responseBuffer;
+            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingNormalPath, L"Client is Normal").serializeObject(&responseBuffer);
+            /* Tell server which path going down */
+            boost::asio::write(connectionSocket, responseBuffer);
+            boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
 
-		boost::asio::streambuf ContentBuffer;
-		boost::asio::read_until(connectionSocket, ContentBuffer, Definition::Delimiter);
+            ClientLib::StartUp::GatherUsername(&connectionSocket);
 
-		CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
+            boost::asio::streambuf ContentBuffer;
+            boost::asio::read_until(connectionSocket, ContentBuffer, Definition::Delimiter);
 
-        wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
+            CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
+
+            wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
+            break;
+        }
+
+        case ClientLib::StartUp::ClientMode::Hosting:
+        {
+            CentralLib::Logging::LogMessage<wchar_t>(L"Client Hosting a Communications server\n", true);
+            boost::asio::streambuf responseBuffer;
+            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"Client is Hosting").serializeObject(&responseBuffer);
+            /* Tell server which path going down */
+            boost::asio::write(connectionSocket, responseBuffer);
+            boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
+            ClientLib::Hosting::StartServer();
+            break;
+        }
+        }
     }
     catch (const std::exception& e)
     {
