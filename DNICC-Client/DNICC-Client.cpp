@@ -9,6 +9,7 @@
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
 #include "Header/ClientLib.hpp"
+#include "Header/ClientRuntime.hpp"
 #include "Header/ClientHosting.hpp"
 
 #include <iostream>
@@ -53,6 +54,8 @@ int main()
             /* Tell server which path going down */
             boost::asio::write(connectionSocket, responseBuffer);
             boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
+
+            ClientLib::Runtime::ClientModeExection();
 
             ClientLib::StartUp::GatherUsername(&connectionSocket);
 

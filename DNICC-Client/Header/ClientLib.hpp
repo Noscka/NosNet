@@ -77,7 +77,7 @@ namespace ClientLib
 
 		enum ClientMode : uint8_t
 		{
-			Normal = 0,
+			Normal = 0, /* RENAME TO SOMETHING NOT RETARD SUCH AS "ClientMode"/"ClientPath" */
 			Hosting = 1,
 		};
 

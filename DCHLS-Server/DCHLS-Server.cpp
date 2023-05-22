@@ -25,7 +25,7 @@ private:
 
     ~tcp_connection_handle()
     {
-        ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Offline);
+        //ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Offline);
 
         //delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
     }
@@ -47,10 +47,12 @@ private:
             switch (clientReponse.GetInformationCode())
             {
             case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingNormalPath:
+                CentralLib::Logging::LogMessage<wchar_t>(L"Client is normal", true);
                 break;
 
             case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
                 ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Hosting, &ConnectionSocket);
+                CentralLib::Logging::LogMessage<wchar_t>(L"Client is hosting a communications server", true);
                 return; /* For now just return */
                 break;
             }
