@@ -46,36 +46,28 @@ int main()
 
         switch (ClientLib::StartUp::GatherClientMode())
         {
-        case ClientLib::StartUp::ClientMode::Normal:
+        case ClientLib::StartUp::UserMode::Client:
         {
-            CentralLib::Logging::LogMessage<wchar_t>(L"Client is normal\n", true);
+            CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client\n", true);
             boost::asio::streambuf responseBuffer;
-            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingNormalPath, L"Client is Normal").serializeObject(&responseBuffer);
+            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath, L"User is Client").serializeObject(&responseBuffer);
             /* Tell server which path going down */
             boost::asio::write(connectionSocket, responseBuffer);
             boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
 
-            ClientLib::Runtime::ClientModeExection();
-
-            ClientLib::StartUp::GatherUsername(&connectionSocket);
-
-            boost::asio::streambuf ContentBuffer;
-            boost::asio::read_until(connectionSocket, ContentBuffer, Definition::Delimiter);
-
-            CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
-
-            wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
+            ClientLib::Runtime::NormalClient(&connectionSocket);
             break;
         }
 
-        case ClientLib::StartUp::ClientMode::Hosting:
+        case ClientLib::StartUp::UserMode::Hosting:
         {
             CentralLib::Logging::LogMessage<wchar_t>(L"Client Hosting a Communications server\n", true);
             boost::asio::streambuf responseBuffer;
-            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"Client is Hosting").serializeObject(&responseBuffer);
+            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"User is Hosting").serializeObject(&responseBuffer);
             /* Tell server which path going down */
             boost::asio::write(connectionSocket, responseBuffer);
             boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
+
             ClientLib::Hosting::StartServer();
             break;
         }

@@ -8,15 +8,6 @@
 
 namespace ClientLib
 {
-	namespace Mode
-	{
-		enum class ClientMode : uint8_t
-		{
-			Standard = 0,
-			Hosting = 1,
-		};
-	}
-
     /// <summary>
     /// namespace which will contains items which are to do with starting up
     /// </summary>
@@ -75,13 +66,13 @@ namespace ClientLib
 			return username;
         }
 
-		enum ClientMode : uint8_t
+		enum UserMode : uint8_t
 		{
-			Normal = 0, /* RENAME TO SOMETHING NOT RETARD SUCH AS "ClientMode"/"ClientPath" */
+			Client = 0,
 			Hosting = 1,
 		};
 
-		ClientMode GatherClientMode()
+		UserMode GatherClientMode()
 		{
 			bool gatheringModeChoice = true;
 			int mode;
@@ -105,7 +96,7 @@ namespace ClientLib
 
 				gatheringModeChoice = false; /* if it passed all the checks, set gatheringModeChoice to false as to not check for mode anymore */
 			}
-			return (ClientMode)mode;
+			return (UserMode)mode;
 		}
     }
 

@@ -22,6 +22,7 @@
     <ClCompile Include="DCHLS-Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\ServerConnectionProcessing.hpp" />
     <ClInclude Include="Header\ServerLib.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -46,8 +46,8 @@ private:
 
             switch (clientReponse.GetInformationCode())
             {
-            case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingNormalPath:
-                CentralLib::Logging::LogMessage<wchar_t>(L"Client is normal", true);
+            case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath:
+                CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client", true);
                 break;
 
             case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
