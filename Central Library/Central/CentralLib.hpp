@@ -158,7 +158,7 @@ namespace CentralLib
                     }
                 }
 
-                oa& (clientHostingCount - (positionToIngore != -1 && ClientArray[positionToIngore]->ClientCurrentStatus == ClientStatus::Hosting ? 1 : 0));
+                oa& (clientHostingCount - (positionToIngore != -1 ? (ClientArray[positionToIngore]->ClientCurrentStatus == ClientStatus::Hosting ? 1 : 0) : 0));
 
                 for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++)
                 {
@@ -208,7 +208,7 @@ namespace CentralLib
                 archive& boost::serialization::base_object<CentralLib::ClientInterfacing::StrippedClientTracker>(*this);
             }
 
-            static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
+            //static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
 
             boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
 
@@ -308,7 +308,7 @@ namespace CentralLib
         public:
             enum class InformationCodes : uint8_t
             {
-                GoingNormalPath = 0,
+                GoingClientPath = 0,
                 GoingHostingPath = 1,
             };
         protected:
