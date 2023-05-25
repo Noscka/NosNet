@@ -127,6 +127,15 @@ namespace CentralLib
                 delete TargetEndpoint;
             }
 
+            /// <summary>
+            /// Get the current client's ip address as a string
+            /// </summary>
+            /// <returns>the ip address</returns>
+            std::string ReturnIPAddress()
+            {
+                return TargetEndpoint->address().to_v4().to_string();
+            }
+
 			/// <summary>
 			/// (FOR TESTING) just used to list all the ips that are in the array
 			/// </summary>
@@ -134,12 +143,17 @@ namespace CentralLib
 			static std::wstring ListClientArray()
 			{
                 std::wstring output;
-                for (StrippedClientTracker* entry : ClientArray)
+                for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++)
                 {
-                    output += std::format(L"{} : {}\n", entry->ClientUsername, CentralLib::ReturnAddress(*(entry->TargetEndpoint)));
+                    output += std::format(L"{}) {} : {}\n",i, ClientArray[i]->ClientUsername, CentralLib::ReturnAddress(*(ClientArray[i]->TargetEndpoint)));
                 }
                 return output;
 			}
+
+            static NosStdLib::DynamicArray<StrippedClientTracker*>* GetClientArray()
+            {
+                return &ClientArray;
+            }
 
             /// <summary>
             /// Function used to serialize the whole array into streambuf

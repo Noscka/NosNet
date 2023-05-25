@@ -55,7 +55,7 @@ int main()
             boost::asio::write(connectionSocket, responseBuffer);
             boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
 
-            ClientLib::Runtime::NormalClient(&connectionSocket);
+            ClientLib::Runtime::NormalClient(&io_context, &connectionSocket);
             break;
         }
 
