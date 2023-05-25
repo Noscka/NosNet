@@ -32,6 +32,13 @@ namespace ClientLib
 
 				//delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
 			}
+
+			void StartImp()
+			{
+				CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
+
+				CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
+			}
 		public:
 			static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }
 
@@ -40,11 +47,10 @@ namespace ClientLib
 				return ConnectionSocket;
 			}
 
-			void start()
+			void StartPublic()
 			{
-				CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
-
-				CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
+				StartImp(); /* Run function and make sure it gets deleted */
+				delete this; /* commit suicide if the connection ends as the object won't get used/deleted otherwise */
 			}
 		};
 
@@ -68,7 +74,7 @@ namespace ClientLib
 					acceptor.accept(newConSim->GetSocket(), error);
 
 					/* if no errors, create thread for the new connection */
-					if (!error) { boost::thread* ClientThread = new boost::thread(boost::bind(&tcp_connection_handle::start, newConSim)); }
+					if (!error) { boost::thread* ClientThread = new boost::thread(boost::bind(&tcp_connection_handle::StartPublic, newConSim)); }
 				}
 			}
 			catch (const std::exception& e)

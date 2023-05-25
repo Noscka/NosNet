@@ -11,6 +11,7 @@
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
 #include "Header/ServerLib.hpp"
+#include "Header/ServerConnectionProcessing.hpp"
 
 #include <iostream>
 #include <conio.h>
@@ -30,7 +31,7 @@ private:
         //delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
     }
 
-    void Start()
+    void StartImp()
     {
         CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
 
@@ -47,50 +48,15 @@ private:
             switch (clientReponse.GetInformationCode())
             {
             case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath:
-                CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client", true);
+                CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client\n", true);
+                ServerLib::Processing::UserClientPath(&ConnectionSocket, ClientTrackerAttached);
                 break;
 
             case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
-                ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Hosting, &ConnectionSocket);
-                CentralLib::Logging::LogMessage<wchar_t>(L"Client is hosting a communications server", true);
-                return; /* For now just return */
+                CentralLib::Logging::LogMessage<wchar_t>(L"Client is hosting a communications server\n", true);
+                ServerLib::Processing::UserHostPath(&ConnectionSocket, ClientTrackerAttached);
                 break;
             }
-
-
-            bool initialValidation = true;
-            while (initialValidation)
-            { /* Scoped to delete usernameBuffer after use */
-                /* Get Username from Client */
-                boost::asio::streambuf usernameBuffer;
-                size_t lenght = boost::asio::read_until(ConnectionSocket, usernameBuffer, Definition::Delimiter);
-
-                std::wstring clientsUsername = CentralLib::streamBufferToWstring(&usernameBuffer, lenght);
-
-                boost::asio::streambuf responseBuffer;
-
-                if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
-                {
-                    /* Create ClientTracker Object and attach it to current session */
-                    ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, &ConnectionSocket);
-                    initialValidation = false;
-                    ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
-                }
-                else /* username isn't valid */
-                {
-                    ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
-                }
-
-                boost::asio::write(ConnectionSocket, responseBuffer);
-                boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
-            }
-
-            wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
-
-            boost::asio::streambuf streamBuffer;
-            CentralLib::ClientInterfacing::StrippedClientTracker::SerializeArray(&streamBuffer, *(ClientTrackerAttached->GetArrayPositionPointer()));
-            boost::asio::write(ConnectionSocket, streamBuffer);
-            boost::asio::write(ConnectionSocket, boost::asio::buffer(Definition::Delimiter));
         }
         catch (const std::exception& e)
         {
@@ -110,7 +76,7 @@ public:
 
     void StartPublic()
     {
-        Start(); /* Run function and make sure it gets deleted */
+        StartImp(); /* Run function and make sure it gets deleted */
         delete this; /* commit suicide if the connection ends as the object won't get used/deleted otherwise */
     }
 };

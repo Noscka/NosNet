@@ -22,6 +22,8 @@ namespace ClientLib
 			CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
 
 			wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
+
+
 		}
 	}
 }
