@@ -31,7 +31,7 @@ namespace ClientLib
 
 			std::string ipAddress = (*CentralLib::ClientInterfacing::StrippedClientTracker::GetClientArray())[0]->ReturnIPAddress();
 
-			 /*
+			/*
 			Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
 			Host - Hostname/Ip address
 			Service - Service(Hostname for ports)/Port number
