@@ -28,7 +28,7 @@ namespace ClientLib
 
 			~tcp_connection_handle()
 			{
-				ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Offline);
+				//ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Offline); ADD BACK FOR CRASH ERROR
 
 				//delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
 			}
@@ -38,6 +38,21 @@ namespace ClientLib
 				CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
 
 				CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
+
+				while (true)
+				{
+					boost::system::error_code error;
+
+					boost::asio::streambuf messageBuffer;
+					size_t lenght = boost::asio::read_until(ConnectionSocket, messageBuffer, Definition::Delimiter);
+
+					if (error == boost::asio::error::eof)
+						break; // Connection closed cleanly by client.
+					else if (error)
+						throw boost::system::system_error(error); // Some other error.
+
+					wprintf((CentralLib::streamBufferToWstring(&messageBuffer, lenght) + L'\n').c_str());
+				}
 			}
 		public:
 			static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }

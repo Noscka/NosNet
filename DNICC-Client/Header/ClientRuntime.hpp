@@ -41,7 +41,14 @@ namespace ClientLib
 
 			while (true)
 			{
-				/* While loop just for now */
+				/* Basic chat implementation just for now to test the communications capabilities */
+
+				std::string message;
+
+				std::getline(std::cin, message);
+
+				boost::asio::write((*connectionSocket), boost::asio::buffer(message));
+				boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
 			}
 		}
 	}
