@@ -271,9 +271,10 @@ namespace CentralLib
         public:
             enum class InformationCodes : uint8_t
             {
-                Successful = 0,
-                Accepted = 1,
-                NotAccepted = 2,
+                Successful = 0, /* Operation was successful */
+                Accepted = 1, /* Input was accepted */
+                NotAccepted = 2, /* Input was not accepted */
+                Ready = 3, /* Message from Server which tells the Client that it is ready for the next step */
             };
         protected:
 			friend class boost::serialization::access;
@@ -324,6 +325,7 @@ namespace CentralLib
             {
                 GoingClientPath = 0,
                 GoingHostingPath = 1,
+                Ready = 2, /* Message from Client which tells the server that it is ready for the next step */
             };
         protected:
             friend class boost::serialization::access;

@@ -47,9 +47,13 @@ namespace ClientLib
 					size_t lenght = boost::asio::read_until(ConnectionSocket, messageBuffer, Definition::Delimiter);
 
 					if (error == boost::asio::error::eof)
+					{
 						break; // Connection closed cleanly by client.
+					}
 					else if (error)
-						throw boost::system::system_error(error); // Some other error.
+					{
+						throw boost::system::system_error(error); // Some other error
+					}
 
 					wprintf((CentralLib::streamBufferToWstring(&messageBuffer, lenght) + L'\n').c_str());
 				}

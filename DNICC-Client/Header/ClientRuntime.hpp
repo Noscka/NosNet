@@ -19,22 +19,28 @@ namespace ClientLib
 		{
 			ClientLib::StartUp::GatherUsername(connectionSocket);
 
+			/* Once sent username, tell server client is ready for Array */
+			boost::asio::streambuf responseBuffer;
+			ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready, L"Client is ready for array").serializeObject(&responseBuffer);
+			boost::asio::write((*connectionSocket), responseBuffer);
+			boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
+
+			/* Receive array */
 			boost::asio::streambuf ContentBuffer;
 			boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
-
 			CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
 
+			/* List the array */
 			wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
 
+			/* Disconnect from DCHLS server */
 			(*connectionSocket).cancel();
 
-
+			/* TEMP: Get first IP in array (guaranteed to be a server since only Client Server ips get sent) */
 			std::string ipAddress = (*CentralLib::ClientInterfacing::StrippedClientTracker::GetClientArray())[0]->ReturnIPAddress();
 
 			/*
-			Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
-			Host - Hostname/Ip address
-			Service - Service(Hostname for ports)/Port number
+			Connect to the Client Server (DNICC not DCHLS)
 			*/
 			boost::asio::connect((*connectionSocket), boost::asio::ip::tcp::resolver((*io_context)).resolve(ipAddress, Constants::DefaultClientHostPort));
 			CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
@@ -42,7 +48,6 @@ namespace ClientLib
 			while (true)
 			{
 				/* Basic chat implementation just for now to test the communications capabilities */
-
 				std::string message;
 
 				std::getline(std::cin, message);

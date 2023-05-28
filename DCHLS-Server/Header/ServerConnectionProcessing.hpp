@@ -46,10 +46,21 @@ namespace ServerLib
 
             wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
 
-            boost::asio::streambuf streamBuffer;
-            CentralLib::ClientInterfacing::StrippedClientTracker::SerializeArray(&streamBuffer, *(currentConnectionClientTracker->GetArrayPositionPointer()));
-            boost::asio::write((*connectionSocket), streamBuffer);
-            boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
+			/* Wait for client to be ready */
+			boost::asio::streambuf serverReponseBuffer;
+			boost::asio::read_until((*connectionSocket), serverReponseBuffer, Definition::Delimiter);
+			CentralLib::Communications::CentralizedClientResponse clientReponse(&serverReponseBuffer);
+
+            if (clientReponse.GetInformationCode() != CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready)
+            {
+                CentralLib::Logging::LogMessage<wchar_t>(L"Client sent unexpected reponse messages, escaping\n", true);
+                return;
+            }
+
+			boost::asio::streambuf streamBuffer;
+			CentralLib::ClientInterfacing::StrippedClientTracker::SerializeArray(&streamBuffer, *(currentConnectionClientTracker->GetArrayPositionPointer()));
+			boost::asio::write((*connectionSocket), streamBuffer);
+			boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
 		}
 
 		void UserHostPath(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientManagement::ClientTracker* currentConnectionClientTracker)

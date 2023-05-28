@@ -40,10 +40,10 @@ private:
         try
         {
             /* Check what path the user takes */
-            boost::asio::streambuf serverReponseBuffer;
-            boost::asio::read_until(ConnectionSocket, serverReponseBuffer, Definition::Delimiter);
+            boost::asio::streambuf clientReponseBuffer;
+            boost::asio::read_until(ConnectionSocket, clientReponseBuffer, Definition::Delimiter);
 
-            CentralLib::Communications::CentralizedClientResponse clientReponse(&serverReponseBuffer);
+            CentralLib::Communications::CentralizedClientResponse clientReponse(&clientReponseBuffer);
 
             switch (clientReponse.GetInformationCode())
             {
