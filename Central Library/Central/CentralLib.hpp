@@ -57,6 +57,23 @@ namespace CentralLib
         return std::wstring{boost::asio::buffers_begin(streamBuffer->data()), boost::asio::buffers_begin(streamBuffer->data()) + bytes_received - Definition::Delimiter.size()};
     }
 
+    inline size_t Write(boost::asio::ip::tcp::socket* connectedSocket, boost::asio::mutable_buffers_1 b)
+    {
+		size_t firstWrite = boost::asio::write((*connectedSocket), b);
+		size_t secondWrite = boost::asio::write((*connectedSocket), boost::asio::buffer(Definition::Delimiter));
+
+		return firstWrite + secondWrite;
+    }
+
+    template<typename Allocator>
+	inline size_t Write(boost::asio::ip::tcp::socket* connectedSocket, boost::asio::basic_streambuf<Allocator>& b)
+    {
+		size_t firstWrite = boost::asio::write((*connectedSocket), boost::asio::basic_streambuf_ref<Allocator>(b));
+		size_t secondWrite = boost::asio::write((*connectedSocket), boost::asio::buffer(Definition::Delimiter));
+
+        return firstWrite + secondWrite;
+    }
+
     namespace ClientInterfacing
     {
         class StrippedClientTracker : public NosStdLib::ArrayPositionTrack::PositionTrack

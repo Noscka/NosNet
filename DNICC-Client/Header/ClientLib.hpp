@@ -37,8 +37,7 @@ namespace ClientLib
 				gatheringUsername = false;
 
 				/* If valid, send username to server */
-				boost::asio::write((*connectionSocket), boost::asio::buffer(username));
-				boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
+				CentralLib::Write(connectionSocket, boost::asio::buffer(username));
 
 				/* Wait for server response on if it accepted the username */
 				boost::asio::streambuf serverReponseBuffer;

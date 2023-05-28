@@ -7,6 +7,8 @@
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
 
+#include <Central/CentralLib.hpp>
+
 namespace ClientLib
 {
 	namespace Runtime
@@ -22,8 +24,7 @@ namespace ClientLib
 			/* Once sent username, tell server client is ready for Array */
 			boost::asio::streambuf responseBuffer;
 			ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready, L"Client is ready for array").serializeObject(&responseBuffer);
-			boost::asio::write((*connectionSocket), responseBuffer);
-			boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
+			CentralLib::Write(connectionSocket, responseBuffer);
 
 			/* Receive array */
 			boost::asio::streambuf ContentBuffer;
@@ -52,8 +53,7 @@ namespace ClientLib
 
 				std::getline(std::cin, message);
 
-				boost::asio::write((*connectionSocket), boost::asio::buffer(message));
-				boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
+				CentralLib::Write(connectionSocket, boost::asio::buffer(message));
 			}
 		}
 	}

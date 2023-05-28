@@ -52,8 +52,8 @@ int main()
             boost::asio::streambuf responseBuffer;
             ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath, L"User is Client").serializeObject(&responseBuffer);
             /* Tell server which path going down */
-            boost::asio::write(connectionSocket, responseBuffer);
-            boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
+
+            CentralLib::Write(&connectionSocket, responseBuffer);
 
             ClientLib::Runtime::NormalClient(&io_context, &connectionSocket);
             break;
@@ -65,8 +65,7 @@ int main()
             boost::asio::streambuf responseBuffer;
             ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"User is Hosting").serializeObject(&responseBuffer);
             /* Tell server which path going down */
-            boost::asio::write(connectionSocket, responseBuffer);
-            boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
+            CentralLib::Write(&connectionSocket, responseBuffer);
 
             ClientLib::Hosting::StartServer(&io_context, &connectionSocket);
             break;

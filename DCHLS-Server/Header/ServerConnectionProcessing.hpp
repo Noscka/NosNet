@@ -40,8 +40,7 @@ namespace ServerLib
                     ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
                 }
 
-                boost::asio::write((*connectionSocket), responseBuffer);
-                boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
+                CentralLib::Write(connectionSocket, responseBuffer);
             }
 
             wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
@@ -59,8 +58,8 @@ namespace ServerLib
 
 			boost::asio::streambuf streamBuffer;
 			CentralLib::ClientInterfacing::StrippedClientTracker::SerializeArray(&streamBuffer, *(currentConnectionClientTracker->GetArrayPositionPointer()));
-			boost::asio::write((*connectionSocket), streamBuffer);
-			boost::asio::write((*connectionSocket), boost::asio::buffer(Definition::Delimiter));
+
+            CentralLib::Write(connectionSocket, streamBuffer);
 		}
 
 		void UserHostPath(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientManagement::ClientTracker* currentConnectionClientTracker)
