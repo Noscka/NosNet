@@ -73,23 +73,26 @@ namespace ClientLib
 			}
 		};
 
-		void StartServer()
+		void StartServer(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
 		{
 			try
 			{
-				boost::asio::io_context io_context;
-				boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
+				/* Disconnect from DCHLS server */
+				(*connectionSocket).cancel();
+
+				/* Create TCP Acceptor on client host port */
+				boost::asio::ip::tcp::acceptor acceptor((*io_context), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
 
 				CentralLib::Logging::LogMessage<wchar_t>(L"Client Server started\n", true);
 
 				while (true)
 				{
-					/* tcp_connection object which allows for managed of multiple users */
-					tcp_connection_handle* newConSim = tcp_connection_handle::create(io_context);
+					/* tcp_connection_handle object which allows for managed of multiple users */
+					tcp_connection_handle* newConSim = tcp_connection_handle::create((*io_context));
 
 					boost::system::error_code error;
 
-					/* accept incoming connection and assigned it to the tcp_connection object socket */
+					/* accept incoming connection and assigned it to the tcp_connection_handle object socket */
 					acceptor.accept(newConSim->GetSocket(), error);
 
 					/* if no errors, create thread for the new connection */

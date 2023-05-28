@@ -15,7 +15,7 @@ namespace ClientLib
 		/// Function ran if User chose to be a client
 		/// </summary>
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
-		void NormalClient(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket) /* Rename to something more describtive */
+		void NormalClient(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket) /* Rename to something more descriptive */
 		{
 			ClientLib::StartUp::GatherUsername(connectionSocket);
 

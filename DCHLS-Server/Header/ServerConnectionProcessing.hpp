@@ -31,7 +31,7 @@ namespace ServerLib
                 if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
                 {
                     /* Create ClientTracker Object and attach it to current session */
-                    currentConnectionClientTracker = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Online, connectionSocket);
+                    currentConnectionClientTracker = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, connectionSocket);
                     initialValidation = false;
                     ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
                 }
@@ -53,7 +53,7 @@ namespace ServerLib
 
             if (clientReponse.GetInformationCode() != CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready)
             {
-                CentralLib::Logging::LogMessage<wchar_t>(L"Client sent unexpected reponse messages, escaping\n", true);
+                CentralLib::Logging::LogMessage<wchar_t>(L"Client sent unexpected response messages, escaping\n", true);
                 return;
             }
 

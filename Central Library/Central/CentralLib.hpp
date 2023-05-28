@@ -67,9 +67,8 @@ namespace CentralLib
             /// </summary>
             enum class ClientStatus : uint8_t
             {
-                Offline = 0,
-                Online = 1,
-                Hosting = 2,
+                Client = 0,
+                Hosting = 1,
             };
 
         private:

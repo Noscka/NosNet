@@ -68,7 +68,7 @@ int main()
             boost::asio::write(connectionSocket, responseBuffer);
             boost::asio::write(connectionSocket, boost::asio::buffer(Definition::Delimiter));
 
-            ClientLib::Hosting::StartServer();
+            ClientLib::Hosting::StartServer(&io_context, &connectionSocket);
             break;
         }
         }
