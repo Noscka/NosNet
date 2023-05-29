@@ -19,8 +19,6 @@ namespace ClientLib
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
 		void NormalClient(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket) /* Rename to something more descriptive */
 		{
-			ClientLib::StartUp::GatherUsername(connectionSocket);
-
 			/* Once sent username, tell server client is ready for Array */
 			boost::asio::streambuf responseBuffer;
 			ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready, L"Client is ready for array").serializeObject(&responseBuffer);
@@ -45,6 +43,8 @@ namespace ClientLib
 			*/
 			boost::asio::connect((*connectionSocket), boost::asio::ip::tcp::resolver((*io_context)).resolve(ipAddress, Constants::DefaultClientHostPort));
 			CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
+
+			ClientLib::StartUp::GatherUsername(connectionSocket);
 
 			while (true)
 			{

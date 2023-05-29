@@ -12,7 +12,7 @@
 
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
-
+#include "..\DCHLS-Server\Header\ServerLib.hpp" /* TEMP */
 
 namespace ClientLib
 {
@@ -39,6 +39,32 @@ namespace ClientLib
 
 				CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
 
+				bool initialValidation = true;
+				while (initialValidation)
+				{ /* Scoped to delete usernameBuffer after use */
+					/* Get Username from Client */
+					boost::asio::streambuf usernameBuffer;
+					size_t lenght = boost::asio::read_until(ConnectionSocket, usernameBuffer, Definition::Delimiter);
+
+					std::wstring clientsUsername = CentralLib::streamBufferToWstring(&usernameBuffer, lenght);
+
+					boost::asio::streambuf responseBuffer;
+
+					if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
+					{
+						/* Create ClientTracker Object and attach it to current session */
+						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, &ConnectionSocket);
+						initialValidation = false;
+						ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
+					}
+					else /* username isn't valid */
+					{
+						ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
+					}
+
+					CentralLib::Write(&ConnectionSocket, responseBuffer);
+				}
+
 				while (true)
 				{
 					boost::system::error_code error;
@@ -55,7 +81,7 @@ namespace ClientLib
 						throw boost::system::system_error(error); // Some other error
 					}
 
-					wprintf((CentralLib::streamBufferToWstring(&messageBuffer, lenght) + L'\n').c_str());
+					wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
 				}
 			}
 		public:

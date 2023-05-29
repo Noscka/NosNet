@@ -153,6 +153,15 @@ namespace CentralLib
             }
 
 			/// <summary>
+			/// Get the current client's username
+			/// </summary>
+			/// <returns>username</returns>
+            std::wstring GetUsername()
+            {
+                return ClientUsername;
+            }
+
+			/// <summary>
 			/// (FOR TESTING) just used to list all the ips that are in the array
 			/// </summary>
 			/// <returns></returns>
@@ -180,7 +189,7 @@ namespace CentralLib
             {
                 boost::archive::binary_oarchive oa(*Streambuf);
                 int clientHostingCount = 0;
-                for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++) /* Count */
+                for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++) /* Count amount of Client Servers in array */
                 {
                     if (ClientArray[i]->ClientCurrentStatus == ClientStatus::Hosting)
                     {
@@ -188,6 +197,7 @@ namespace CentralLib
                     }
                 }
 
+                /* Serialize the int containing the amount of entries in array */
                 oa& (clientHostingCount - (positionToIngore != -1 ? (ClientArray[positionToIngore]->ClientCurrentStatus == ClientStatus::Hosting ? 1 : 0) : 0));
 
                 for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++)
@@ -197,7 +207,7 @@ namespace CentralLib
                         continue;
                     }
 
-                    if (ClientArray[i]->ClientCurrentStatus != ClientStatus::Hosting)
+                    if (ClientArray[i]->ClientCurrentStatus != ClientStatus::Hosting) /* if user isn't a client server, ignore */
                     {
                         continue;
                     }
