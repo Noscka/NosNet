@@ -11,6 +11,49 @@
 
 namespace ClientLib
 {
+	/* Aliased with using StrippedClientTracker */
+	using AliasedSCT = CentralLib::ClientInterfacing::StrippedClientTracker;
+
+	namespace Functions
+	{
+		/// <summary>
+		/// Returns a IP Address of a server that is chosen by the user
+		/// </summary>
+		/// <returns>IP Address of a server</returns>
+		std::string ChooseServer()
+		{
+			/* List all clients */
+			AliasedSCT::ListClientArray();
+
+			bool choosing = true;
+			int serverIndex = -1;
+			std::string connectionChoiceString;
+
+			while (choosing)
+			{
+				wprintf(L"Enter Server Index: "); /* TEMP NUMBER INPUT */
+
+				std::getline(std::cin, connectionChoiceString);
+
+				if (sscanf_s(connectionChoiceString.c_str(), "%d", &serverIndex) != 1)
+				{ /* Conversion failed */
+					wprintf(L"Invalid argument, please input again\n");
+					continue;
+				}
+
+				if (serverIndex < 0 || serverIndex > AliasedSCT::GetClientArray()->GetArrayIndexPointer()-1) /* TODO: Validate range */
+				{ /* out of range */
+					wprintf(L"input was out of range\n");
+					continue;
+				}
+
+				choosing = false; /* Past all checks, is valid */
+			}
+
+			return (*AliasedSCT::GetClientArray())[serverIndex]->ReturnIPAddress();
+		}
+	}
+
 	namespace Runtime
 	{
 		/// <summary>
@@ -27,16 +70,16 @@ namespace ClientLib
 			/* Receive array */
 			boost::asio::streambuf ContentBuffer;
 			boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
-			CentralLib::ClientInterfacing::StrippedClientTracker::DeserializeArray(&ContentBuffer);
+			AliasedSCT::DeserializeArray(&ContentBuffer);
 
 			/* List the array */
-			wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
+			wprintf(AliasedSCT::ListClientArray().c_str());
 
 			/* Disconnect from DCHLS server */
 			(*connectionSocket).cancel();
 
-			/* TEMP: Get first IP in array (guaranteed to be a server since only Client Server ips get sent) */
-			std::string ipAddress = (*CentralLib::ClientInterfacing::StrippedClientTracker::GetClientArray())[0]->ReturnIPAddress();
+			/* TEMP: put into variable and then use */
+			std::string ipAddress = ClientLib::Functions::ChooseServer();
 
 			/*
 			Connect to the Client Server (DNICC not DCHLS)
