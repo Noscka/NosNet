@@ -11,9 +11,6 @@
 
 namespace ClientLib
 {
-	/* Aliased with using StrippedClientTracker */
-	using AliasedSCT = CentralLib::ClientInterfacing::StrippedClientTracker;
-
 	namespace Functions
 	{
 		/// <summary>
@@ -22,6 +19,9 @@ namespace ClientLib
 		/// <returns>IP Address of a server</returns>
 		std::string ChooseServer()
 		{
+			/* Aliased with using StrippedClientTracker */
+			using AliasedSCT = CentralLib::ClientInterfacing::StrippedClientTracker;
+
 			/* List all clients */
 			AliasedSCT::ListClientArray();
 
@@ -62,11 +62,15 @@ namespace ClientLib
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
 		void NormalClient(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket) /* Rename to something more descriptive */
 		{
+			/* Aliased with using StrippedClientTracker */
+			using AliasedSCT = CentralLib::ClientInterfacing::StrippedClientTracker;
+			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
+
 			/* Tell server which path going down */
-			ClientLib::Communications::ClientResponse::CreateSerializeSend(connectionSocket, CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath, L"User is Client");
+			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::GoingClientPath, L"User is Client");
 
 			/* Once sent username, tell server client is ready for Array */
-			ClientLib::Communications::ClientResponse::CreateSerializeSend(connectionSocket, CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready, L"Client is ready for array");
+			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::Ready, L"Client is ready for array");
 
 			/* Receive array */
 			boost::asio::streambuf ContentBuffer;

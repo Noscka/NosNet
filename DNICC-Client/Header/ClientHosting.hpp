@@ -35,6 +35,8 @@ namespace ClientLib
 
 			void StartImp()
 			{
+				using AliasedServerReponse = ServerLib::Communications::ServerResponse;
+
 				CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
 
 				CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
@@ -54,11 +56,11 @@ namespace ClientLib
 						/* Create ClientTracker Object and attach it to current session */
 						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, &ConnectionSocket);
 						initialValidation = false;
-						ServerLib::Communications::ServerResponse::CreateSerializeSend(&ConnectionSocket, CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username");
+						AliasedServerReponse::CreateSerializeSend(&ConnectionSocket, AliasedServerReponse::InformationCodes::Accepted, L"server accepted username");
 					}
 					else /* username isn't valid */
 					{
-						ServerLib::Communications::ServerResponse::CreateSerializeSend(&ConnectionSocket, CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username");
+						AliasedServerReponse::CreateSerializeSend(&ConnectionSocket, AliasedServerReponse::InformationCodes::NotAccepted, L"server didn't accept username");
 					}
 				}
 
@@ -98,8 +100,10 @@ namespace ClientLib
 
 		void StartServer(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
 		{
+			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
+
 			/* Tell server which path going down */
-			ClientLib::Communications::ClientResponse::CreateSerializeSend(connectionSocket, CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"User is Hosting");
+			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::GoingHostingPath, L"User is Hosting");
 
 			try
 			{
