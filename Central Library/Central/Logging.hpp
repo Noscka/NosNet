@@ -48,7 +48,7 @@ namespace CentralLib
 			LoggedMessages.Append(messageLogObject);
 			if (printLog)
 			{
-				wprintf(messageLogObject->ConvertToLog().c_str());
+				(void)wprintf(messageLogObject->ConvertToLog().c_str());
 			}
 			return;
 		}

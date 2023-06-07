@@ -17,33 +17,7 @@ namespace ServerLib
 	{
 		void UserClientPath(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientManagement::ClientTracker* currentConnectionClientTracker)
 		{
-            //bool initialValidation = true;
-            //while (initialValidation)
-            //{ /* Scoped to delete usernameBuffer after use */
-            //    /* Get Username from Client */
-            //    boost::asio::streambuf usernameBuffer;
-            //    size_t lenght = boost::asio::read_until((*connectionSocket), usernameBuffer, Definition::Delimiter);
-
-            //    std::wstring clientsUsername = CentralLib::streamBufferToWstring(&usernameBuffer, lenght);
-
-            //    boost::asio::streambuf responseBuffer;
-
-            //    if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
-            //    {
-            //        /* Create ClientTracker Object and attach it to current session */
-            //        currentConnectionClientTracker = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, connectionSocket);
-            //        initialValidation = false;
-            //        ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
-            //    }
-            //    else /* username isn't valid */
-            //    {
-            //        ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
-            //    }
-
-            //    CentralLib::Write(connectionSocket, responseBuffer);
-            //}
-
-			currentConnectionClientTracker = CentralLib::ClientManagement::ClientTracker::RegisterClient(L"Basic Username", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, connectionSocket);
+			currentConnectionClientTracker = CentralLib::ClientManagement::ClientTracker::RegisterClient(L"Client Username", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, connectionSocket);
 
             wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
 

@@ -62,7 +62,7 @@ private:
             std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
         }
 
-        wprintf(std::format(L"Connection with {} Terminated\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())).c_str());
+        (void)wprintf(std::format(L"Connection with {} Terminated\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())).c_str());
     }
 public:
     static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }
@@ -112,6 +112,6 @@ int main()
         std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
 
-    wprintf(L"Press any button to continue"); _getch();
+    (void)wprintf(L"Press any button to continue"); _getch();
     return 0;
 }

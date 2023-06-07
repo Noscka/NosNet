@@ -31,19 +31,19 @@ namespace ClientLib
 
 			while (choosing)
 			{
-				wprintf(L"Enter Server Index: "); /* TEMP NUMBER INPUT */
+				(void)wprintf(L"Enter Server Index: "); /* TEMP NUMBER INPUT */
 
 				std::getline(std::cin, connectionChoiceString);
 
 				if (sscanf_s(connectionChoiceString.c_str(), "%d", &serverIndex) != 1)
 				{ /* Conversion failed */
-					wprintf(L"Invalid argument, please input again\n");
+					(void)wprintf(L"Invalid argument, please input again\n");
 					continue;
 				}
 
 				if (serverIndex < 0 || serverIndex > AliasedSCT::GetClientArray()->GetArrayIndexPointer()-1) /* TODO: Validate range */
 				{ /* out of range */
-					wprintf(L"input was out of range\n");
+					(void)wprintf(L"input was out of range\n");
 					continue;
 				}
 
@@ -73,7 +73,7 @@ namespace ClientLib
 			AliasedSCT::DeserializeArray(&ContentBuffer);
 
 			/* List the array */
-			wprintf(AliasedSCT::ListClientArray().c_str());
+			(void)wprintf(AliasedSCT::ListClientArray().c_str());
 
 			/* Disconnect from DCHLS server */
 			(*connectionSocket).cancel();

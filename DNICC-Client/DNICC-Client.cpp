@@ -28,7 +28,7 @@ int main()
 
     try
     {
-        wprintf(L"(DEBUGGING) Type in hostname: ");
+        (void)wprintf(L"(DEBUGGING) Type in hostname: ");
         std::string hostName;
         std::getline(std::cin, hostName);
         if (hostName.empty())
@@ -78,6 +78,6 @@ int main()
         std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
 
-    wprintf(L"Press any button to continue"); _getch();
+    (void)wprintf(L"Press any button to continue"); _getch();
     return 0;
 }

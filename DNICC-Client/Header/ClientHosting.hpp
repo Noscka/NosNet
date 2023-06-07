@@ -81,7 +81,7 @@ namespace ClientLib
 						throw boost::system::system_error(error); // Some other error
 					}
 
-					wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
+					(void)wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
 				}
 			}
 		public:

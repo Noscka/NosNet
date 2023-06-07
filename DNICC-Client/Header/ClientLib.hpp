@@ -78,18 +78,18 @@ namespace ClientLib
 			while (gatheringModeChoice)
 			{
 				std::string modeString;
-				wprintf(L"What mode would you like to run in?\n0) Normal (connect to others)\n1) Host (others connect to you)\n: "); /* Make more advanced Choosing */
+				(void)wprintf(L"What mode would you like to run in?\n0) Normal (connect to others)\n1) Host (others connect to you)\n: "); /* Make more advanced Choosing */
 				std::getline(std::cin, modeString);
 
 				if (sscanf_s(modeString.c_str(), "%d", &mode) != 1)
 				{ /* Conversion failed */
-					wprintf(L"Invalid argument, please input again\n");
+					(void)wprintf(L"Invalid argument, please input again\n");
 					continue;
 				}
 
 				if (mode > 1 || mode < 0)
 				{ /* out of range */
-					wprintf(L"input was out of range\n");
+					(void)wprintf(L"input was out of range\n");
 					continue;
 				}
 
