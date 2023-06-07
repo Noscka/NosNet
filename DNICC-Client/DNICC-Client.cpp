@@ -49,12 +49,6 @@ int main()
         case ClientLib::StartUp::UserMode::Client:
         {
             CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client\n", true);
-            boost::asio::streambuf responseBuffer;
-            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath, L"User is Client").serializeObject(&responseBuffer);
-            /* Tell server which path going down */
-
-            CentralLib::Write(&connectionSocket, responseBuffer);
-
             ClientLib::Runtime::NormalClient(&io_context, &connectionSocket);
             break;
         }
@@ -62,11 +56,6 @@ int main()
         case ClientLib::StartUp::UserMode::Hosting:
         {
             CentralLib::Logging::LogMessage<wchar_t>(L"Client Hosting a Communications server\n", true);
-            boost::asio::streambuf responseBuffer;
-            ClientLib::Communications::ClientResponse(CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"User is Hosting").serializeObject(&responseBuffer);
-            /* Tell server which path going down */
-            CentralLib::Write(&connectionSocket, responseBuffer);
-
             ClientLib::Hosting::StartServer(&io_context, &connectionSocket);
             break;
         }

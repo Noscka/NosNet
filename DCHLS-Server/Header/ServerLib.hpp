@@ -29,6 +29,12 @@ namespace ServerLib
 				InformationCode = informationCode;
 				AdditionalInformation = additionalInformation;
 			}
+
+			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, const InformationCodes& informationCode, const std::wstring& additionalInformation)
+			{
+				boost::asio::streambuf tempBuf;
+				CentralLib::Write(connectionSocket, *(ServerResponse(informationCode, additionalInformation).SerializeObject(&tempBuf)));
+			}
 		};
 	}
 }

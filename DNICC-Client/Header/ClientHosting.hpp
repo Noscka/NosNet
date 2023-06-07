@@ -48,21 +48,18 @@ namespace ClientLib
 
 					std::wstring clientsUsername = CentralLib::streamBufferToWstring(&usernameBuffer, lenght);
 
-					boost::asio::streambuf responseBuffer;
 
 					if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
 					{
 						/* Create ClientTracker Object and attach it to current session */
 						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, &ConnectionSocket);
 						initialValidation = false;
-						ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username").serializeObject(&responseBuffer);
+						ServerLib::Communications::ServerResponse::CreateSerializeSend(&ConnectionSocket, CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted, L"server accepted username");
 					}
 					else /* username isn't valid */
 					{
-						ServerLib::Communications::ServerResponse(CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username").serializeObject(&responseBuffer);
+						ServerLib::Communications::ServerResponse::CreateSerializeSend(&ConnectionSocket, CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted, L"server didn't accept username");
 					}
-
-					CentralLib::Write(&ConnectionSocket, responseBuffer);
 				}
 
 				while (true)
@@ -101,6 +98,9 @@ namespace ClientLib
 
 		void StartServer(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
 		{
+			/* Tell server which path going down */
+			ClientLib::Communications::ClientResponse::CreateSerializeSend(connectionSocket, CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath, L"User is Hosting");
+
 			try
 			{
 				/* Disconnect from DCHLS server */

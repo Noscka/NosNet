@@ -331,10 +331,11 @@ namespace CentralLib
                 return AdditionalInformation;
             }
 
-			void serializeObject(std::streambuf* Streambuf)
+            boost::asio::streambuf* SerializeObject(boost::asio::streambuf* Streambuf)
 			{
 				boost::archive::binary_oarchive oa(*Streambuf);
 				oa& *this;
+                return Streambuf;
 			}
 
 			void DeserializeObject(boost::asio::streambuf* Streambuf)
@@ -382,10 +383,11 @@ namespace CentralLib
                 return AdditionalInformation;
             }
 
-            void serializeObject(std::streambuf* Streambuf)
+            boost::asio::streambuf* SerializeObject(boost::asio::streambuf* Streambuf)
             {
                 boost::archive::binary_oarchive oa(*Streambuf);
                 oa&* this;
+                return Streambuf;
             }
 
             void DeserializeObject(boost::asio::streambuf* Streambuf)
