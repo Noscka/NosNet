@@ -91,7 +91,9 @@ int main()
         boost::asio::io_context io_context;
         boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultPort)));
 
-        wprintf(L"Server started\n");
+        SetConsoleTitle(std::format(L"DCHLS Server - {}", CentralLib::ReturnAddress(acceptor.local_endpoint())).c_str());
+
+        (void)wprintf(L"Server started\n");
 
         while (true)
         {

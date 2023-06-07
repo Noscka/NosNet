@@ -104,10 +104,12 @@ namespace ClientLib
 			try
 			{
 				/* Disconnect from DCHLS server */
-				(*connectionSocket).cancel();
+				connectionSocket->cancel();
 
 				/* Create TCP Acceptor on client host port */
 				boost::asio::ip::tcp::acceptor acceptor((*io_context), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
+
+				SetConsoleTitle(std::format(L"DNICC Client Server - {}", CentralLib::ReturnAddress(acceptor.local_endpoint())).c_str());
 
 				CentralLib::Logging::LogMessage<wchar_t>(L"Client Server started\n", true);
 
