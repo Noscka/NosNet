@@ -20,13 +20,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header\ClientHosting.hpp">
+    <ClInclude Include="Header\Host.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\ClientLib.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\ClientRuntime.hpp">
+    <ClInclude Include="Header\Client.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

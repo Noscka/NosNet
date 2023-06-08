@@ -9,8 +9,8 @@
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
 #include "Header/ClientLib.hpp"
-#include "Header/ClientRuntime.hpp"
-#include "Header/ClientHosting.hpp"
+#include "Header/Client.hpp"
+#include "Header/Host.hpp"
 
 #include <iostream>
 #include <conio.h>
@@ -49,14 +49,14 @@ int main()
         case ClientLib::StartUp::UserMode::Client:
         {
             CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client\n", true);
-            ClientLib::Runtime::NormalClient(&io_context, &connectionSocket);
+            ClientLib::Client::StartClient(&io_context, &connectionSocket);
             break;
         }
 
         case ClientLib::StartUp::UserMode::Hosting:
         {
             CentralLib::Logging::LogMessage<wchar_t>(L"Client Hosting a Communications server\n", true);
-            ClientLib::Hosting::StartServer(&io_context, &connectionSocket);
+            ClientLib::Hosting::StartHosting(&io_context, &connectionSocket);
             break;
         }
         }

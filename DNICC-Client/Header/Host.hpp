@@ -98,7 +98,7 @@ namespace ClientLib
 			}
 		};
 
-		void StartServer(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
+		void StartHosting(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
 		{
 			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
 
