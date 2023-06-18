@@ -268,6 +268,11 @@ namespace CentralLib
             }
 
         public:
+            boost::asio::ip::tcp::socket* GetConnectionSocket()
+            {
+                return SessionConnectionSocket;
+            }
+
             /// <summary>
             /// Changes clients status
             /// </summary>

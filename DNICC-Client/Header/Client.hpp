@@ -7,6 +7,8 @@
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
 
+#include <NosStdLib/Chat.hpp>
+
 #include <Central/CentralLib.hpp>
 
 namespace ClientLib
@@ -54,6 +56,26 @@ namespace ClientLib
 
 				return (*AliasedStrippedClientTracker::GetClientArray())[serverIndex]->ReturnIPAddress();
 			}
+
+			void ChatListen_Thread(boost::asio::ip::tcp::socket* connectionSocket, NosStdLib::Chat::DynamicChat* mainChat)
+			{
+				boost::system::error_code errorCode;
+				if (mainChat->GetChatLoopState() && errorCode != boost::asio::error::eof)
+				{
+					boost::asio::streambuf MessageBuffer;
+					size_t size = boost::asio::read_until((*connectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
+
+					mainChat->AddMessage(CentralLib::streamBufferToWstring(&MessageBuffer, size)); /* add message gotten from server | TODO: Convert to object with a string inside */
+				}
+			}
+
+			boost::asio::ip::tcp::socket* ConnectionSocket; /* TEMP */
+
+			void OnMessageSentEvent(const std::wstring& message)
+			{
+				std::string temp = NosStdLib::String::ConvertString<char, wchar_t>(message);
+				CentralLib::Write(ConnectionSocket, boost::asio::buffer(temp));
+			}
 		}
 
 		/// <summary>
@@ -62,6 +84,8 @@ namespace ClientLib
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
 		void StartClient(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
 		{
+			ConnectionSocket = connectionSocket; /* TEMP */
+
 			/* Aliased with using StrippedClientTracker */
 			using AliasedStrippedClientTracker = CentralLib::ClientInterfacing::StrippedClientTracker;
 			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
@@ -94,15 +118,16 @@ namespace ClientLib
 
 			ClientLib::StartUp::GatherUsername(connectionSocket);
 
-			while (true)
-			{
-				/* Basic chat implementation just for now to test the communications capabilities */
-				std::string message;
+			NosStdLib::Chat::DynamicChat mainChat;
 
-				std::getline(std::cin, message);
+			std::thread chatListenThread(&ChatListen_Thread, connectionSocket, &mainChat);
 
-				CentralLib::Write(connectionSocket, boost::asio::buffer(message));
-			}
+			mainChat.OnMessageSent.AssignEventFunction(&OnMessageSentEvent);
+
+			NosStdLib::Console::ClearScreen();
+			mainChat.StartChat();
+
+			chatListenThread.join();
 		}
 	}
 }

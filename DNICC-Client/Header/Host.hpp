@@ -80,7 +80,19 @@ namespace ClientLib
 						throw boost::system::system_error(error); // Some other error
 					}
 
-					(void)wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
+					std::string tempString = NosStdLib::String::ConvertString<char, wchar_t>(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)));
+
+					(void)wprintf(NosStdLib::String::ConvertString<wchar_t, char>(tempString).c_str());
+
+					for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
+					{
+						if (singleClient == ClientTrackerAttached)
+						{
+							continue;
+						}
+
+						CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), boost::asio::buffer(tempString));
+					}
 				}
 			}
 		public:
