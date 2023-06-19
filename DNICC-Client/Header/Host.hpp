@@ -80,9 +80,9 @@ namespace ClientLib
 						throw boost::system::system_error(error); // Some other error
 					}
 
-					std::string tempString = NosStdLib::String::ConvertString<char, wchar_t>(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)));
+					std::string tempString = NosStdLib::String::ConvertString<char, wchar_t>(std::format(L"{}) {}", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)));
 
-					(void)wprintf(NosStdLib::String::ConvertString<wchar_t, char>(tempString).c_str());
+					(void)wprintf(NosStdLib::String::ConvertString<wchar_t, char>(tempString + "\n").c_str());
 
 					for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
 					{

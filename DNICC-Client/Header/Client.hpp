@@ -60,7 +60,7 @@ namespace ClientLib
 			void ChatListen_Thread(boost::asio::ip::tcp::socket* connectionSocket, NosStdLib::Chat::DynamicChat* mainChat)
 			{
 				boost::system::error_code errorCode;
-				if (mainChat->GetChatLoopState() && errorCode != boost::asio::error::eof)
+				while (mainChat->GetChatLoopState() && errorCode != boost::asio::error::eof)
 				{
 					boost::asio::streambuf MessageBuffer;
 					size_t size = boost::asio::read_until((*connectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
