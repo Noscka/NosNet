@@ -98,24 +98,5 @@ namespace ClientLib
 			return (UserMode)mode;
 		}
     }
-
-	namespace Communications
-	{
-		class ClientResponse : public CentralLib::Communications::CentralizedClientResponse
-		{
-		public:
-			ClientResponse(const InformationCodes& informationCode, const std::wstring& additionalInformation)
-			{
-				InformationCode = informationCode;
-				AdditionalInformation = additionalInformation;
-			}
-
-			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, const InformationCodes& informationCode, const std::wstring& additionalInformation)
-			{
-				boost::asio::streambuf tempBuf;
-				CentralLib::Write(connectionSocket, *(ClientResponse(informationCode, additionalInformation).SerializeObject(&tempBuf)));
-			}
-		};
-	}
 }
 #endif

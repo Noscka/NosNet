@@ -14,6 +14,8 @@
 #include <Central/Logging.hpp>
 #include "..\DCHLS-Server\Header\ServerLib.hpp" /* TEMP */
 
+#include "Communication.hpp"
+
 namespace ClientLib
 {
 	namespace Hosting
@@ -80,9 +82,12 @@ namespace ClientLib
 						throw boost::system::system_error(error); // Some other error
 					}
 
-					std::string tempString = NosStdLib::String::ConvertString<char, wchar_t>(std::format(L"{}) {}", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)));
+					(void)wprintf(std::format(L"{}) {}", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
 
-					(void)wprintf(NosStdLib::String::ConvertString<wchar_t, char>(tempString + "\n").c_str());
+					ClientLib::Communications::MessageObject messageObject(*ClientTrackerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
+
+					boost::asio::streambuf messageObjectStreamBuf;
+					messageObject.SerializeObject(&messageObjectStreamBuf); /* serialize into a buffer, which will be used to send to everyone */
 
 					for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
 					{
@@ -91,7 +96,7 @@ namespace ClientLib
 							continue;
 						}
 
-						CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), boost::asio::buffer(tempString));
+						CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), messageObjectStreamBuf);
 					}
 				}
 			}

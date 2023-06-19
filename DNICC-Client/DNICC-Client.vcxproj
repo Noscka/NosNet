@@ -22,6 +22,7 @@
     <ClCompile Include="DNICC-Client.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\Communication.hpp" />
     <ClInclude Include="Header\Host.hpp" />
     <ClInclude Include="Header\ClientLib.hpp" />
     <ClInclude Include="Header\Client.hpp" />

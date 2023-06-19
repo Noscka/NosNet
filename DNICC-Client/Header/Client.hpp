@@ -11,6 +11,8 @@
 
 #include <Central/CentralLib.hpp>
 
+#include "Communication.hpp"
+
 namespace ClientLib
 {
 	namespace Client
@@ -65,7 +67,9 @@ namespace ClientLib
 					boost::asio::streambuf MessageBuffer;
 					size_t size = boost::asio::read_until((*connectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
 
-					mainChat->AddMessage(CentralLib::streamBufferToWstring(&MessageBuffer, size)); /* add message gotten from server | TODO: Convert to object with a string inside */
+					ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
+
+					mainChat->AddMessage(messageObject.GetMessage());
 				}
 			}
 
