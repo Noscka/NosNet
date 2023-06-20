@@ -69,7 +69,7 @@ namespace ClientLib
 
 					ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
 
-					mainChat->AddMessage(messageObject.GetMessage());
+					mainChat->AddMessage(std::format(L"{}) {}", messageObject.GetUserInfo()->GetUsername() ,messageObject.GetMessage()));
 				}
 			}
 

@@ -66,38 +66,46 @@ namespace ClientLib
 					}
 				}
 
-				while (true)
+				try
 				{
-					boost::system::error_code error;
-
-					boost::asio::streambuf messageBuffer;
-					size_t lenght = boost::asio::read_until(ConnectionSocket, messageBuffer, Definition::Delimiter);
-
-					if (error == boost::asio::error::eof)
+					while (true)
 					{
-						break; // Connection closed cleanly by client.
-					}
-					else if (error)
-					{
-						throw boost::system::system_error(error); // Some other error
-					}
+						boost::system::error_code error;
 
-					(void)wprintf(std::format(L"{}) {}", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
+						boost::asio::streambuf messageBuffer;
+						size_t lenght = boost::asio::read_until(ConnectionSocket, messageBuffer, Definition::Delimiter);
 
-					ClientLib::Communications::MessageObject messageObject(*ClientTrackerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
-
-					boost::asio::streambuf messageObjectStreamBuf;
-					messageObject.SerializeObject(&messageObjectStreamBuf); /* serialize into a buffer, which will be used to send to everyone */
-
-					for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
-					{
-						if (singleClient == ClientTrackerAttached)
+						if (error == boost::asio::error::eof)
 						{
-							continue;
+							break; // Connection closed cleanly by client.
+						}
+						else if (error)
+						{
+							throw boost::system::system_error(error); // Some other error
 						}
 
-						CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), messageObjectStreamBuf);
+						(void)wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
+
+						ClientLib::Communications::MessageObject messageObject(ClientTrackerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
+
+						boost::asio::streambuf messageObjectStreamBuf;
+						messageObject.SerializeObject(&messageObjectStreamBuf); /* serialize into a buffer, which will be used to send to everyone */
+
+						for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
+						{
+							if (singleClient == ClientTrackerAttached)
+							{
+								continue;
+							}
+
+							CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), messageObjectStreamBuf);
+						}
 					}
+				}
+				catch (const std::exception& e)
+				{
+					CentralLib::Logging::LogMessage<wchar_t>(NosStdLib::String::ConvertString<wchar_t, char>(e.what()), true);
+					std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
 				}
 			}
 		public:

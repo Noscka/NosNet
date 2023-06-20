@@ -11,10 +11,11 @@ namespace ClientLib
 {
 	namespace Communications
 	{
+
 		class MessageObject
 		{
 		protected:
-			CentralLib::ClientInterfacing::StrippedClientTracker UserInfo;
+			CentralLib::ClientInterfacing::StrippedClientTracker* UserInfo;
 			std::wstring Message;
 
 			friend class boost::serialization::access;
@@ -25,7 +26,7 @@ namespace ClientLib
 				archive& Message;
 			}
 		public:
-			MessageObject(const CentralLib::ClientInterfacing::StrippedClientTracker& userInfo, const std::wstring& message)
+			MessageObject(CentralLib::ClientInterfacing::StrippedClientTracker* userInfo, const std::wstring& message)
 			{
 				UserInfo = userInfo;
 				Message = message;
@@ -36,7 +37,7 @@ namespace ClientLib
 				DeserializeObject(Streambuf);
 			}
 
-			CentralLib::ClientInterfacing::StrippedClientTracker GetUserInfo()
+			CentralLib::ClientInterfacing::StrippedClientTracker* GetUserInfo()
 			{
 				return UserInfo;
 			}
@@ -59,7 +60,7 @@ namespace ClientLib
 				ia&* this;
 			}
 
-			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, const CentralLib::ClientInterfacing::StrippedClientTracker& userInfo, const std::wstring& message)
+			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientInterfacing::StrippedClientTracker* userInfo, const std::wstring& message)
 			{
 				boost::asio::streambuf tempBuf;
 				CentralLib::Write(connectionSocket, *(MessageObject(userInfo, message).SerializeObject(&tempBuf)));
