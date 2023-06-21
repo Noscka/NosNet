@@ -82,10 +82,15 @@ namespace CentralLib
             /// <summary>
             /// Emun which is used to define the clients last known status
             /// </summary>
-            enum class ClientStatus : uint8_t
+            enum class UserStatus : uint8_t
             {
-                Client = 0,
-                Hosting = 1,
+                /* User Type */
+                Client = 0b10000000,
+                Hosting = 0b01000000,
+
+                /* User Status */
+                Online = 0b00000001,
+                Offline = 0b00000010,
             };
 
         private:
@@ -119,13 +124,13 @@ namespace CentralLib
             static inline NosStdLib::DynamicArray<StrippedClientTracker*> ClientArray; /* Array of all clients that have joined */
 
             std::wstring ClientUsername; /* Client's name which they choose */
-            ClientStatus ClientCurrentStatus; /* Client's status on if they are online, offline and etc */
+            UserStatus ClientCurrentStatus; /* Client's status on if they are online, offline and etc */
             boost::asio::ip::tcp::endpoint* TargetEndpoint; /* Session's ConnectionSocket to get the endpoint from */
 
 			/// <summary>
 			/// Constructor
 			/// </summary>
-            StrippedClientTracker(const std::wstring& clientUsername, const ClientStatus& clientCurrentStatus, boost::asio::ip::tcp::endpoint* targetEndpoint)
+            StrippedClientTracker(const std::wstring& clientUsername, const UserStatus& clientCurrentStatus, boost::asio::ip::tcp::endpoint* targetEndpoint)
 			{
 				ClientUsername = clientUsername;
 				ClientCurrentStatus = clientCurrentStatus;
@@ -191,14 +196,14 @@ namespace CentralLib
                 int clientHostingCount = 0;
                 for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++) /* Count amount of Client Servers in array */
                 {
-                    if (ClientArray[i]->ClientCurrentStatus == ClientStatus::Hosting)
+                    if (ClientArray[i]->ClientCurrentStatus == UserStatus::Hosting)
                     {
                         clientHostingCount++;
                     }
                 }
 
                 /* Serialize the int containing the amount of entries in array */
-                oa& (clientHostingCount - (positionToIngore != -1 ? (ClientArray[positionToIngore]->ClientCurrentStatus == ClientStatus::Hosting ? 1 : 0) : 0));
+                oa& (clientHostingCount - (positionToIngore != -1 ? (ClientArray[positionToIngore]->ClientCurrentStatus == UserStatus::Hosting ? 1 : 0) : 0));
 
                 for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++)
                 {
@@ -207,7 +212,7 @@ namespace CentralLib
                         continue;
                     }
 
-                    if (ClientArray[i]->ClientCurrentStatus != ClientStatus::Hosting) /* if user isn't a client server, ignore */
+                    if (ClientArray[i]->ClientCurrentStatus != UserStatus::Hosting) /* if user isn't a client server, ignore */
                     {
                         continue;
                     }
@@ -255,7 +260,7 @@ namespace CentralLib
             /// <summary>
             /// Constructor
             /// </summary>
-            ClientTracker(const std::wstring& clientUsername, const ClientStatus& clientCurrentStatus, boost::asio::ip::tcp::socket* sessionConnectionSocket)
+            ClientTracker(const std::wstring& clientUsername, const UserStatus& clientCurrentStatus, boost::asio::ip::tcp::socket* sessionConnectionSocket)
             {
                 ClientUsername = clientUsername;
                 ClientCurrentStatus = clientCurrentStatus;
@@ -276,7 +281,7 @@ namespace CentralLib
             /// <summary>
             /// Changes clients status
             /// </summary>
-            void ChangeStatus(const ClientStatus& newClientStatus)
+            void ChangeStatus(const UserStatus& newClientStatus)
             {
                 ClientCurrentStatus = newClientStatus;
             }
@@ -288,7 +293,7 @@ namespace CentralLib
             /// <param name="clientCurrentStatus">- the clients status when created</param>
             /// <param name="sessionConnectionSocket">- pointer to the clients endpoint (remote_endpoint)</param>
             /// <returns>pointer to self</returns>
-            static ClientTracker* RegisterClient(const std::wstring& clientUsername, const ClientStatus& clientCurrentStatus, boost::asio::ip::tcp::socket* sessionConnectionSocket)
+            static ClientTracker* RegisterClient(const std::wstring& clientUsername, const UserStatus& clientCurrentStatus, boost::asio::ip::tcp::socket* sessionConnectionSocket)
             {
                 return new ClientTracker(clientUsername, clientCurrentStatus, sessionConnectionSocket);
             }

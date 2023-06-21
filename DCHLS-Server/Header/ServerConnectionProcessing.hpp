@@ -24,7 +24,7 @@ namespace ServerLib
 
 		void UserClientPath(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientManagement::ClientTracker* currentConnectionClientTracker)
 		{
-			currentConnectionClientTracker = AliasedClientTracker::RegisterClient(L"Client Username", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, connectionSocket);
+			currentConnectionClientTracker = AliasedClientTracker::RegisterClient(L"Client Username", CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client, connectionSocket);
 
             wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
 
@@ -52,7 +52,7 @@ namespace ServerLib
 
 		void UserHostPath(boost::asio::ip::tcp::socket* connectionSocket, AliasedClientTracker* currentConnectionClientTracker)
 		{
-            currentConnectionClientTracker = AliasedClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Hosting, connectionSocket);
+            currentConnectionClientTracker = AliasedClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Hosting, connectionSocket);
 		}
 	}
 }

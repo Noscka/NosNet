@@ -30,9 +30,27 @@ namespace ClientLib
 
 			~tcp_connection_handle()
 			{
-				//ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Offline); ADD BACK FOR CRASH ERROR
+				ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline);
 
-				//delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
+				ClientLib::Communications::MessageObject tempMessageObject(ClientTrackerAttached, L"Client has left");
+
+				SendToAll(&tempMessageObject, false);
+			}
+
+			void SendToAll(ClientLib::Communications::MessageObject* messageObject, const bool& sendToSelfClient)
+			{
+				boost::asio::streambuf tempStreamBuf;
+				messageObject->SerializeObject(&tempStreamBuf); /* serialize into a buffer, which will be used to send to everyone */
+
+				for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
+				{
+					if (singleClient == ClientTrackerAttached && !sendToSelfClient)
+					{
+						continue;
+					}
+
+					CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), tempStreamBuf);
+				}
 			}
 
 			void StartImp()
@@ -56,7 +74,7 @@ namespace ClientLib
 					if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
 					{
 						/* Create ClientTracker Object and attach it to current session */
-						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, &ConnectionSocket);
+						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client, &ConnectionSocket);
 						initialValidation = false;
 						AliasedServerReponse::CreateSerializeSend(&ConnectionSocket, AliasedServerReponse::InformationCodes::Accepted, L"server accepted username");
 					}
@@ -88,18 +106,7 @@ namespace ClientLib
 
 						ClientLib::Communications::MessageObject messageObject(ClientTrackerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
 
-						boost::asio::streambuf messageObjectStreamBuf;
-						messageObject.SerializeObject(&messageObjectStreamBuf); /* serialize into a buffer, which will be used to send to everyone */
-
-						for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
-						{
-							if (singleClient == ClientTrackerAttached)
-							{
-								continue;
-							}
-
-							CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), messageObjectStreamBuf);
-						}
+						SendToAll(&messageObject, false);
 					}
 				}
 				catch (const std::exception& e)
