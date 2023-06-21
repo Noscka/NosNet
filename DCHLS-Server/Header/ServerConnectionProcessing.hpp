@@ -15,22 +15,34 @@ namespace ServerLib
 {
 	namespace Processing
 	{
+		namespace /* PRIVATE NAMESPACE */
+		{
+			/* Aliased with using StrippedClientTracker */
+			using AliasedClientTracker = CentralLib::ClientManagement::ClientTracker;
+			using AliasedServerResponse = ServerLib::Communications::ServerResponse;
+		}
+
 		void UserClientPath(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientManagement::ClientTracker* currentConnectionClientTracker)
 		{
-			currentConnectionClientTracker = CentralLib::ClientManagement::ClientTracker::RegisterClient(L"Client Username", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, connectionSocket);
+			currentConnectionClientTracker = AliasedClientTracker::RegisterClient(L"Client Username", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Client, connectionSocket);
 
             wprintf(CentralLib::ClientInterfacing::StrippedClientTracker::ListClientArray().c_str());
 
-			/* Wait for client to be ready */
-			boost::asio::streambuf serverReponseBuffer;
-			boost::asio::read_until((*connectionSocket), serverReponseBuffer, Definition::Delimiter);
-			CentralLib::Communications::CentralizedClientResponse clientReponse(&serverReponseBuffer);
+			/* Tell client that it is ready for next step */
+			AliasedServerResponse::CreateSerializeSend(connectionSocket, AliasedServerResponse::InformationCodes::Ready, L"Server is ready for next step");
 
-            if (clientReponse.GetInformationCode() != CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready)
-            {
-                CentralLib::Logging::LogMessage<wchar_t>(L"Client sent unexpected response messages, escaping\n", true);
-                return;
-            }
+			{
+				/* Wait for client to be ready */
+				boost::asio::streambuf serverReponseBuffer;
+				boost::asio::read_until((*connectionSocket), serverReponseBuffer, Definition::Delimiter);
+				CentralLib::Communications::CentralizedClientResponse clientReponse(&serverReponseBuffer);
+
+				if (clientReponse.GetInformationCode() != CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready)
+				{
+					CentralLib::Logging::LogMessage<wchar_t>(L"Client sent unexpected response messages, escaping\n", true);
+					return;
+				}
+			}
 
 			boost::asio::streambuf streamBuffer;
 			CentralLib::ClientInterfacing::StrippedClientTracker::SerializeArray(&streamBuffer, *(currentConnectionClientTracker->GetArrayPositionPointer()));
@@ -38,9 +50,9 @@ namespace ServerLib
             CentralLib::Write(connectionSocket, streamBuffer);
 		}
 
-		void UserHostPath(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientManagement::ClientTracker* currentConnectionClientTracker)
+		void UserHostPath(boost::asio::ip::tcp::socket* connectionSocket, AliasedClientTracker* currentConnectionClientTracker)
 		{
-            currentConnectionClientTracker = CentralLib::ClientManagement::ClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Hosting, connectionSocket);
+            currentConnectionClientTracker = AliasedClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::ClientStatus::Hosting, connectionSocket);
 		}
 	}
 }

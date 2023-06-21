@@ -97,13 +97,28 @@ namespace ClientLib
 			/* Tell server which path going down */
 			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::GoingClientPath, L"User is Client");
 
+			{
+				/* Wait for Server to be ready */
+				boost::asio::streambuf serverReponseBuffer;
+				boost::asio::read_until((*connectionSocket), serverReponseBuffer, Definition::Delimiter);
+				CentralLib::Communications::CentralizedServerResponse serverReponse(&serverReponseBuffer);
+
+				if (serverReponse.GetInformationCode() != CentralLib::Communications::CentralizedServerResponse::InformationCodes::Ready)
+				{
+					CentralLib::Logging::LogMessage<wchar_t>(L"Server sent unexpected response messages, escaping\n", true);
+					return;
+				}
+			}
+
 			/* Once sent username, tell server client is ready for Array */
 			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::Ready, L"Client is ready for array");
 
-			/* Receive array */
-			boost::asio::streambuf ContentBuffer;
-			boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
-			AliasedStrippedClientTracker::DeserializeArray(&ContentBuffer);
+			{
+				/* Receive array */
+				boost::asio::streambuf ContentBuffer;
+				boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
+				AliasedStrippedClientTracker::DeserializeArray(&ContentBuffer);
+			}
 
 			/* List the array */
 			(void)wprintf(AliasedStrippedClientTracker::ListClientArray().c_str());
