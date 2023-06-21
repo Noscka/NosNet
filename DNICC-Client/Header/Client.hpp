@@ -135,9 +135,9 @@ namespace ClientLib
 			boost::asio::connect((*connectionSocket), boost::asio::ip::tcp::resolver((*io_context)).resolve(ipAddress, Constants::DefaultClientHostPort));
 			CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
 
-			ClientLib::StartUp::GatherUsername(connectionSocket);
+			std::wstring username = NosStdLib::String::ConvertString<wchar_t, char>(ClientLib::StartUp::GatherUsername(connectionSocket));
 
-			NosStdLib::Chat::DynamicChat mainChat;
+			NosStdLib::Chat::DynamicChat mainChat(true, std::format(L"{}) {}", username, L"{}"));
 
 			std::thread chatListenThread(&ChatListen_Thread, connectionSocket, &mainChat);
 
