@@ -7,7 +7,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
 
-#include <NosStdLib/Chat.hpp>
+#include <NosLib/Chat.hpp>
 
 #include <Central/CentralLib.hpp>
 
@@ -59,7 +59,7 @@ namespace ClientLib
 				return (*AliasedStrippedClientTracker::GetClientArray())[serverIndex]->ReturnIPAddress();
 			}
 
-			void ChatListen_Thread(boost::asio::ip::tcp::socket* connectionSocket, NosStdLib::Chat::DynamicChat* mainChat)
+			void ChatListen_Thread(boost::asio::ip::tcp::socket* connectionSocket, NosLib::Chat::DynamicChat* mainChat)
 			{
 				boost::system::error_code errorCode;
 				while (mainChat->GetChatLoopState() && errorCode != boost::asio::error::eof)
@@ -77,7 +77,7 @@ namespace ClientLib
 
 			void OnMessageSentEvent(const std::wstring& message)
 			{
-				std::string temp = NosStdLib::String::ConvertString<char, wchar_t>(message);
+				std::string temp = NosLib::String::ConvertString<char, wchar_t>(message);
 				CentralLib::Write(ConnectionSocket, boost::asio::buffer(temp));
 			}
 		}
@@ -135,15 +135,15 @@ namespace ClientLib
 			boost::asio::connect((*connectionSocket), boost::asio::ip::tcp::resolver((*io_context)).resolve(ipAddress, Constants::DefaultClientHostPort));
 			CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
 
-			std::wstring username = NosStdLib::String::ConvertString<wchar_t, char>(ClientLib::StartUp::GatherUsername(connectionSocket));
+			std::wstring username = NosLib::String::ConvertString<wchar_t, char>(ClientLib::StartUp::GatherUsername(connectionSocket));
 
-			NosStdLib::Chat::DynamicChat mainChat(true, std::format(L"{}) {}", username, L"{}"));
+			NosLib::Chat::DynamicChat mainChat(true, std::format(L"{}) {}", username, L"{}"));
 
 			std::thread chatListenThread(&ChatListen_Thread, connectionSocket, &mainChat);
 
 			mainChat.OnMessageSent.AssignEventFunction(&OnMessageSentEvent);
 
-			NosStdLib::Console::ClearScreen();
+			NosLib::Console::ClearScreen();
 			mainChat.StartChat();
 
 			chatListenThread.join();

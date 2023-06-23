@@ -7,8 +7,8 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
-#include <NosStdLib/DynamicArray.hpp>
-#include <NosStdLib/String.hpp>
+#include <NosLib/DynamicArray.hpp>
+#include <NosLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
@@ -111,8 +111,8 @@ namespace ClientLib
 				}
 				catch (const std::exception& e)
 				{
-					CentralLib::Logging::LogMessage<wchar_t>(NosStdLib::String::ConvertString<wchar_t, char>(e.what()), true);
-					std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
+					CentralLib::Logging::LogMessage<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
+					std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
 				}
 			}
 		public:
@@ -165,7 +165,7 @@ namespace ClientLib
 			}
 			catch (const std::exception& e)
 			{
-				std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
+				std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
 			}
 		}
 	}

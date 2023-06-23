@@ -11,8 +11,8 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/serialization.hpp>
 
-#include <NosStdLib/String.hpp>
-#include <NosStdLib/Cast.hpp>
+#include <NosLib/String.hpp>
+#include <NosLib/Cast.hpp>
 
 #include <string.h>
 #include <format>
@@ -43,7 +43,7 @@ namespace CentralLib
 {
 	std::wstring ReturnAddress(const boost::asio::ip::tcp::endpoint& Endpoint)
 	{
-		return std::format(L"{}:{}", NosStdLib::String::ConvertString<wchar_t, char>(Endpoint.address().to_v4().to_string()), NosStdLib::String::ConvertString<wchar_t, char>(std::to_string(Endpoint.port())));
+		return std::format(L"{}:{}", NosLib::String::ConvertString<wchar_t, char>(Endpoint.address().to_v4().to_string()), NosLib::String::ConvertString<wchar_t, char>(std::to_string(Endpoint.port())));
 	}
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace CentralLib
 
     namespace ClientInterfacing
     {
-        class StrippedClientTracker : public NosStdLib::ArrayPositionTrack::PositionTrack
+        class StrippedClientTracker : public NosLib::ArrayPositionTrack::PositionTrack
         {
         public:
             /// <summary>
@@ -102,7 +102,7 @@ namespace CentralLib
 				archive& ClientUsername;
 				archive& ClientCurrentStatus;
 				archive& TargetEndpoint->address().to_string();
-				archive& NosStdLib::Cast::Cast<int>(TargetEndpoint->port());
+				archive& NosLib::Cast::Cast<int>(TargetEndpoint->port());
             }
             template<class Archive>
             void load(Archive& archive, const unsigned int version)
@@ -121,7 +121,7 @@ namespace CentralLib
             BOOST_SERIALIZATION_SPLIT_MEMBER()
 
         protected:
-            static inline NosStdLib::DynamicArray<StrippedClientTracker*> ClientArray; /* Array of all clients that have joined */
+            static inline NosLib::DynamicArray<StrippedClientTracker*> ClientArray; /* Array of all clients that have joined */
 
             std::wstring ClientUsername; /* Client's name which they choose */
             UserStatus ClientCurrentStatus; /* Client's status on if they are online, offline and etc */
@@ -180,7 +180,7 @@ namespace CentralLib
                 return output;
 			}
 
-            static NosStdLib::DynamicArray<StrippedClientTracker*>* GetClientArray()
+            static NosLib::DynamicArray<StrippedClientTracker*>* GetClientArray()
             {
                 return &ClientArray;
             }
@@ -253,7 +253,7 @@ namespace CentralLib
                 archive& boost::serialization::base_object<CentralLib::ClientInterfacing::StrippedClientTracker>(*this);
             }
 
-            //static inline NosStdLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
+            //static inline NosLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
 
             boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
 

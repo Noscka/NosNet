@@ -101,13 +101,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Libraries\NosStdLib\NosStdLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Libraries\NosLib\NosLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Libraries\NosStdLib\Build\NosStdLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Libraries\NosLib\Build\NosLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,7 +120,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Libraries\NosStdLib\NosStdLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Libraries\NosLib\NosLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Libraries\NosStdLib\Build\NosStdLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Libraries\NosLib\Build\NosLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,13 +139,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Libraries\NosStdLib\NosStdLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Libraries\NosLib\NosLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Libraries\NosStdLib\Build\NosStdLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Libraries\NosLib\Build\NosLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,7 +158,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Libraries\NosStdLib\NosStdLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Libraries\NosLib\NosLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -166,7 +166,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Libraries\NosStdLib\Build\NosStdLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Libraries\NosLib\Build\NosLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

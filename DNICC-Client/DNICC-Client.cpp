@@ -3,8 +3,8 @@
 
 #include <boost/asio.hpp>
 
-#include <NosStdLib/Console.hpp>
-#include <NosStdLib/String.hpp>
+#include <NosLib/Console.hpp>
+#include <NosLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
@@ -17,10 +17,10 @@
 
 int main()
 {
-    NosStdLib::Console::InitializeModifiers::EnableUnicode();
-    NosStdLib::Console::InitializeModifiers::EnableANSI();
-    NosStdLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DNICC Client");
-    NosStdLib::Console::InitializeModifiers::InitializeEventHandler();
+    NosLib::Console::InitializeModifiers::EnableUnicode();
+    NosLib::Console::InitializeModifiers::EnableANSI();
+    NosLib::Console::InitializeModifiers::BeatifyConsole<wchar_t>(L"DNICC Client");
+    NosLib::Console::InitializeModifiers::InitializeEventHandler();
 
     boost::asio::io_context io_context;
 
@@ -63,8 +63,8 @@ int main()
     }
     catch (const std::exception& e)
     {
-        CentralLib::Logging::LogMessage<wchar_t>(NosStdLib::String::ConvertString<wchar_t, char>(e.what()), true);
-        std::wcerr << NosStdLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
+        CentralLib::Logging::LogMessage<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
+        std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
 
     (void)wprintf(L"Press any button to continue"); _getch();

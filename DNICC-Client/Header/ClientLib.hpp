@@ -28,7 +28,7 @@ namespace ClientLib
 				wprintf(L"Type in a username: ");
 				std::getline(std::cin, username);
 
-				if (!CentralLib::Validation::ValidateUsername(NosStdLib::String::ConvertString<wchar_t, char>(username)))
+				if (!CentralLib::Validation::ValidateUsername(NosLib::String::ConvertString<wchar_t, char>(username)))
 				{ /* if username didn't pass username requirements */
 					CentralLib::Logging::LogMessage<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", true);
 					continue;

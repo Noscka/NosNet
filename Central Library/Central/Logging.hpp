@@ -4,8 +4,8 @@
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
 
-#include <NosStdLib/DynamicArray.hpp>
-#include <NosStdLib/String.hpp>
+#include <NosLib/DynamicArray.hpp>
+#include <NosLib/String.hpp>
 
 #include <chrono>
 
@@ -38,13 +38,13 @@ namespace CentralLib
 				}
 			};
 
-			NosStdLib::DynamicArray<MessageLog*> LoggedMessages;
+			NosLib::DynamicArray<MessageLog*> LoggedMessages;
 		}
 
 		template<typename CharType>
 		void LogMessage(const std::basic_string<CharType>& strIn, const bool& printLog)
 		{
-			MessageLog* messageLogObject = new MessageLog(NosStdLib::String::ConvertString<wchar_t, CharType>(strIn));
+			MessageLog* messageLogObject = new MessageLog(NosLib::String::ConvertString<wchar_t, CharType>(strIn));
 			LoggedMessages.Append(messageLogObject);
 			if (printLog)
 			{

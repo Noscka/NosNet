@@ -12,8 +12,8 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/serialization.hpp>
 
-#include <NosStdLib/DynamicArray.hpp>
-#include <NosStdLib/String.hpp>
+#include <NosLib/DynamicArray.hpp>
+#include <NosLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
 
