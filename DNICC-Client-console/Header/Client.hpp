@@ -47,7 +47,7 @@ namespace ClientLib
 						continue;
 					}
 
-					if (serverIndex < 0 || serverIndex > AliasedStrippedClientTracker::GetClientArray()->GetArrayIndexPointer() - 1) /* TODO: Validate range */
+					if (serverIndex < 0 || serverIndex > AliasedStrippedClientTracker::GetClientArray()->GetLastArrayIndex()) /* TODO: Validate range */
 					{ /* out of range */
 						(void)wprintf(L"input was out of range\n");
 						continue;

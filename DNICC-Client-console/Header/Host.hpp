@@ -12,7 +12,7 @@
 
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
-#include "..\DCHLS-Server\Header\ServerLib.hpp" /* TEMP */
+#include "..\DCHLS-Server-console\Header\ServerLib.hpp" /* TEMP */
 
 #include "Communication.hpp"
 

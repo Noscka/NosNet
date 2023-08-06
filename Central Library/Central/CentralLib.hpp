@@ -102,7 +102,7 @@ namespace CentralLib
 				archive& ClientUsername;
 				archive& ClientCurrentStatus;
 				archive& TargetEndpoint->address().to_string();
-				archive& NosLib::Cast::Cast<int>(TargetEndpoint->port());
+				archive& NosLib::Cast<int>(TargetEndpoint->port());
             }
             template<class Archive>
             void load(Archive& archive, const unsigned int version)
@@ -173,7 +173,7 @@ namespace CentralLib
 			static std::wstring ListClientArray()
 			{
                 std::wstring output;
-                for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++)
+                for (int i = 0; i <= ClientArray.GetLastArrayIndex(); i++)
                 {
                     output += std::format(L"{}) {} : {}\n",i, ClientArray[i]->ClientUsername, CentralLib::ReturnAddress(*(ClientArray[i]->TargetEndpoint)));
                 }
@@ -194,7 +194,7 @@ namespace CentralLib
             {
                 boost::archive::binary_oarchive oa(*Streambuf);
                 int clientHostingCount = 0;
-                for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++) /* Count amount of Client Servers in array */
+                for (int i = 0; i <= ClientArray.GetLastArrayIndex(); i++) /* Count amount of Client Servers in array */
                 {
                     if (ClientArray[i]->ClientCurrentStatus == UserStatus::Hosting)
                     {
@@ -205,7 +205,7 @@ namespace CentralLib
                 /* Serialize the int containing the amount of entries in array */
                 oa& (clientHostingCount - (positionToIngore != -1 ? (ClientArray[positionToIngore]->ClientCurrentStatus == UserStatus::Hosting ? 1 : 0) : 0));
 
-                for (int i = 0; i < ClientArray.GetArrayIndexPointer(); i++)
+                for (int i = 0; i <= ClientArray.GetLastArrayIndex(); i++)
                 {
                     if (positionToIngore == i) /* if the index is the same as positionToIgnore, then ignore it */
                     {
