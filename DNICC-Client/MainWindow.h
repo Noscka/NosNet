@@ -52,7 +52,7 @@ protected:
 		Service - Service(Hostname for ports)/Port number
 		*/
 		boost::asio::connect((*ConnectionSocket), boost::asio::ip::tcp::resolver(*IOContext).resolve(ui->HostNameText->text().toStdString(), Constants::DefaultPort));
-		CentralLib::Logging::CreateLog<wchar_t>(L"Connected to server\n", false);
+		CentralLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", false);
 
 		switch (ClientLib::StartUp::GatherClientMode(ui))
 		{

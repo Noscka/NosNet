@@ -44,7 +44,7 @@ namespace ClientLib
 					std::wstring entryName = std::format(L"IP: {}", NosLib::String::ToWstring(currentEntry->ReturnIPAddress()));
 					serverEntry->setObjectName(entryName);
 					serverEntry->setText(QString::fromStdWString(entryName));
-					QMainWindow::connect(serverEntry, &QPushButton::released, nullptr, [currentEntry]()
+					QMainWindow::connect(serverEntry, &QPushButton::released, [currentEntry]()
 					{
 						ClientLib::Client::JoinHost(currentEntry);
 					});
@@ -139,7 +139,7 @@ namespace ClientLib
 
 			/* Connect to the Client Server (DNICC not DCHLS) */
 			boost::asio::connect((*ConnectionSocket), boost::asio::ip::tcp::resolver((*IOContext)).resolve(hostObject->ReturnIPAddress(), Constants::DefaultClientHostPort));
-			CentralLib::Logging::CreateLog<wchar_t>(L"Connected to server\n", false);
+			CentralLib::Logging::CreateLog<wchar_t>(L"Connected to DNICC Server\n", false);
 
 			/* Go to Chat page */
 			UI->stackedWidget->setCurrentIndex(2);
