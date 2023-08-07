@@ -120,6 +120,15 @@
     <QtMoc Include="MainWindow.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="CustomWidgets\CenterLayout.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header\Client.hpp" />
+    <ClInclude Include="Header\ClientLib.hpp" />
+    <ClInclude Include="Header\Communication.hpp" />
+    <ClInclude Include="Header\Host.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />
