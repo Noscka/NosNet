@@ -8,12 +8,24 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{6A31E136-3076-4240-9C81-5C840C5E3443}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DNICC-Client", "DNICC-Client\DNICC-Client.vcxproj", "{384B17AF-AB12-4996-B2E4-D8CD3E4ED851}"
+	ProjectSection(ProjectDependencies) = postProject
+		{626A01BB-206F-4EDF-A66B-7A434245AC95} = {626A01BB-206F-4EDF-A66B-7A434245AC95}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DNICC-Client-console", "DNICC-Client-console\DNICC-Client-console.vcxproj", "{6E6F8690-9836-47C7-B45B-93DF2C46818A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{626A01BB-206F-4EDF-A66B-7A434245AC95} = {626A01BB-206F-4EDF-A66B-7A434245AC95}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DCHLS-Server-console", "DCHLS-Server-console\DCHLS-Server-console.vcxproj", "{6DF4F942-E6A1-4C0A-9480-363312D7C800}"
+	ProjectSection(ProjectDependencies) = postProject
+		{626A01BB-206F-4EDF-A66B-7A434245AC95} = {626A01BB-206F-4EDF-A66B-7A434245AC95}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DCHLS-Server", "DCHLS-Server\DCHLS-Server.vcxproj", "{799C0681-36CC-45ED-8A6E-BD99CAA8C822}"
+	ProjectSection(ProjectDependencies) = postProject
+		{626A01BB-206F-4EDF-A66B-7A434245AC95} = {626A01BB-206F-4EDF-A66B-7A434245AC95}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

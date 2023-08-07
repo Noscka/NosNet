@@ -6,6 +6,13 @@
 
 #include <string>
 
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QStackedWidget>
+#include "ui_MainWindow.h"
+
+#include "Central\CentralLib.hpp"
+
 namespace ClientLib
 {
     /// <summary>
@@ -18,7 +25,7 @@ namespace ClientLib
         /// </summary>
         /// <param name="connectionSocket">- the current connection socket</param>
         /// <returns>the username that was gathered</returns>
-        std::string GatherUsername(boost::asio::ip::tcp::socket* connectionSocket)
+		inline std::string GatherUsername(boost::asio::ip::tcp::socket* connectionSocket)
         {
 			std::string username;
 			bool gatheringUsername = true;
@@ -65,38 +72,48 @@ namespace ClientLib
 			return username;
         }
 
-		enum UserMode : uint8_t
+		enum class UserMode : uint8_t
 		{
 			Client = 0,
 			Hosting = 1,
 		};
 
-		UserMode GatherClientMode()
+		inline UserMode GatherClientMode(Ui::MainWindowClass* ui)
 		{
-			bool gatheringModeChoice = true;
-			int mode;
-			while (gatheringModeChoice)
+			if (ui->NormalSelection->isChecked()) /* Normal client */
 			{
-				std::string modeString;
-				(void)wprintf(L"What mode would you like to run in?\n0) Normal (connect to others)\n1) Host (others connect to you)\n: "); /* Make more advanced Choosing */
-				std::getline(std::cin, modeString);
-
-				if (sscanf_s(modeString.c_str(), "%d", &mode) != 1)
-				{ /* Conversion failed */
-					(void)wprintf(L"Invalid argument, please input again\n");
-					continue;
-				}
-
-				if (mode > 1 || mode < 0)
-				{ /* out of range */
-					(void)wprintf(L"input was out of range\n");
-					continue;
-				}
-
-				gatheringModeChoice = false; /* if it passed all the checks, set gatheringModeChoice to false as to not check for mode anymore */
+				return UserMode::Client;
 			}
-			return (UserMode)mode;
+			
+			if (ui->HostSelection->isChecked()) /* Host */
+			{
+				return UserMode::Hosting;
+			}
 		}
     }
+
+	namespace ClientInterfacing
+	{
+		class StrippedClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
+		{
+		public:
+			/// <summary>
+			/// Creates clickable entries for all servers
+			/// </summary>
+			/// <param name="ui">- pointer to ui</param>
+			static inline void GenerateServerEntries(Ui::MainWindowClass* ui)
+			{
+				for (int i = 0; i <= ClientArray.GetLastArrayIndex(); i++)
+				{
+					QPushButton* serverEntry = new QPushButton();
+					std::wstring entryName = std::format(L"IP: {}", NosLib::String::ToWstring(ClientArray[i]->ReturnIPAddress()));
+					serverEntry->setObjectName(entryName);
+					serverEntry->setText(QString::fromStdWString(entryName));
+
+					ui->verticalLayout_3->addWidget(serverEntry);
+				}
+			}
+		};
+	}
 }
 #endif

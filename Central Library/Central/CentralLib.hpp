@@ -41,7 +41,7 @@ namespace Constants
 
 namespace CentralLib
 {
-	std::wstring ReturnAddress(const boost::asio::ip::tcp::endpoint& Endpoint)
+	inline std::wstring ReturnAddress(const boost::asio::ip::tcp::endpoint& Endpoint)
 	{
 		return std::format(L"{}:{}", NosLib::String::ConvertString<wchar_t, char>(Endpoint.address().to_v4().to_string()), NosLib::String::ConvertString<wchar_t, char>(std::to_string(Endpoint.port())));
 	}
@@ -52,7 +52,7 @@ namespace CentralLib
     /// <param name="streamBuffer"> - stream buffer pointer needed </param>
     /// <param name="bytes_received"> - amount of bytes received</param>
     /// <returns>wide string</returns>
-    std::wstring streamBufferToWstring(boost::asio::streambuf* streamBuffer, const size_t& bytes_received)
+    inline std::wstring streamBufferToWstring(boost::asio::streambuf* streamBuffer, const size_t& bytes_received)
     {
         return std::wstring{boost::asio::buffers_begin(streamBuffer->data()), boost::asio::buffers_begin(streamBuffer->data()) + bytes_received - Definition::Delimiter.size()};
     }
@@ -415,7 +415,7 @@ namespace CentralLib
         /// </summary>
         /// <param name="username">- username to validate</param>
         /// <returns>true if valid, False if invalid</returns>
-        bool ValidateUsername(const std::wstring& username)
+        inline bool ValidateUsername(const std::wstring& username)
         {
             /*
 			Current requirements:

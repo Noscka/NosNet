@@ -28,8 +28,8 @@ namespace ClientLib
 				/* Aliased with using StrippedClientTracker */
 				using AliasedStrippedClientTracker = CentralLib::ClientInterfacing::StrippedClientTracker;
 
-				/* List all clients */
-				AliasedStrippedClientTracker::ListClientArray();
+				/* List the array */
+				(void)wprintf(AliasedStrippedClientTracker::ListClientArray().c_str());
 
 				bool choosing = true;
 				int serverIndex = -1;
@@ -119,9 +119,6 @@ namespace ClientLib
 				boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
 				AliasedStrippedClientTracker::DeserializeArray(&ContentBuffer);
 			}
-
-			/* List the array */
-			(void)wprintf(AliasedStrippedClientTracker::ListClientArray().c_str());
 
 			/* Disconnect from DCHLS server */
 			(*connectionSocket).cancel();

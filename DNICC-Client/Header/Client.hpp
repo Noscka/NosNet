@@ -11,6 +11,11 @@
 
 #include <Central/CentralLib.hpp>
 
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QPushButton>
+#include "ui_MainWindow.h"
+
 #include "Communication.hpp"
 
 namespace ClientLib
@@ -26,10 +31,7 @@ namespace ClientLib
 			std::string ChooseServer()
 			{
 				/* Aliased with using StrippedClientTracker */
-				using AliasedStrippedClientTracker = CentralLib::ClientInterfacing::StrippedClientTracker;
-
-				/* List all clients */
-				AliasedStrippedClientTracker::ListClientArray();
+				using AliasedStrippedClientTracker = ClientLib::ClientInterfacing::StrippedClientTracker;
 
 				bool choosing = true;
 				int serverIndex = -1;
@@ -86,12 +88,12 @@ namespace ClientLib
 		/// Function ran if User chose to be a client
 		/// </summary>
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
-		void StartClient(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
+		inline void StartClient(Ui::MainWindowClass* ui, boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
 		{
 			ConnectionSocket = connectionSocket; /* TEMP */
 
 			/* Aliased with using StrippedClientTracker */
-			using AliasedStrippedClientTracker = CentralLib::ClientInterfacing::StrippedClientTracker;
+			using AliasedStrippedClientTracker = ClientLib::ClientInterfacing::StrippedClientTracker;
 			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
 
 			/* Tell server which path going down */
@@ -105,7 +107,7 @@ namespace ClientLib
 
 				if (serverReponse.GetInformationCode() != CentralLib::Communications::CentralizedServerResponse::InformationCodes::Ready)
 				{
-					CentralLib::Logging::LogMessage<wchar_t>(L"Server sent unexpected response messages, escaping\n", true);
+					CentralLib::Logging::LogMessage<wchar_t>(L"Server sent unexpected response messages, escaping\n", false);
 					return;
 				}
 			}
@@ -119,9 +121,13 @@ namespace ClientLib
 				boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
 				AliasedStrippedClientTracker::DeserializeArray(&ContentBuffer);
 			}
+			/* Go to next page */
+			ui->stackedWidget->setCurrentIndex(1);
 
 			/* List the array */
-			(void)wprintf(AliasedStrippedClientTracker::ListClientArray().c_str());
+			AliasedStrippedClientTracker::GenerateServerEntries(ui);
+
+			return;
 
 			/* Disconnect from DCHLS server */
 			(*connectionSocket).cancel();

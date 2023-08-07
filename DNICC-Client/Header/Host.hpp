@@ -14,6 +14,7 @@
 #include <Central/Logging.hpp>
 #include "..\DCHLS-Server-console\Header\ServerLib.hpp" /* TEMP */
 
+#include "ClientLib.hpp"
 #include "Communication.hpp"
 
 namespace ClientLib
@@ -30,7 +31,7 @@ namespace ClientLib
 
 			~tcp_connection_handle()
 			{
-				ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline);
+				ClientTrackerAttached->ChangeStatus(ClientLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline);
 
 				ClientLib::Communications::MessageObject tempMessageObject(ClientTrackerAttached, L"Client has left");
 
@@ -74,7 +75,7 @@ namespace ClientLib
 					if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
 					{
 						/* Create ClientTracker Object and attach it to current session */
-						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client, &ConnectionSocket);
+						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, ClientLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client, &ConnectionSocket);
 						initialValidation = false;
 						AliasedServerReponse::CreateSerializeSend(&ConnectionSocket, AliasedServerReponse::InformationCodes::Accepted, L"server accepted username");
 					}
@@ -130,7 +131,7 @@ namespace ClientLib
 			}
 		};
 
-		void StartHosting(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
+		inline void StartHosting(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
 		{
 			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
 
