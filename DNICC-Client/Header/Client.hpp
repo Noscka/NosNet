@@ -20,54 +20,57 @@
 
 namespace ClientLib
 {
+	namespace Client /* forward deceleration */
+	{
+		void JoinHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject);
+	}
+
+	namespace ClientInterfacing
+	{
+		class StrippedClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
+		{
+		public:
+			/// <summary>
+			/// Creates clickable entries for all servers
+			/// </summary>
+			/// <param name="ui">- pointer to ui</param>
+			static inline void GenerateServerEntries(Ui::MainWindowClass* ui)
+			{
+				for (int i = 0; i <= ClientArray.GetLastArrayIndex(); i++)
+				{
+					CentralLib::ClientInterfacing::StrippedClientTracker* currentEntry = ClientArray[i];
+
+					QPushButton* serverEntry = new QPushButton();
+					std::wstring entryName = std::format(L"IP: {}", NosLib::String::ToWstring(currentEntry->ReturnIPAddress()));
+					serverEntry->setObjectName(entryName);
+					serverEntry->setText(QString::fromStdWString(entryName));
+					QMainWindow::connect(serverEntry, &QPushButton::released, nullptr, [currentEntry]()
+					{
+						ClientLib::Client::JoinHost(currentEntry);
+					});
+
+					ui->verticalLayout_3->addWidget(serverEntry);
+				}
+			}
+		};
+	}
+
 	namespace Client
 	{
 		namespace /* PRIVATE NAMESPACE */
 		{
-			/// <summary>
-			/// Returns a IP Address of a server that is chosen by the user
-			/// </summary>
-			/// <returns>IP Address of a server</returns>
-			std::string ChooseServer()
-			{
-				/* Aliased with using StrippedClientTracker */
-				using AliasedStrippedClientTracker = ClientLib::ClientInterfacing::StrippedClientTracker;
+			Ui::MainWindowClass* UI;
+			boost::asio::ip::tcp::socket* ConnectionSocket;
+			boost::asio::io_context* IOContext;
 
-				bool choosing = true;
-				int serverIndex = -1;
-				std::string connectionChoiceString;
 
-				while (choosing)
-				{
-					(void)wprintf(L"Enter Server Index: "); /* TEMP NUMBER INPUT */
-
-					std::getline(std::cin, connectionChoiceString);
-
-					if (sscanf_s(connectionChoiceString.c_str(), "%d", &serverIndex) != 1)
-					{ /* Conversion failed */
-						(void)wprintf(L"Invalid argument, please input again\n");
-						continue;
-					}
-
-					if (serverIndex < 0 || serverIndex > AliasedStrippedClientTracker::GetClientArray()->GetLastArrayIndex()) /* TODO: Validate range */
-					{ /* out of range */
-						(void)wprintf(L"input was out of range\n");
-						continue;
-					}
-
-					choosing = false; /* Past all checks, is valid */
-				}
-
-				return (*AliasedStrippedClientTracker::GetClientArray())[serverIndex]->ReturnIPAddress();
-			}
-
-			void ChatListen_Thread(boost::asio::ip::tcp::socket* connectionSocket, NosLib::Chat::DynamicChat* mainChat)
+			void ChatListen_Thread(NosLib::Chat::DynamicChat* mainChat)
 			{
 				boost::system::error_code errorCode;
 				while (mainChat->GetChatLoopState() && errorCode != boost::asio::error::eof)
 				{
 					boost::asio::streambuf MessageBuffer;
-					size_t size = boost::asio::read_until((*connectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
+					size_t size = boost::asio::read_until((*ConnectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
 
 					ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
 
@@ -75,7 +78,6 @@ namespace ClientLib
 				}
 			}
 
-			boost::asio::ip::tcp::socket* ConnectionSocket; /* TEMP */
 
 			void OnMessageSentEvent(const std::wstring& message)
 			{
@@ -88,9 +90,11 @@ namespace ClientLib
 		/// Function ran if User chose to be a client
 		/// </summary>
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
-		inline void StartClient(Ui::MainWindowClass* ui, boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
+		inline void StartClient(Ui::MainWindowClass* ui, boost::asio::io_context* ioContext, boost::asio::ip::tcp::socket* connectionSocket)
 		{
-			ConnectionSocket = connectionSocket; /* TEMP */
+			UI = ui;
+			ConnectionSocket = connectionSocket;
+			IOContext = ioContext;
 
 			/* Aliased with using StrippedClientTracker */
 			using AliasedStrippedClientTracker = ClientLib::ClientInterfacing::StrippedClientTracker;
@@ -107,7 +111,7 @@ namespace ClientLib
 
 				if (serverReponse.GetInformationCode() != CentralLib::Communications::CentralizedServerResponse::InformationCodes::Ready)
 				{
-					CentralLib::Logging::LogMessage<wchar_t>(L"Server sent unexpected response messages, escaping\n", false);
+					CentralLib::Logging::CreateLog<wchar_t>(L"Server sent unexpected response messages, escaping\n", false);
 					return;
 				}
 			}
@@ -121,31 +125,30 @@ namespace ClientLib
 				boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
 				AliasedStrippedClientTracker::DeserializeArray(&ContentBuffer);
 			}
-			/* Go to next page */
+			/* Go to Server selection page */
 			ui->stackedWidget->setCurrentIndex(1);
 
 			/* List the array */
 			AliasedStrippedClientTracker::GenerateServerEntries(ui);
+		}
 
-			return;
-
+		inline void JoinHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject)
+		{
 			/* Disconnect from DCHLS server */
-			(*connectionSocket).cancel();
+			(*ConnectionSocket).cancel();
 
-			/* TEMP: put into variable and then use */
-			std::string ipAddress = ChooseServer();
+			/* Connect to the Client Server (DNICC not DCHLS) */
+			boost::asio::connect((*ConnectionSocket), boost::asio::ip::tcp::resolver((*IOContext)).resolve(hostObject->ReturnIPAddress(), Constants::DefaultClientHostPort));
+			CentralLib::Logging::CreateLog<wchar_t>(L"Connected to server\n", false);
 
-			/*
-			Connect to the Client Server (DNICC not DCHLS)
-			*/
-			boost::asio::connect((*connectionSocket), boost::asio::ip::tcp::resolver((*io_context)).resolve(ipAddress, Constants::DefaultClientHostPort));
-			CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
+			/* Go to Chat page */
+			UI->stackedWidget->setCurrentIndex(2);
 
-			std::wstring username = NosLib::String::ConvertString<wchar_t, char>(ClientLib::StartUp::GatherUsername(connectionSocket));
+			std::wstring username = NosLib::String::ConvertString<wchar_t, char>(ClientLib::StartUp::GatherUsername(ConnectionSocket));
 
 			NosLib::Chat::DynamicChat mainChat(true, std::format(L"{}) {}", username, L"{}"));
 
-			std::thread chatListenThread(&ChatListen_Thread, connectionSocket, &mainChat);
+			std::thread chatListenThread(&ChatListen_Thread, &mainChat);
 
 			mainChat.OnMessageSent.AssignEventFunction(&OnMessageSentEvent);
 

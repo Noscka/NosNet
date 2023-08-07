@@ -52,20 +52,20 @@ protected:
 		Service - Service(Hostname for ports)/Port number
 		*/
 		boost::asio::connect((*ConnectionSocket), boost::asio::ip::tcp::resolver(*IOContext).resolve(ui->HostNameText->text().toStdString(), Constants::DefaultPort));
-		CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", false);
+		CentralLib::Logging::CreateLog<wchar_t>(L"Connected to server\n", false);
 
 		switch (ClientLib::StartUp::GatherClientMode(ui))
 		{
 		case ClientLib::StartUp::UserMode::Client:
 		{
-			CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client\n", false);
+			CentralLib::Logging::CreateLog<wchar_t>(L"User Became Client\n", false);
 			ClientLib::Client::StartClient(ui, IOContext, ConnectionSocket);
 			break;
 		}
 
 		case ClientLib::StartUp::UserMode::Hosting:
 		{
-			CentralLib::Logging::LogMessage<wchar_t>(L"Client Hosting a Communications server\n", false);
+			CentralLib::Logging::CreateLog<wchar_t>(L"Client Hosting a Communications server\n", false);
 			ClientLib::Hosting::StartHosting(IOContext, ConnectionSocket);
 			break;
 		}

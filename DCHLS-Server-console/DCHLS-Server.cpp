@@ -31,9 +31,9 @@ private:
 
     void StartImp()
     {
-        CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
+        CentralLib::Logging::CreateLog<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
 
-        CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
+        CentralLib::Logging::CreateLog<wchar_t>(L"Creating profile and adding to array\n", true);
 
         try
         {
@@ -46,19 +46,19 @@ private:
             switch (clientReponse.GetInformationCode())
             {
             case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath:
-                CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client\n", true);
+                CentralLib::Logging::CreateLog<wchar_t>(L"User Became Client\n", true);
                 ServerLib::Processing::UserClientPath(&ConnectionSocket, ClientTrackerAttached);
                 break;
 
             case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
-                CentralLib::Logging::LogMessage<wchar_t>(L"Client is hosting a communications server\n", true);
+                CentralLib::Logging::CreateLog<wchar_t>(L"Client is hosting a communications server\n", true);
                 ServerLib::Processing::UserHostPath(&ConnectionSocket, ClientTrackerAttached);
                 break;
             }
         }
         catch (const std::exception& e)
         {
-            CentralLib::Logging::LogMessage<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
+            CentralLib::Logging::CreateLog<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
             std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
         }
 

@@ -60,7 +60,7 @@ namespace ClientLib
 				ia&* this;
 			}
 
-			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, ClientLib::ClientInterfacing::StrippedClientTracker* userInfo, const std::wstring& message)
+			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientInterfacing::StrippedClientTracker* userInfo, const std::wstring& message)
 			{
 				boost::asio::streambuf tempBuf;
 				CentralLib::Write(connectionSocket, *(MessageObject(userInfo, message).SerializeObject(&tempBuf)));

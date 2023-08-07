@@ -122,6 +122,21 @@
         </property>
        </layout>
       </widget>
+      <widget class="QWidget" name="Chat">
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>340</x>
+          <y>170</y>
+          <width>161</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Chat Page</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>

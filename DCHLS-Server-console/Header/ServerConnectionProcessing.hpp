@@ -39,7 +39,7 @@ namespace ServerLib
 
 				if (clientReponse.GetInformationCode() != CentralLib::Communications::CentralizedClientResponse::InformationCodes::Ready)
 				{
-					CentralLib::Logging::LogMessage<wchar_t>(L"Client sent unexpected response messages, escaping\n", true);
+					CentralLib::Logging::CreateLog<wchar_t>(L"Client sent unexpected response messages, escaping\n", true);
 					return;
 				}
 			}

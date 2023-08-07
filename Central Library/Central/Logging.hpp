@@ -1,5 +1,5 @@
-#ifndef _CLIENT_LOGGING_NOSNET_HPP_
-#define _CLIENT_LOGGING_NOSNET_HPP_
+#ifndef _CENTRAL_LOGGING_NOSNET_HPP_
+#define _CENTRAL_LOGGING_NOSNET_HPP_
 
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
@@ -11,48 +11,46 @@
 
 namespace CentralLib
 {
-	namespace Logging
+	class Logging
 	{
-		namespace
+	protected:
+		static inline NosLib::DynamicArray<Logging*> Logs;
+
+		std::wstring LogMessage;
+		std::chrono::system_clock::time_point LogTimestamp;
+
+		Logging() {}
+
+		Logging(const std::wstring& logMessage)
 		{
-			class MessageLog
-			{
-			private:
-				std::wstring Message;
-				std::chrono::system_clock::time_point LogTimestamp;
-
-			public:
-				MessageLog(){ }
-
-				MessageLog(const std::wstring& message)
-				{
-					Message = message;
-					LogTimestamp = std::chrono::system_clock::now();
-				}
-
-				std::wstring ConvertToLog()
-				{
-					// %d/%m/%Y for date too
-
-					return std::format(L"{:%X}  {}", std::chrono::zoned_time(std::chrono::current_zone(), LogTimestamp), Message);
-				}
-			};
-
-			NosLib::DynamicArray<MessageLog*> LoggedMessages;
+			LogMessage = logMessage;
+			LogTimestamp = std::chrono::system_clock::now();
 		}
 
+	public:
 		template<typename CharType>
-		void LogMessage(const std::basic_string<CharType>& strIn, const bool& printLog)
+		static inline void CreateLog(const std::basic_string<CharType>& strIn, const bool& printLog = false)
 		{
-			MessageLog* messageLogObject = new MessageLog(NosLib::String::ConvertString<wchar_t, CharType>(strIn));
-			LoggedMessages.Append(messageLogObject);
+			Logging* logObject = new Logging(NosLib::String::ConvertString<wchar_t, CharType>(strIn));
+			Logs.Append(logObject);
+
+			std::wstring containedLogMessage = logObject->GetLog();
 			if (printLog)
 			{
-				(void)wprintf(messageLogObject->ConvertToLog().c_str());
+				(void)wprintf(containedLogMessage.c_str());
 			}
-			return;
+
+			std::wofstream outLog(L"log.txt", std::ios::binary | std::ios::app);
+			outLog.write(containedLogMessage.c_str(), containedLogMessage.size());
+			outLog.close();
 		}
-	}
+
+		std::wstring GetLog()
+		{
+			// %d/%m/%Y for date too
+			return std::format(L"{:%X}  {}", std::chrono::zoned_time(std::chrono::current_zone(), LogTimestamp), LogMessage);
+		}
+	};
 }
 
-#endif
+#endif /* _CENTRAL_LOGGING_NOSNET_HPP_ */

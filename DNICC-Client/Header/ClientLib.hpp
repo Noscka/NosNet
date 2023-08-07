@@ -6,6 +6,7 @@
 
 #include <string>
 
+#include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QStackedWidget>
@@ -37,7 +38,7 @@ namespace ClientLib
 
 				if (!CentralLib::Validation::ValidateUsername(NosLib::String::ConvertString<wchar_t, char>(username)))
 				{ /* if username didn't pass username requirements */
-					CentralLib::Logging::LogMessage<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", true);
+					CentralLib::Logging::CreateLog<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", false);
 					continue;
 				}
 
@@ -54,16 +55,16 @@ namespace ClientLib
 
 				if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted) /* if server accepts username too, continue as normal */
 				{
-					CentralLib::Logging::LogMessage<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), true);
+					CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
 				}
 				else if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted) /* if server doesn't accept username, don't exit loop */
 				{
-					CentralLib::Logging::LogMessage<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), true);
+					CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
 					gatheringUsername = true;
 				}
 				else /* if server sends an unexpected response, exit because client and server are out of sync */
 				{
-					CentralLib::Logging::LogMessage<wchar_t>(L"server sent an unexpected response\nExiting...\n", true);
+					CentralLib::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\nExiting...\n", false);
 					Sleep(1000);
 					exit(-1);
 				}
@@ -91,29 +92,5 @@ namespace ClientLib
 			}
 		}
     }
-
-	namespace ClientInterfacing
-	{
-		class StrippedClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
-		{
-		public:
-			/// <summary>
-			/// Creates clickable entries for all servers
-			/// </summary>
-			/// <param name="ui">- pointer to ui</param>
-			static inline void GenerateServerEntries(Ui::MainWindowClass* ui)
-			{
-				for (int i = 0; i <= ClientArray.GetLastArrayIndex(); i++)
-				{
-					QPushButton* serverEntry = new QPushButton();
-					std::wstring entryName = std::format(L"IP: {}", NosLib::String::ToWstring(ClientArray[i]->ReturnIPAddress()));
-					serverEntry->setObjectName(entryName);
-					serverEntry->setText(QString::fromStdWString(entryName));
-
-					ui->verticalLayout_3->addWidget(serverEntry);
-				}
-			}
-		};
-	}
 }
 #endif

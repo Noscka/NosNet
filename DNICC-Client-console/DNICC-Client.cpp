@@ -42,20 +42,20 @@ int main()
         Service - Service(Hostname for ports)/Port number
         */
         boost::asio::connect(connectionSocket, boost::asio::ip::tcp::resolver(io_context).resolve(hostName, Constants::DefaultPort));
-        CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
+        CentralLib::Logging::CreateLog<wchar_t>(L"Connected to server\n", true);
 
         switch (ClientLib::StartUp::GatherClientMode())
         {
         case ClientLib::StartUp::UserMode::Client:
         {
-            CentralLib::Logging::LogMessage<wchar_t>(L"User Became Client\n", true);
+            CentralLib::Logging::CreateLog<wchar_t>(L"User Became Client\n", true);
             ClientLib::Client::StartClient(&io_context, &connectionSocket);
             break;
         }
 
         case ClientLib::StartUp::UserMode::Hosting:
         {
-            CentralLib::Logging::LogMessage<wchar_t>(L"Client Hosting a Communications server\n", true);
+            CentralLib::Logging::CreateLog<wchar_t>(L"Client Hosting a Communications server\n", true);
             ClientLib::Hosting::StartHosting(&io_context, &connectionSocket);
             break;
         }
@@ -63,7 +63,7 @@ int main()
     }
     catch (const std::exception& e)
     {
-        CentralLib::Logging::LogMessage<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
+        CentralLib::Logging::CreateLog<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
         std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
     }
 

@@ -58,9 +58,9 @@ namespace ClientLib
 			{
 				using AliasedServerReponse = ServerLib::Communications::ServerResponse;
 
-				CentralLib::Logging::LogMessage<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), true);
+				CentralLib::Logging::CreateLog<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), false);
 
-				CentralLib::Logging::LogMessage<wchar_t>(L"Creating profile and adding to array\n", true);
+				CentralLib::Logging::CreateLog<wchar_t>(L"Creating profile and adding to array\n", false);
 
 				bool initialValidation = true;
 				while (initialValidation)
@@ -112,7 +112,7 @@ namespace ClientLib
 				}
 				catch (const std::exception& e)
 				{
-					CentralLib::Logging::LogMessage<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
+					CentralLib::Logging::CreateLog<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
 					std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
 				}
 			}
@@ -148,7 +148,7 @@ namespace ClientLib
 
 				SetConsoleTitle(std::format(L"DNICC Client Server - {}", CentralLib::ReturnAddress(acceptor.local_endpoint())).c_str());
 
-				CentralLib::Logging::LogMessage<wchar_t>(L"Client Server started\n", true);
+				CentralLib::Logging::CreateLog<wchar_t>(L"Client Server started\n", true);
 
 				while (true)
 				{

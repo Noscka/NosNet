@@ -105,7 +105,7 @@ namespace ClientLib
 
 				if (serverReponse.GetInformationCode() != CentralLib::Communications::CentralizedServerResponse::InformationCodes::Ready)
 				{
-					CentralLib::Logging::LogMessage<wchar_t>(L"Server sent unexpected response messages, escaping\n", true);
+					CentralLib::Logging::CreateLog<wchar_t>(L"Server sent unexpected response messages, escaping\n", true);
 					return;
 				}
 			}
@@ -130,7 +130,7 @@ namespace ClientLib
 			Connect to the Client Server (DNICC not DCHLS)
 			*/
 			boost::asio::connect((*connectionSocket), boost::asio::ip::tcp::resolver((*io_context)).resolve(ipAddress, Constants::DefaultClientHostPort));
-			CentralLib::Logging::LogMessage<wchar_t>(L"Connected to server\n", true);
+			CentralLib::Logging::CreateLog<wchar_t>(L"Connected to server\n", true);
 
 			std::wstring username = NosLib::String::ConvertString<wchar_t, char>(ClientLib::StartUp::GatherUsername(connectionSocket));
 
