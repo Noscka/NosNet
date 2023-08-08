@@ -6,6 +6,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QLineEdit>
 #include "ui_MainWindow.h"
 
 #include "Central/CentralLib.hpp"
@@ -32,10 +33,28 @@ public:
 		ConnectionSocket = connectionSocket;
 
 		ui->setupUi(this);
+		/* START PAGE */
 		connect(ui->HostNameEntry, &QPushButton::released, this, &MainWindow::ProcessUserInput);
 
 		connect(ui->NormalSelection, &QRadioButton::clicked, this, [&]() { ui->HostNameEntry->setEnabled(true); });
 		connect(ui->HostSelection, &QRadioButton::clicked, this, [&]() { ui->HostNameEntry->setEnabled(true); });
+		/* START PAGE */
+
+		/* LOGIN PAGE */
+		connect(ui->LoginTextbox, &QLineEdit::textChanged, this, [&]()
+		{
+			/* if no text or more then 30, blackout box */
+			if (ui->LoginTextbox->text().length() <= 0 || ui->LoginTextbox->text().length() > 30)
+			{
+				ui->LoginButton->setEnabled(false);
+				return;
+			}
+
+			ui->LoginButton->setEnabled(true);
+		});
+
+		connect(ui->LoginButton, &QPushButton::released, &ClientLib::Client::ValidateUsername);
+		/* LOGIN PAGE */
 	}
 
     ~MainWindow()

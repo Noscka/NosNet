@@ -29,7 +29,7 @@ namespace CentralLib
 
 	public:
 		template<typename CharType>
-		static inline void CreateLog(const std::basic_string<CharType>& strIn, const bool& printLog = false)
+		static inline Logging* CreateLog(const std::basic_string<CharType>& strIn, const bool& printLog = false)
 		{
 			Logging* logObject = new Logging(NosLib::String::ConvertString<wchar_t, CharType>(strIn));
 			Logs.Append(logObject);
@@ -43,6 +43,8 @@ namespace CentralLib
 			std::wofstream outLog(L"log.txt", std::ios::binary | std::ios::app);
 			outLog.write(containedLogMessage.c_str(), containedLogMessage.size());
 			outLog.close();
+
+			return logObject;
 		}
 
 		std::wstring GetLog()

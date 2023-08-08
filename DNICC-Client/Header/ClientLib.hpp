@@ -21,58 +21,6 @@ namespace ClientLib
     /// </summary>
     namespace StartUp
     {
-        /// <summary>
-        /// Gather the username from the user
-        /// </summary>
-        /// <param name="connectionSocket">- the current connection socket</param>
-        /// <returns>the username that was gathered</returns>
-		inline std::string GatherUsername(boost::asio::ip::tcp::socket* connectionSocket)
-        {
-			std::string username;
-			bool gatheringUsername = true;
-
-			while (gatheringUsername) /* Client side Verifications */
-			{
-				wprintf(L"Type in a username: ");
-				std::getline(std::cin, username);
-
-				if (!CentralLib::Validation::ValidateUsername(NosLib::String::ConvertString<wchar_t, char>(username)))
-				{ /* if username didn't pass username requirements */
-					CentralLib::Logging::CreateLog<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", false);
-					continue;
-				}
-
-				gatheringUsername = false;
-
-				/* If valid, send username to server */
-				CentralLib::Write(connectionSocket, boost::asio::buffer(username));
-
-				/* Wait for server response on if it accepted the username */
-				boost::asio::streambuf serverReponseBuffer;
-				boost::asio::read_until((*connectionSocket), serverReponseBuffer, Definition::Delimiter);
-
-				CentralLib::Communications::CentralizedServerResponse serverReponse(&serverReponseBuffer);
-
-				if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted) /* if server accepts username too, continue as normal */
-				{
-					CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
-				}
-				else if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted) /* if server doesn't accept username, don't exit loop */
-				{
-					CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
-					gatheringUsername = true;
-				}
-				else /* if server sends an unexpected response, exit because client and server are out of sync */
-				{
-					CentralLib::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\nExiting...\n", false);
-					Sleep(1000);
-					exit(-1);
-				}
-			}
-
-			return username;
-        }
-
 		enum class UserMode : uint8_t
 		{
 			Client = 0,
@@ -90,6 +38,8 @@ namespace ClientLib
 			{
 				return UserMode::Hosting;
 			}
+
+			return UserMode::Client;
 		}
     }
 }

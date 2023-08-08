@@ -22,7 +22,7 @@ namespace ClientLib
 {
 	namespace Client /* forward deceleration */
 	{
-		void JoinHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject);
+		void InitiateJoiningHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject);
 	}
 
 	namespace ClientInterfacing
@@ -46,10 +46,10 @@ namespace ClientLib
 					serverEntry->setText(QString::fromStdWString(entryName));
 					QMainWindow::connect(serverEntry, &QPushButton::released, [currentEntry]()
 					{
-						ClientLib::Client::JoinHost(currentEntry);
+						ClientLib::Client::InitiateJoiningHost(currentEntry);
 					});
 
-					ui->verticalLayout_3->addWidget(serverEntry);
+					ui->ServerSelectionVerticalLayout->addWidget(serverEntry);
 				}
 			}
 		};
@@ -132,7 +132,7 @@ namespace ClientLib
 			AliasedStrippedClientTracker::GenerateServerEntries(ui);
 		}
 
-		inline void JoinHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject)
+		inline void InitiateJoiningHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject)
 		{
 			/* Disconnect from DCHLS server */
 			(*ConnectionSocket).cancel();
@@ -143,19 +143,65 @@ namespace ClientLib
 
 			/* Go to Chat page */
 			UI->stackedWidget->setCurrentIndex(2);
+		}
 
-			std::wstring username = NosLib::String::ConvertString<wchar_t, char>(ClientLib::StartUp::GatherUsername(ConnectionSocket));
+		inline void FinishJoiningHost(); /* forward deceleration */
 
-			NosLib::Chat::DynamicChat mainChat(true, std::format(L"{}) {}", username, L"{}"));
+		inline void ValidateUsername()
+		{
+			std::string username = UI->LoginTextbox->text().toStdString();
 
-			std::thread chatListenThread(&ChatListen_Thread, &mainChat);
+			if (!CentralLib::Validation::ValidateUsername(NosLib::String::ConvertString<wchar_t, char>(username)))
+			{ /* if username didn't pass username requirements */
+				CentralLib::Logging::CreateLog<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", false);
+				UI->LoginErrorLabel->setText(QString::fromStdWString(L"Username cannot be empty and cannot be longer then 30 characters"));
+				return;
+			}
 
-			mainChat.OnMessageSent.AssignEventFunction(&OnMessageSentEvent);
+			/* If valid, send username to server */
+			CentralLib::Write(ConnectionSocket, boost::asio::buffer(username));
 
-			NosLib::Console::ClearScreen();
-			mainChat.StartChat();
+			/* Wait for server response on if it accepted the username */
+			boost::asio::streambuf serverReponseBuffer;
+			boost::asio::read_until((*ConnectionSocket), serverReponseBuffer, Definition::Delimiter);
+			CentralLib::Communications::CentralizedServerResponse serverReponse(&serverReponseBuffer);
 
-			chatListenThread.join();
+			if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted) /* if server accepts username too, continue as normal */
+			{
+				CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
+				UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
+			}
+			else if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted) /* if server doesn't accept username, return */
+			{
+				CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
+				UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
+				return;
+			}
+			else /* if server sends an unexpected response, exit because client and server are out of sync */
+			{
+				CentralLib::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\nExiting...\n", false);
+				UI->LoginErrorLabel->setText(QString::fromStdWString(L"server sent an unexpected response\nExiting..."));
+				Sleep(1000);
+				QApplication::quit();
+				exit(EXIT_FAILURE);
+				return;
+			}
+
+			/* go to chat page */
+			UI->stackedWidget->setCurrentIndex(3);
+			FinishJoiningHost();
+		}
+
+		inline void FinishJoiningHost()
+		{
+			//std::thread chatListenThread(&ChatListen_Thread);
+			//
+			//mainChat.OnMessageSent.AssignEventFunction(&OnMessageSentEvent);
+			//
+			//NosLib::Console::ClearScreen();
+			//mainChat.StartChat();
+			//
+			//chatListenThread.join();
 		}
 	}
 }
