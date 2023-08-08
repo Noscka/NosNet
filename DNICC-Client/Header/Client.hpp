@@ -10,12 +10,18 @@
 #include <NosLib/Chat.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Central/Logging.hpp>
 
+#include <QtCore/QtGlobal>
+#include <QtCore/QVariant>
+#include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QPushButton>
+#include <QThread>
 #include "ui_MainWindow.h"
 
+#include "GlobalRoot.hpp"
 #include "Communication.hpp"
 
 namespace ClientLib
@@ -63,28 +69,43 @@ namespace ClientLib
 			boost::asio::ip::tcp::socket* ConnectionSocket;
 			boost::asio::io_context* IOContext;
 
-
-			void ChatListen_Thread(NosLib::Chat::DynamicChat* mainChat)
-			{
-				boost::system::error_code errorCode;
-				while (mainChat->GetChatLoopState() && errorCode != boost::asio::error::eof)
-				{
-					boost::asio::streambuf MessageBuffer;
-					size_t size = boost::asio::read_until((*ConnectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
-
-					ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
-
-					mainChat->AddMessage(std::format(L"{}) {}", messageObject.GetUserInfo()->GetUsername() ,messageObject.GetMessage()));
-				}
-			}
-
-
 			void OnMessageSentEvent(const std::wstring& message)
 			{
 				std::string temp = NosLib::String::ConvertString<char, wchar_t>(message);
 				CentralLib::Write(ConnectionSocket, boost::asio::buffer(temp));
 			}
 		}
+
+		class ChatListenThread : public QThread
+		{
+			Q_OBJECT
+
+		signals:
+			void ReceivedMessage(ClientLib::Communications::MessageObject receivedMessage);
+
+		protected:
+			void run() override
+			{
+				boost::system::error_code errorCode;
+
+				while (!isInterruptionRequested() && errorCode != boost::asio::error::eof)
+				{
+					boost::asio::streambuf MessageBuffer;
+					boost::asio::read_until((*ConnectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
+
+					ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
+
+					emit ReceivedMessage(messageObject);
+				}
+
+				if (errorCode == boost::asio::error::eof)
+				{
+					CentralLib::Logging::CreateLog<wchar_t>(L"listen thread quit, reason: end of file\n", false);
+				}
+
+				/* send some closing message */
+			}
+		};
 
 		/// <summary>
 		/// Function ran if User chose to be a client
@@ -179,10 +200,10 @@ namespace ClientLib
 			}
 			else /* if server sends an unexpected response, exit because client and server are out of sync */
 			{
-				CentralLib::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\nExiting...\n", false);
+				CentralLib::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\tExiting...\n", false);
 				UI->LoginErrorLabel->setText(QString::fromStdWString(L"server sent an unexpected response\nExiting..."));
 				Sleep(1000);
-				QApplication::quit();
+				QApplication::exit(EXIT_FAILURE);
 				exit(EXIT_FAILURE);
 				return;
 			}
@@ -194,14 +215,14 @@ namespace ClientLib
 
 		inline void FinishJoiningHost()
 		{
-			//std::thread chatListenThread(&ChatListen_Thread);
-			//
-			//mainChat.OnMessageSent.AssignEventFunction(&OnMessageSentEvent);
-			//
-			//NosLib::Console::ClearScreen();
-			//mainChat.StartChat();
-			//
-			//chatListenThread.join();
+			/* Create and start the listen thread, create using "new" since it will run along side the program */
+			ChatListenThread* listenThread = new ChatListenThread;
+			QObject::connect(listenThread, &ChatListenThread::ReceivedMessage, UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
+			listenThread->start();
+			CentralLib::Logging::CreateLog<wchar_t>(L"Created and started Listen Thread\n", false);
+
+			/* connect "AboutToQuit" signal to thread's interrupt signal */
+			QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);
 		}
 	}
 }

@@ -5,6 +5,8 @@
 
 #include <QtWidgets/QApplication>
 
+#include "Header/GlobalRoot.hpp"
+
 #include "MainWindow.h"
 
 int main(int argc, char *argv[])
@@ -13,6 +15,7 @@ int main(int argc, char *argv[])
 	boost::asio::ip::tcp::socket connectionSocket(io_context);
 
     QApplication a(argc, argv);
+    GlobalRoot::AppPointer = &a;
     QApplication::setStyle("Fusion");
     MainWindow w(&io_context, &connectionSocket);
     w.show();

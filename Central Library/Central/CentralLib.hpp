@@ -256,7 +256,7 @@ namespace CentralLib
             //static inline NosLib::DynamicArray<ClientTracker*> ClientArray; /* Array of all clients that have joined */
 
             boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
-
+       
             /// <summary>
             /// Constructor
             /// </summary>
@@ -273,6 +273,7 @@ namespace CentralLib
             }
 
         public:
+
             boost::asio::ip::tcp::socket* GetConnectionSocket()
             {
                 return SessionConnectionSocket;
