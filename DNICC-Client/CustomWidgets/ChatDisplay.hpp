@@ -37,17 +37,12 @@ public:
 
 	void NewMessage(/* const */ ClientLib::Communications::MessageObject& receivedMessage)
 	{
+		//QPalette messagePalette;
+		//messagePalette.setColor(QPalette::Window, QColor::fromRgb(10, 10, 10));
+
 		/* Create message object */
-		//QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-		//sizePolicy.setHorizontalStretch(0);
-		//sizePolicy.setVerticalStretch(0);
-
-		QPalette messagePalette;
-		messagePalette.setColor(QPalette::Window, QColor::fromRgb(10, 10, 10));
-
 		QWidget* messageContainer = new QWidget(this);
 		messageContainer->setAutoFillBackground(true);
-		//messageContainer->setPalette(messagePalette);
 		messageContainer->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 
 		QVBoxLayout* messageLayout = new QVBoxLayout();

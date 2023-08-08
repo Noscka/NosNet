@@ -125,8 +125,10 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CustomWidgets\ChatDisplay.hpp" />
-    <QtMoc Include="Header\Client.hpp" />
+    <QtMoc Include="CustomWidgets\ChatLineEdit.hpp" />
     <ClInclude Include="Header\ClientLib.hpp" />
+    <QtMoc Include="Header\Client\SendReceive.hpp" />
+    <ClInclude Include="Header\Client\Connection.hpp" />
     <ClInclude Include="Header\Communication.hpp" />
     <ClInclude Include="Header\GlobalRoot.hpp" />
     <ClInclude Include="Header\Host.hpp" />

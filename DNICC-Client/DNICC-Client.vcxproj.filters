@@ -45,7 +45,10 @@
     <QtMoc Include="CustomWidgets\ChatDisplay.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Header\Client.hpp">
+    <QtMoc Include="CustomWidgets\ChatLineEdit.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Header\Client\SendReceive.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalRoot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Client\Connection.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

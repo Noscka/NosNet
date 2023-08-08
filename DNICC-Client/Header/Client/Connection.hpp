@@ -1,5 +1,5 @@
-#ifndef _CLIENT_RUNTIME_NOSNET_HPP_
-#define _CLIENT_RUNTIME_NOSNET_HPP_
+#ifndef _CLIENT_CONNECTION_NOSNET_
+#define _CLIENT_CONNECTION_NOSNET_
 
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
@@ -7,12 +7,9 @@
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
 
-#include <NosLib/Chat.hpp>
-
 #include <Central/CentralLib.hpp>
 #include <Central/Logging.hpp>
 
-#include <QtCore/QtGlobal>
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -21,14 +18,15 @@
 #include <QThread>
 #include "ui_MainWindow.h"
 
-#include "GlobalRoot.hpp"
-#include "Communication.hpp"
+#include "..\GlobalRoot.hpp"
+#include "..\Communication.hpp"
+#include "SendReceive.hpp"
 
 namespace ClientLib
 {
-	namespace Client /* forward deceleration */
+	namespace Client
 	{
-		void InitiateJoiningHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject);
+		void InitiateJoiningHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject); /* forward delecration */
 	}
 
 	namespace ClientInterfacing
@@ -63,59 +61,15 @@ namespace ClientLib
 
 	namespace Client
 	{
-		namespace /* PRIVATE NAMESPACE */
-		{
-			Ui::MainWindowClass* UI;
-			boost::asio::ip::tcp::socket* ConnectionSocket;
-			boost::asio::io_context* IOContext;
-
-			void OnMessageSentEvent(const std::wstring& message)
-			{
-				std::string temp = NosLib::String::ConvertString<char, wchar_t>(message);
-				CentralLib::Write(ConnectionSocket, boost::asio::buffer(temp));
-			}
-		}
-
-		class ChatListenThread : public QThread
-		{
-			Q_OBJECT
-
-		signals:
-			void ReceivedMessage(ClientLib::Communications::MessageObject receivedMessage);
-
-		protected:
-			void run() override
-			{
-				boost::system::error_code errorCode;
-
-				while (!isInterruptionRequested() && errorCode != boost::asio::error::eof)
-				{
-					boost::asio::streambuf MessageBuffer;
-					boost::asio::read_until((*ConnectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
-
-					ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
-
-					emit ReceivedMessage(messageObject);
-				}
-
-				if (errorCode == boost::asio::error::eof)
-				{
-					CentralLib::Logging::CreateLog<wchar_t>(L"listen thread quit, reason: end of file\n", false);
-				}
-
-				/* send some closing message */
-			}
-		};
-
 		/// <summary>
 		/// Function ran if User chose to be a client
 		/// </summary>
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
 		inline void StartClient(Ui::MainWindowClass* ui, boost::asio::io_context* ioContext, boost::asio::ip::tcp::socket* connectionSocket)
 		{
-			UI = ui;
-			ConnectionSocket = connectionSocket;
-			IOContext = ioContext;
+			GlobalRoot::UI = ui;
+			GlobalRoot::ConnectionSocket = connectionSocket;
+			GlobalRoot::IOContext = ioContext;
 
 			/* Aliased with using StrippedClientTracker */
 			using AliasedStrippedClientTracker = ClientLib::ClientInterfacing::StrippedClientTracker;
@@ -156,52 +110,52 @@ namespace ClientLib
 		inline void InitiateJoiningHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject)
 		{
 			/* Disconnect from DCHLS server */
-			(*ConnectionSocket).cancel();
+			(*GlobalRoot::ConnectionSocket).cancel();
 
 			/* Connect to the Client Server (DNICC not DCHLS) */
-			boost::asio::connect((*ConnectionSocket), boost::asio::ip::tcp::resolver((*IOContext)).resolve(hostObject->ReturnIPAddress(), Constants::DefaultClientHostPort));
+			boost::asio::connect((*GlobalRoot::ConnectionSocket), boost::asio::ip::tcp::resolver((*GlobalRoot::IOContext)).resolve(hostObject->ReturnIPAddress(), Constants::DefaultClientHostPort));
 			CentralLib::Logging::CreateLog<wchar_t>(L"Connected to DNICC Server\n", false);
 
 			/* Go to Chat page */
-			UI->stackedWidget->setCurrentIndex(2);
+			GlobalRoot::UI->stackedWidget->setCurrentIndex(2);
 		}
 
 		inline void FinishJoiningHost(); /* forward deceleration */
 
 		inline void ValidateUsername()
 		{
-			std::string username = UI->LoginTextbox->text().toStdString();
+			std::string username = GlobalRoot::UI->LoginTextbox->text().toStdString();
 
 			if (!CentralLib::Validation::ValidateUsername(NosLib::String::ConvertString<wchar_t, char>(username)))
 			{ /* if username didn't pass username requirements */
 				CentralLib::Logging::CreateLog<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", false);
-				UI->LoginErrorLabel->setText(QString::fromStdWString(L"Username cannot be empty and cannot be longer then 30 characters"));
+				GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(L"Username cannot be empty and cannot be longer then 30 characters"));
 				return;
 			}
 
 			/* If valid, send username to server */
-			CentralLib::Write(ConnectionSocket, boost::asio::buffer(username));
+			CentralLib::Write(GlobalRoot::ConnectionSocket, boost::asio::buffer(username));
 
 			/* Wait for server response on if it accepted the username */
 			boost::asio::streambuf serverReponseBuffer;
-			boost::asio::read_until((*ConnectionSocket), serverReponseBuffer, Definition::Delimiter);
+			boost::asio::read_until((*GlobalRoot::ConnectionSocket), serverReponseBuffer, Definition::Delimiter);
 			CentralLib::Communications::CentralizedServerResponse serverReponse(&serverReponseBuffer);
 
 			if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::Accepted) /* if server accepts username too, continue as normal */
 			{
 				CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
-				UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
+				GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
 			}
 			else if (serverReponse.GetInformationCode() == CentralLib::Communications::CentralizedServerResponse::InformationCodes::NotAccepted) /* if server doesn't accept username, return */
 			{
 				CentralLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
-				UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
+				GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
 				return;
 			}
 			else /* if server sends an unexpected response, exit because client and server are out of sync */
 			{
 				CentralLib::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\tExiting...\n", false);
-				UI->LoginErrorLabel->setText(QString::fromStdWString(L"server sent an unexpected response\nExiting..."));
+				GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(L"server sent an unexpected response\nExiting..."));
 				Sleep(1000);
 				QApplication::exit(EXIT_FAILURE);
 				exit(EXIT_FAILURE);
@@ -209,7 +163,7 @@ namespace ClientLib
 			}
 
 			/* go to chat page */
-			UI->stackedWidget->setCurrentIndex(3);
+			GlobalRoot::UI->stackedWidget->setCurrentIndex(3);
 			FinishJoiningHost();
 		}
 
@@ -217,13 +171,14 @@ namespace ClientLib
 		{
 			/* Create and start the listen thread, create using "new" since it will run along side the program */
 			ChatListenThread* listenThread = new ChatListenThread;
-			QObject::connect(listenThread, &ChatListenThread::ReceivedMessage, UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
+			QObject::connect(listenThread, &ChatListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
 			listenThread->start();
 			CentralLib::Logging::CreateLog<wchar_t>(L"Created and started Listen Thread\n", false);
 
 			/* connect "AboutToQuit" signal to thread's interrupt signal */
 			QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);
 		}
+
 	}
 }
-#endif
+#endif /* _CLIENT_CONNECTION_NOSNET_ */

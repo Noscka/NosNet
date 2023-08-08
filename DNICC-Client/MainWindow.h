@@ -13,7 +13,7 @@
 #include "Central/Logging.hpp"
 
 #include "Header/ClientLib.hpp"
-#include "Header/Client.hpp"
+#include "Header/Client/Connection.hpp"
 #include "Header/Host.hpp"
 
 QT_BEGIN_NAMESPACE
