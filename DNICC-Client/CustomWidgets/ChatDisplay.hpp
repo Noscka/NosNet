@@ -28,6 +28,8 @@ public:
 		setWidget(ChatFeedWidget);
 
 		ChatFeedLayout = new QVBoxLayout(ChatFeedWidget);
+		ChatFeedLayout->setContentsMargins(0, 0, 0, 0);
+		ChatFeedLayout->setAlignment(Qt::AlignmentFlag::AlignTop);
 		ChatFeedWidget->setLayout(ChatFeedLayout);
 
 		QCoreApplication::processEvents();
@@ -36,22 +38,29 @@ public:
 	void NewMessage(/* const */ ClientLib::Communications::MessageObject& receivedMessage)
 	{
 		/* Create message object */
-		QWidget* messageContainer = new QWidget(this);
+		//QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+		//sizePolicy.setHorizontalStretch(0);
+		//sizePolicy.setVerticalStretch(0);
 
 		QPalette messagePalette;
-		messagePalette.setColor(QPalette::Window, Qt::black);
+		messagePalette.setColor(QPalette::Window, QColor::fromRgb(10, 10, 10));
 
+		QWidget* messageContainer = new QWidget(this);
 		messageContainer->setAutoFillBackground(true);
-		messageContainer->setPalette(messagePalette);
+		//messageContainer->setPalette(messagePalette);
+		messageContainer->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 
 		QVBoxLayout* messageLayout = new QVBoxLayout();
-		messageLayout->setContentsMargins(0, 0, 0, 0);
+		messageLayout->setContentsMargins(6, 6, 6, 6);
 		messageContainer->setLayout(messageLayout);
-		
+
 		QLabel* username = new QLabel();
 		username->setText(QString::fromStdWString(receivedMessage.GetUserInfo()->GetUsername()));
+		QFont usernameFont = username->font();
+		usernameFont.setPointSize(16);
+		username->setFont(usernameFont);
 		messageLayout->addWidget(username);
-		
+
 		QLabel* message = new QLabel();
 		message->setText(QString::fromStdWString(receivedMessage.GetMessage()));
 		messageLayout->addWidget(message);
