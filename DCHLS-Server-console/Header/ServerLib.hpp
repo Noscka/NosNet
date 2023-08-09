@@ -15,7 +15,7 @@
 #include <NosLib/DynamicArray.hpp>
 #include <NosLib/String.hpp>
 
-#include <Central/CentralLib.hpp>
+#include <Central/Communication.hpp>
 
 namespace ServerLib
 {

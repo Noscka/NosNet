@@ -29,6 +29,6 @@ protected:
 
 		/* if enter key, then send the message */
 		ClientLib::Client::SendMessage(text().toStdWString());
-		emit SentMessage(text().toStdWString());
+		//emit SentMessage(text().toStdWString());
 	}
 };

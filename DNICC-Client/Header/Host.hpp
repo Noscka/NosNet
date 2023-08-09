@@ -11,6 +11,7 @@
 #include <NosLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Central/Communication.hpp>
 #include <Central/Logging.hpp>
 #include "..\DCHLS-Server-console\Header\ServerLib.hpp" /* TEMP */
 

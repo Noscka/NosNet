@@ -6,6 +6,7 @@
 
 #include <boost/asio.hpp>
 #include <Central/CentralLib.hpp>
+#include <Central/Communication.hpp>
 
 namespace ClientLib
 {

@@ -8,6 +8,7 @@
 #include <boost/asio/io_context.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Central/Communication.hpp>
 #include <Central/Logging.hpp>
 #include "ServerLib.hpp"
 

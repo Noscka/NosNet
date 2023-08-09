@@ -9,6 +9,7 @@
 #include <NosLib/String.hpp>
 
 #include <Central/CentralLib.hpp>
+#include <Central/Communication.hpp>
 #include <Central/Logging.hpp>
 #include "Header/ServerLib.hpp"
 #include "Header/ServerConnectionProcessing.hpp"
