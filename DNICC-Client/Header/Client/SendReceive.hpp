@@ -13,7 +13,7 @@
 #include <Central/Logging.hpp>
 
 #include "..\Communication.hpp"
-#include "..\GlobalRoot.hpp"
+#include "..\GlobalASIORoot.hpp"
 
 namespace ClientLib
 {

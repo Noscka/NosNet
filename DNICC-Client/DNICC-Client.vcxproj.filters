@@ -62,10 +62,16 @@
     <ClInclude Include="Header\Host.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalRoot.hpp">
+    <ClInclude Include="Header\GlobalUIRoot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\Client\Connection.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\GlobalASIORoot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\GlobalRoot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

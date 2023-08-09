@@ -129,8 +129,10 @@
     <ClInclude Include="Header\ClientLib.hpp" />
     <QtMoc Include="Header\Client\SendReceive.hpp" />
     <ClInclude Include="Header\Client\Connection.hpp" />
-    <ClInclude Include="Header\Communication.hpp" />
     <ClInclude Include="Header\GlobalRoot.hpp" />
+    <ClInclude Include="Header\Communication.hpp" />
+    <ClInclude Include="Header\GlobalASIORoot.hpp" />
+    <ClInclude Include="Header\GlobalUIRoot.hpp" />
     <ClInclude Include="Header\Host.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

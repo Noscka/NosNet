@@ -15,7 +15,7 @@
   </property>
   <widget class="QStackedWidget" name="stackedWidget">
    <property name="currentIndex">
-    <number>3</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="DEBUG_ENTRY">
     <widget class="QWidget" name="gridLayoutWidget">
