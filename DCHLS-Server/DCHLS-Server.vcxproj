@@ -33,7 +33,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.6.0_Dynamic</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
-    <QtBuildConfig>debug</QtBuildConfig>
+    <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.6.0_Dynamic</QtInstall>
@@ -65,6 +65,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <AdditionalLibraryDirectories>D:\Libraries\NosLib\Build\NosLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);$(Qt_LIBS_);%(AdditionalDependencies);</AdditionalDependencies>
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -74,10 +75,17 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(Qt_INCLUDEPATH_);D:\Libraries\NosLib\NosLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
+    <QtMoc>
+      <OverrideClCompile>extend</OverrideClCompile>
+    </QtMoc>
+    <QtRcc>
+      <OverrideClCompile>extend</OverrideClCompile>
+    </QtRcc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <AdditionalLibraryDirectories>D:\Libraries\NosLib\Build\NosLib\$(Platform)\$(Configuration)\;D:\Libraries\Boost\stage\lib;$(SolutionDir)Build\Libraries\Central Library\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);$(Qt_LIBS_);%(AdditionalDependencies);</AdditionalDependencies>
     </Link>
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -87,6 +95,12 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(Qt_INCLUDEPATH_);D:\Libraries\NosLib\NosLib\;D:\Libraries\Boost;$(SolutionDir)Central Library</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
+    <QtMoc>
+      <OverrideClCompile>extend</OverrideClCompile>
+    </QtMoc>
+    <QtRcc>
+      <OverrideClCompile>extend</OverrideClCompile>
+    </QtRcc>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -116,8 +130,16 @@
     <QtRcc Include="Resource.qrc" />
     <QtUic Include="MainWindow.ui" />
     <QtMoc Include="MainWindow.h" />
-    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Header\Listen.hpp" />
+    <QtMoc Include="CustomWidgets\ClientList.hpp" />
+    <ClInclude Include="Header\GlobalASIORoot.hpp" />
+    <ClInclude Include="Header\GlobalRoot.hpp" />
+    <ClInclude Include="Header\GlobalUIRoot.hpp" />
+    <ClInclude Include="Header\ServerConnectionProcessing.hpp" />
+    <ClInclude Include="Header\ServerLib.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

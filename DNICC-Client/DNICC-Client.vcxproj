@@ -141,9 +141,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="CustomWidgets\CenterLayout.hpp" />
-  </ItemGroup>
-  <ItemGroup>
     <QtMoc Include="CustomWidgets\ChatDisplay.hpp" />
     <QtMoc Include="CustomWidgets\ChatLineEdit.hpp" />
     <QtMoc Include="CustomWidgets\ClientList.hpp" />

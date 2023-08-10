@@ -116,7 +116,7 @@ namespace CentralLib
                 archive& ipAddress;
                 archive& port;
 
-                TargetEndpoint = new boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ipAddress), port);// , port);
+                TargetEndpoint = new boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ipAddress), port);
             }
             BOOST_SERIALIZATION_SPLIT_MEMBER()
 
@@ -164,6 +164,23 @@ namespace CentralLib
             std::wstring GetUsername()
             {
                 return ClientUsername;
+            }
+
+            std::wstring GetUserStatusAsWstring()
+            {
+                switch (ClientCurrentStatus)
+                {
+                case CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client:
+					return L"Client";
+                case CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Hosting:
+                    return L"Hosting";
+                case CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Online:
+                    return L"Online";
+                case CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline:
+                    return L"Offline";
+                }
+
+                return L"Unknown";
             }
 
 			/// <summary>

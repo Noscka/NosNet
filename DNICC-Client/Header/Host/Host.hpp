@@ -35,7 +35,7 @@ namespace ClientLib
 
 			ClientConnectionHandle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 
-			~ClientConnectionHandle()
+			void UserDisconnects()
 			{
 				ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline);
 
@@ -112,7 +112,7 @@ namespace ClientLib
 							throw boost::system::system_error(error); // Some other error
 						}
 
-						(void)wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
+						//(void)wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
 
 						ClientLib::Communications::MessageObject messageObject(ClientTrackerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
 
@@ -136,7 +136,8 @@ namespace ClientLib
 			void run() override
 			{
 				StartImp(); /* Run function and make sure it gets deleted */
-				delete this; /* commit suicide if the connection ends as the object won't get used/deleted otherwise */
+				connect(this, &QThread::finished, this, &QThread::deleteLater); /* commit suicide if the connection ends as the object won't get used/deleted otherwise */
+				UserDisconnects();
 			}
 		};
 
@@ -168,6 +169,7 @@ namespace ClientLib
 					{
 						newConnectionHandle->start();
 						connect(newConnectionHandle, &ClientConnectionHandle::ClientConnected, GlobalRoot::UI->ClientListScroll, &ClientList::ClientConnected);
+						connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, newConnectionHandle, &QThread::requestInterruption);
 					}
 				}
 			}
@@ -184,7 +186,6 @@ namespace ClientLib
 			GlobalRoot::ConnectionSocket->cancel();
 
 			ClientListenThread* listenThread = new ClientListenThread;
-			//QObject::connect(listenThread, &ClientListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
 			listenThread->start();
 			CentralLib::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", false);
 			GlobalRoot::UI->stackedWidget->setCurrentIndex(4);

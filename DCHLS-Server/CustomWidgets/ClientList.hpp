@@ -15,9 +15,9 @@ protected:
 	QWidget* ChatFeedWidget;
 
 public slots:
-	void ClientConnected(CentralLib::ClientManagement::ClientTracker* connectedClient)
+	void ClientConnected(CentralLib::ClientInterfacing::StrippedClientTracker* client)
 	{
-		AddClient(connectedClient);
+		AddClient(client);
 	}
 
 public:
@@ -34,7 +34,7 @@ public:
 		QCoreApplication::processEvents();
 	}
 
-	void AddClient(/* const */ CentralLib::ClientManagement::ClientTracker* client)
+	void AddClient(CentralLib::ClientInterfacing::StrippedClientTracker* client)
 	{
 		/* Create message object */
 		QWidget* clientContainer = new QWidget(this);
@@ -63,6 +63,7 @@ public:
 
 		this->widget()->layout()->addWidget(clientContainer);
 
+		//ChatFeedLayout->addWidget(messageContainer);
 		this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
 		QCoreApplication::processEvents();
 	}

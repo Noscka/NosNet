@@ -39,9 +39,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="CustomWidgets\CenterLayout.hpp">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="CustomWidgets\ChatDisplay.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
