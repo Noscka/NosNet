@@ -63,7 +63,6 @@ public:
 
 		this->widget()->layout()->addWidget(clientContainer);
 
-		//ChatFeedLayout->addWidget(messageContainer);
 		this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
 		QCoreApplication::processEvents();
 	}
