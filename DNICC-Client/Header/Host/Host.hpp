@@ -112,8 +112,6 @@ namespace ClientLib
 							throw boost::system::system_error(error); // Some other error
 						}
 
-						//(void)wprintf(std::format(L"{}) {}\n", ClientTrackerAttached->GetUsername(), CentralLib::streamBufferToWstring(&messageBuffer, lenght)).c_str());
-
 						ClientLib::Communications::MessageObject messageObject(ClientTrackerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
 
 						SendToAll(&messageObject, false);

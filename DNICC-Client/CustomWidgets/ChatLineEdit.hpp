@@ -3,6 +3,8 @@
 #include <QCoreApplication>
 #include <QtWidgets\QLayout>
 #include <QtWidgets\QLineEdit>
+#include <qdrag.h>
+#include <qmimedata.h>
 #include <QKeyEvent>
 
 #include "..\Header\Client\SendReceive.hpp"
@@ -17,9 +19,26 @@ signals:
 public:
 	ChatLineEdit(QWidget* parent = nullptr) : QLineEdit(parent)
 	{
-
+		setAcceptDrops(true);
 	}
 protected:
+	void dragEnterEvent(QDragEnterEvent* e) override
+	{
+		if (e->mimeData()->hasUrls())
+		{
+			e->acceptProposedAction();
+		}
+	}
+
+	void dropEvent(QDropEvent* e) override
+	{
+		foreach(const QUrl & url, e->mimeData()->urls())
+		{
+			QString fileName = url.toLocalFile();
+			qDebug() << "Dropped file:" << fileName;
+		}
+	}
+
 	void keyPressEvent(QKeyEvent* keyEvent) override
 	{
 		if (keyEvent->key() != Qt::Key_Return)
