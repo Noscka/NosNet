@@ -146,7 +146,8 @@
   <ItemGroup>
     <QtMoc Include="CustomWidgets\ChatDisplay.hpp" />
     <QtMoc Include="CustomWidgets\ChatLineEdit.hpp" />
-    <ClInclude Include="Header\ClientLib.hpp" />
+    <QtMoc Include="CustomWidgets\ClientList.hpp" />
+    <ClInclude Include="Header\StartUp.hpp" />
     <QtMoc Include="Header\Client\SendReceive.hpp" />
     <ClInclude Include="Header\Client\ClientRoot.hpp" />
     <ClInclude Include="Header\Client\Connection.hpp" />
@@ -154,7 +155,7 @@
     <ClInclude Include="Header\Communication.hpp" />
     <ClInclude Include="Header\GlobalASIORoot.hpp" />
     <ClInclude Include="Header\GlobalUIRoot.hpp" />
-    <ClInclude Include="Header\Host.hpp" />
+    <QtMoc Include="Header\Host\Host.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -12,9 +12,9 @@
 #include "Central/CentralLib.hpp"
 #include "Central/Logging.hpp"
 
-#include "Header/ClientLib.hpp"
+#include "Header/StartUp.hpp"
 #include "Header/Client/Connection.hpp"
-#include "Header/Host.hpp"
+#include "Header/Host/Host.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindowClass; };
@@ -25,12 +25,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-	MainWindow(boost::asio::io_context* ioContext, boost::asio::ip::tcp::socket* connectionSocket, QWidget* parent = nullptr) : QMainWindow(parent)
+	MainWindow(QWidget* parent = nullptr) : QMainWindow(parent)
 	{
 		ui = new Ui::MainWindowClass();
 
-		IOContext = ioContext;
-		ConnectionSocket = connectionSocket;
+		GlobalRoot::UI = ui;
 
 		ui->setupUi(this);
 		/* START PAGE */
@@ -74,7 +73,7 @@ protected:
 		Host - Hostname/Ip address
 		Service - Service(Hostname for ports)/Port number
 		*/
-		boost::asio::connect((*ConnectionSocket), boost::asio::ip::tcp::resolver(*IOContext).resolve(ui->HostNameText->text().toStdString(), Constants::DefaultPort));
+		boost::asio::connect((*GlobalRoot::ConnectionSocket), boost::asio::ip::tcp::resolver(*GlobalRoot::IOContext).resolve(ui->HostNameText->text().toStdString(), Constants::DefaultPort));
 		CentralLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", false);
 
 		switch (ClientLib::StartUp::GatherClientMode(ui))
@@ -82,14 +81,14 @@ protected:
 		case ClientLib::StartUp::UserMode::Client:
 		{
 			CentralLib::Logging::CreateLog<wchar_t>(L"User Became Client\n", false);
-			ClientLib::Client::StartClient(ui, IOContext, ConnectionSocket);
+			ClientLib::Client::StartClient();
 			break;
 		}
 
 		case ClientLib::StartUp::UserMode::Hosting:
 		{
 			CentralLib::Logging::CreateLog<wchar_t>(L"Client Hosting a Communications server\n", false);
-			ClientLib::Hosting::StartHosting(IOContext, ConnectionSocket);
+			ClientLib::Hosting::StartHosting();
 			break;
 		}
 		}
@@ -97,6 +96,4 @@ protected:
 
 private:
     Ui::MainWindowClass* ui;
-	boost::asio::io_context* IOContext;
-	boost::asio::ip::tcp::socket* ConnectionSocket;
 };

@@ -51,15 +51,18 @@
     <QtMoc Include="Header\Client\SendReceive.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="CustomWidgets\ClientList.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Header\Host\Host.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header\ClientLib.hpp">
+    <ClInclude Include="Header\StartUp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\Communication.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Host.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalUIRoot.hpp">

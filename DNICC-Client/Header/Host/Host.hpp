@@ -15,24 +15,25 @@
 #include <Central/Logging.hpp>
 #include "..\DCHLS-Server-console\Header\ServerLib.hpp" /* TEMP */
 
-#include "ClientLib.hpp"
-#include "Communication.hpp"
+#include "..\Communication.hpp"
+#include "..\GlobalRoot.hpp"
 
 namespace ClientLib
 {
 	namespace Hosting
 	{
-		class tcp_connection_handle
+		class ClientConnectionHandle
 		{
+
 		private:
 			boost::asio::ip::tcp::socket ConnectionSocket;
 			CentralLib::ClientManagement::ClientTracker* ClientTrackerAttached;
 
-			tcp_connection_handle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
+			ClientConnectionHandle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 
-			~tcp_connection_handle()
+			~ClientConnectionHandle()
 			{
-				ClientTrackerAttached->ChangeStatus(ClientLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline);
+				ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline);
 
 				ClientLib::Communications::MessageObject tempMessageObject(ClientTrackerAttached, L"Client has left");
 
@@ -76,7 +77,7 @@ namespace ClientLib
 					if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
 					{
 						/* Create ClientTracker Object and attach it to current session */
-						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, ClientLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client, &ConnectionSocket);
+						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client, &ConnectionSocket);
 						initialValidation = false;
 						AliasedServerReponse::CreateSerializeSend(&ConnectionSocket, AliasedServerReponse::InformationCodes::Accepted, L"server accepted username");
 					}
@@ -118,7 +119,7 @@ namespace ClientLib
 				}
 			}
 		public:
-			static tcp_connection_handle* create(boost::asio::io_context& io_context) { return new tcp_connection_handle(io_context); }
+			static ClientConnectionHandle* create(boost::asio::io_context& io_context) { return new ClientConnectionHandle(io_context); }
 
 			boost::asio::ip::tcp::socket& GetSocket()
 			{
@@ -132,29 +133,23 @@ namespace ClientLib
 			}
 		};
 
-		inline void StartHosting(boost::asio::io_context* io_context, boost::asio::ip::tcp::socket* connectionSocket)
+		class ClientListenThread : public QThread
 		{
-			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
-
-			/* Tell server which path going down */
-			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::GoingHostingPath, L"User is Hosting");
-
-			try
+			Q_OBJECT
+		protected:
+			void run() override
 			{
-				/* Disconnect from DCHLS server */
-				connectionSocket->cancel();
-
 				/* Create TCP Acceptor on client host port */
-				boost::asio::ip::tcp::acceptor acceptor((*io_context), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
+				boost::asio::ip::tcp::acceptor acceptor((*GlobalRoot::IOContext), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
 
-				SetConsoleTitle(std::format(L"DNICC Client Server - {}", CentralLib::ReturnAddress(acceptor.local_endpoint())).c_str());
+				SetConsoleTitle(std::format(L"DNICC hosting Server - {}", CentralLib::ReturnAddress(acceptor.local_endpoint())).c_str());
 
 				CentralLib::Logging::CreateLog<wchar_t>(L"Client Server started\n", true);
 
 				while (true)
 				{
 					/* tcp_connection_handle object which allows for managed of multiple users */
-					tcp_connection_handle* newConSim = tcp_connection_handle::create((*io_context));
+					ClientConnectionHandle* newConSim = ClientConnectionHandle::create((*GlobalRoot::IOContext));
 
 					boost::system::error_code error;
 
@@ -162,13 +157,31 @@ namespace ClientLib
 					acceptor.accept(newConSim->GetSocket(), error);
 
 					/* if no errors, create thread for the new connection */
-					if (!error) { boost::thread* ClientThread = new boost::thread(boost::bind(&tcp_connection_handle::StartPublic, newConSim)); }
+					if (!error)
+					{
+						boost::thread* ClientThread = new boost::thread(boost::bind(&ClientConnectionHandle::StartPublic, newConSim));
+					}
 				}
 			}
-			catch (const std::exception& e)
-			{
-				std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
-			}
+		};
+
+		inline void StartHosting()
+		{
+			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
+
+			/* Tell server which path going down */
+			AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::GoingHostingPath, L"User is Hosting");
+
+			/* Disconnect from DCHLS server */
+			GlobalRoot::ConnectionSocket->cancel();
+
+			ClientListenThread* listenThread = new ClientListenThread;
+			//QObject::connect(listenThread, &ClientListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
+			listenThread->start();
+			CentralLib::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", false);
+
+			/* connect "AboutToQuit" signal to thread's interrupt signal */
+			QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);
 		}
 	}
 }

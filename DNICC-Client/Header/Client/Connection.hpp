@@ -71,23 +71,19 @@ namespace ClientLib
 		/// Function ran if User chose to be a client
 		/// </summary>
 		/// <param name="connectionSocket">- Pointer to connection socket</param>
-		inline void StartClient(Ui::MainWindowClass* ui, boost::asio::io_context* ioContext, boost::asio::ip::tcp::socket* connectionSocket)
+		inline void StartClient()
 		{
-			GlobalRoot::UI = ui;
-			GlobalRoot::ConnectionSocket = connectionSocket;
-			GlobalRoot::IOContext = ioContext;
-
 			/* Aliased with using StrippedClientTracker */
 			using AliasedStrippedClientTracker = ClientLib::ClientInterfacing::StrippedClientTracker;
 			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
 
 			/* Tell server which path going down */
-			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::GoingClientPath, L"User is Client");
+			AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::GoingClientPath, L"User is Client");
 
 			{
 				/* Wait for Server to be ready */
 				boost::asio::streambuf serverReponseBuffer;
-				boost::asio::read_until((*connectionSocket), serverReponseBuffer, Definition::Delimiter);
+				boost::asio::read_until((*GlobalRoot::ConnectionSocket), serverReponseBuffer, Definition::Delimiter);
 				CentralLib::Communications::CentralizedServerResponse serverReponse(&serverReponseBuffer);
 
 				if (serverReponse.GetInformationCode() != CentralLib::Communications::CentralizedServerResponse::InformationCodes::Ready)
@@ -98,19 +94,19 @@ namespace ClientLib
 			}
 
 			/* Once sent username, tell server client is ready for Array */
-			AliasedClientReponse::CreateSerializeSend(connectionSocket, AliasedClientReponse::InformationCodes::Ready, L"Client is ready for array");
+			AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::Ready, L"Client is ready for array");
 
 			{
 				/* Receive array */
 				boost::asio::streambuf ContentBuffer;
-				boost::asio::read_until((*connectionSocket), ContentBuffer, Definition::Delimiter);
+				boost::asio::read_until((*GlobalRoot::ConnectionSocket), ContentBuffer, Definition::Delimiter);
 				AliasedStrippedClientTracker::DeserializeArray(&ContentBuffer);
 			}
 			/* Go to Server selection page */
-			ui->stackedWidget->setCurrentIndex(1);
+			GlobalRoot::UI->stackedWidget->setCurrentIndex(1);
 
 			/* List the array */
-			AliasedStrippedClientTracker::GenerateServerEntries(ui);
+			AliasedStrippedClientTracker::GenerateServerEntries(GlobalRoot::UI);
 		}
 
 		inline void InitiateJoiningHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject)

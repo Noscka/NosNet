@@ -11,13 +11,16 @@
 
 int main(int argc, char *argv[])
 {
-	boost::asio::io_context io_context;
-	boost::asio::ip::tcp::socket connectionSocket(io_context);
+	boost::asio::io_context ioContext;
+	boost::asio::ip::tcp::socket connectionSocket(ioContext);
+
+    GlobalRoot::IOContext = &ioContext;
+    GlobalRoot::ConnectionSocket = &connectionSocket;
 
     QApplication a(argc, argv);
     GlobalRoot::AppPointer = &a;
     QApplication::setStyle("Fusion");
-    MainWindow w(&io_context, &connectionSocket);
+    MainWindow w;
     w.show();
     return a.exec();
 }
