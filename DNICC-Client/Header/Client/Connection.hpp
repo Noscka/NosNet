@@ -21,6 +21,7 @@
 #include "..\GlobalRoot.hpp"
 #include "..\Communication.hpp"
 #include "SendReceive.hpp"
+#include "ClientRoot.hpp"
 
 namespace ClientLib
 {
@@ -34,6 +35,11 @@ namespace ClientLib
 		class StrippedClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
 		{
 		public:
+			StrippedClientTracker(const std::wstring& username)
+			{
+				ClientUsername = username;
+			}
+
 			/// <summary>
 			/// Creates clickable entries for all servers
 			/// </summary>
@@ -161,6 +167,8 @@ namespace ClientLib
 				exit(EXIT_FAILURE);
 				return;
 			}
+
+			clientObject = new ClientLib::ClientInterfacing::StrippedClientTracker(NosLib::String::ToWstring(username));
 
 			/* go to chat page */
 			GlobalRoot::UI->stackedWidget->setCurrentIndex(3);

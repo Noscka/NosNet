@@ -55,6 +55,10 @@ public:
 
 		connect(ui->LoginButton, &QPushButton::released, &ClientLib::Client::ValidateUsername);
 		/* LOGIN PAGE */
+
+		/* CHAT PAGE */
+		connect(ui->ChatTextBar, &ChatLineEdit::SentMessage, ui->ChatFeedScroll, &ChatFeed::ReceiveMessage);
+		/* CHAT PAGE */
 	}
 
     ~MainWindow()

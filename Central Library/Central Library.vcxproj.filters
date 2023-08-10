@@ -26,5 +26,8 @@
     <ClInclude Include="Central\Communication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Central\ClientManagement.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

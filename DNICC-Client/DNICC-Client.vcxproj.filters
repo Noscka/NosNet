@@ -74,5 +74,8 @@
     <ClInclude Include="Header\GlobalRoot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Client\ClientRoot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

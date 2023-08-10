@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 
 #include "..\Header\Client\SendReceive.hpp"
+#include "..\Header\Client\ClientRoot.hpp"
 
 class ChatLineEdit : public QLineEdit
 {
@@ -27,8 +28,12 @@ protected:
 			return;
 		}
 
+		ClientLib::Communications::MessageObject messageObject(ClientLib::Client::clientObject, text().toStdWString());
+
 		/* if enter key, then send the message */
-		ClientLib::Client::SendMessage(text().toStdWString());
-		//emit SentMessage(text().toStdWString());
+		emit SentMessage(messageObject);
+		ClientLib::Client::SendMessage(messageObject.GetMessage());
+
+		setText(QStringLiteral(""));
 	}
 };
