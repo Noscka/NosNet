@@ -15,7 +15,7 @@ protected:
 	QWidget* ChatFeedWidget;
 
 public slots:
-	void ClientJoined(CentralLib::ClientManagement::ClientTracker* client)
+	void ClientConnected(CentralLib::ClientManagement::ClientTracker* client)
 	{
 		AddClient(client);
 	}

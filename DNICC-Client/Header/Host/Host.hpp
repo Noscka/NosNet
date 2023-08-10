@@ -22,8 +22,12 @@ namespace ClientLib
 {
 	namespace Hosting
 	{
-		class ClientConnectionHandle
+		class ClientConnectionHandle : public QThread
 		{
+			Q_OBJECT
+
+		signals:
+			void ClientConnected(CentralLib::ClientManagement::ClientTracker* receivedMessage);
 
 		private:
 			boost::asio::ip::tcp::socket ConnectionSocket;
@@ -87,6 +91,9 @@ namespace ClientLib
 					}
 				}
 
+				/* user connected and is validated */
+				emit ClientConnected(ClientTrackerAttached);
+
 				try
 				{
 					while (true)
@@ -126,7 +133,7 @@ namespace ClientLib
 				return ConnectionSocket;
 			}
 
-			void StartPublic()
+			void run() override
 			{
 				StartImp(); /* Run function and make sure it gets deleted */
 				delete this; /* commit suicide if the connection ends as the object won't get used/deleted otherwise */
@@ -149,17 +156,18 @@ namespace ClientLib
 				while (true)
 				{
 					/* tcp_connection_handle object which allows for managed of multiple users */
-					ClientConnectionHandle* newConSim = ClientConnectionHandle::create((*GlobalRoot::IOContext));
+					ClientConnectionHandle* newConnectionHandle = ClientConnectionHandle::create((*GlobalRoot::IOContext));
 
 					boost::system::error_code error;
 
 					/* accept incoming connection and assigned it to the tcp_connection_handle object socket */
-					acceptor.accept(newConSim->GetSocket(), error);
+					acceptor.accept(newConnectionHandle->GetSocket(), error);
 
 					/* if no errors, create thread for the new connection */
 					if (!error)
 					{
-						boost::thread* ClientThread = new boost::thread(boost::bind(&ClientConnectionHandle::StartPublic, newConSim));
+						newConnectionHandle->start();
+						connect(newConnectionHandle, &ClientConnectionHandle::ClientConnected, GlobalRoot::UI->ClientListScroll, &ClientList::ClientConnected);
 					}
 				}
 			}
@@ -179,6 +187,7 @@ namespace ClientLib
 			//QObject::connect(listenThread, &ClientListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
 			listenThread->start();
 			CentralLib::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", false);
+			GlobalRoot::UI->stackedWidget->setCurrentIndex(4);
 
 			/* connect "AboutToQuit" signal to thread's interrupt signal */
 			QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);
