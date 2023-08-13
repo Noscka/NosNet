@@ -39,10 +39,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header\ServerConnectionProcessing.hpp">
+    <ClInclude Include="Header\RequestProcessing.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\ServerLib.hpp">
+    <ClInclude Include="Header\Communication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalUIRoot.hpp">
@@ -52,6 +52,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalRoot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ServerManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

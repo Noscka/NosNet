@@ -13,7 +13,7 @@
 #include <Central/CentralLib.hpp>
 #include <Central/Communication.hpp>
 #include <Central/Logging.hpp>
-#include "..\DCHLS-Server\Header\ServerLib.hpp" /* TEMP */
+#include "..\DCHLS-Server\Header\Communication.hpp" /* TEMP */
 
 #include "..\Communication.hpp"
 #include "..\GlobalRoot.hpp"

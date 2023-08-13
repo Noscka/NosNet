@@ -15,9 +15,11 @@
 #include <Central/CentralLib.hpp>
 #include <Central/Communication.hpp>
 #include <Central/Logging.hpp>
+#include <Central/ServerEntry.hpp>
 
-#include "ServerLib.hpp"
-#include "ServerConnectionProcessing.hpp"
+#include "Communication.hpp"
+#include "RequestProcessing.hpp"
+#include "ServerManager.hpp"
 #include "GlobalRoot.hpp"
 
 namespace ServerLib
@@ -29,23 +31,20 @@ namespace ServerLib
 			Q_OBJECT
 
 		signals:
-			void ClientConnected(CentralLib::ClientInterfacing::StrippedClientTracker* connectedClient);
+			void AddNewServerEntry(ServerLib::ServerManager* connectedClient);
 		private:
 			boost::asio::ip::tcp::socket ConnectionSocket;
-			CentralLib::ClientManagement::ClientTracker* ClientTrackerAttached;
+			ServerLib::ServerManager* ServerSessionAttached;
 
 			ClientConnectionHandle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 
 			~ClientConnectionHandle()
 			{
-				//delete ClientTrackerAttached; /* COMMENTED OUT FOR DEBUGGING */
 			}
 
 			void StartImp()
 			{
-				CentralLib::Logging::CreateLog<wchar_t>(std::format(L"Client Connected from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), false);
-
-				CentralLib::Logging::CreateLog<wchar_t>(L"Creating profile and adding to array\n", false);
+				CentralLib::Logging::CreateLog<wchar_t>(std::format(L"Connection from {}\n", CentralLib::ReturnAddress(ConnectionSocket.remote_endpoint())), false);
 
 				try
 				{
@@ -57,18 +56,18 @@ namespace ServerLib
 
 					switch (clientReponse.GetInformationCode())
 					{
-					case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingClientPath:
-						CentralLib::Logging::CreateLog<wchar_t>(L"DNICC is client\n", false);
-						ServerLib::Processing::UserClientPath(&ConnectionSocket, ClientTrackerAttached);
+					case CentralLib::Communications::CentralizedClientResponse::InformationCodes::RequestServerArray:
+						CentralLib::Logging::CreateLog<wchar_t>(L"DNICC requested server array\n", false);
+						ServerLib::Processing::RequestedServerArray(&ConnectionSocket);
 						break;
 
-					case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
-						CentralLib::Logging::CreateLog<wchar_t>(L"DNICC is hosting\n", false);
-						ServerLib::Processing::UserHostPath(&ConnectionSocket, ClientTrackerAttached);
-						break;
+					//case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
+					//	CentralLib::Logging::CreateLog<wchar_t>(L"DNICC is hosting\n", false);
+					//	ServerLib::Processing::UserHostPath(&ConnectionSocket, ClientTrackerAttached);
+					//	break;
 					}
 
-					emit ClientConnected(ClientTrackerAttached);
+					//emit AddNewServerEntry(ClientTrackerAttached); CHANGE IMPLEMENATION
 				}
 				catch (const std::exception& e)
 				{
@@ -120,7 +119,7 @@ namespace ServerLib
 					if (!error)
 					{
 						newConnectionHandle->start();
-						connect(newConnectionHandle, &ClientConnectionHandle::ClientConnected, GlobalRoot::UI->ClientListScroll, &ClientList::ClientConnected);
+						connect(newConnectionHandle, &ClientConnectionHandle::AddNewServerEntry, GlobalRoot::UI->ClientListScroll, &ClientList::AddNewServerEntry);
 						connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, newConnectionHandle, &QThread::requestInterruption);
 					}
 				}

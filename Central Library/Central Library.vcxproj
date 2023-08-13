@@ -97,7 +97,7 @@
     <ClCompile Include="Central\CentralLib.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Central\ClientManagement.hpp" />
+    <ClInclude Include="Central\ServerEntry.hpp" />
     <ClInclude Include="Central\Communication.hpp" />
     <ClInclude Include="Central\Logging.hpp" />
   </ItemGroup>

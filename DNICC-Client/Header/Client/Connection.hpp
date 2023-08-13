@@ -27,46 +27,6 @@ namespace ClientLib
 {
 	namespace Client
 	{
-		void InitiateJoiningHost(CentralLib::ClientInterfacing::StrippedClientTracker* hostObject); /* forward delecration */
-	}
-
-	namespace ClientInterfacing
-	{
-		class StrippedClientTracker : public CentralLib::ClientInterfacing::StrippedClientTracker
-		{
-		public:
-			StrippedClientTracker(const std::wstring& username)
-			{
-				ClientUsername = username;
-			}
-
-			/// <summary>
-			/// Creates clickable entries for all servers
-			/// </summary>
-			/// <param name="ui">- pointer to ui</param>
-			static inline void GenerateServerEntries(Ui::MainWindowClass* ui)
-			{
-				for (int i = 0; i <= ClientArray.GetLastArrayIndex(); i++)
-				{
-					CentralLib::ClientInterfacing::StrippedClientTracker* currentEntry = ClientArray[i];
-
-					QPushButton* serverEntry = new QPushButton();
-					std::wstring entryName = std::format(L"IP: {}", NosLib::String::ToWstring(currentEntry->ReturnIPAddress()));
-					serverEntry->setObjectName(entryName);
-					serverEntry->setText(QString::fromStdWString(entryName));
-					QMainWindow::connect(serverEntry, &QPushButton::released, [currentEntry]()
-					{
-						ClientLib::Client::InitiateJoiningHost(currentEntry);
-					});
-
-					ui->ServerSelectionVerticalLayout->addWidget(serverEntry);
-				}
-			}
-		};
-	}
-
-	namespace Client
-	{
 		/// <summary>
 		/// Function ran if User chose to be a client
 		/// </summary>

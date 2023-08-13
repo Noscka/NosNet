@@ -8,6 +8,8 @@
 #include <Central/CentralLib.hpp>
 #include <Central/Communication.hpp>
 
+#include "ClientManagement\ClientEntry.hpp"
+
 namespace ClientLib
 {
 	namespace Communications
@@ -16,7 +18,7 @@ namespace ClientLib
 		class MessageObject
 		{
 		protected:
-			CentralLib::ClientInterfacing::StrippedClientTracker* UserInfo;
+			ClientLib::ClientEntry* UserInfo;
 			std::wstring Message;
 
 			friend class boost::serialization::access;
@@ -27,7 +29,7 @@ namespace ClientLib
 				archive& Message;
 			}
 		public:
-			MessageObject(CentralLib::ClientInterfacing::StrippedClientTracker* userInfo, const std::wstring& message)
+			MessageObject(ClientLib::ClientEntry* userInfo, const std::wstring& message)
 			{
 				UserInfo = userInfo;
 				Message = message;
@@ -38,7 +40,7 @@ namespace ClientLib
 				DeserializeObject(Streambuf);
 			}
 
-			CentralLib::ClientInterfacing::StrippedClientTracker* GetUserInfo()
+			ClientLib::ClientEntry* GetUserInfo()
 			{
 				return UserInfo;
 			}
@@ -61,7 +63,7 @@ namespace ClientLib
 				ia&* this;
 			}
 
-			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, CentralLib::ClientInterfacing::StrippedClientTracker* userInfo, const std::wstring& message)
+			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, ClientLib::ClientEntry* userInfo, const std::wstring& message)
 			{
 				boost::asio::streambuf tempBuf;
 				CentralLib::Write(connectionSocket, *(MessageObject(userInfo, message).SerializeObject(&tempBuf)));

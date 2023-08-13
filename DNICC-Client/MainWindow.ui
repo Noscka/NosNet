@@ -13,249 +13,182 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QStackedWidget" name="stackedWidget">
-   <property name="currentIndex">
+  <widget class="QWidget" name="CentralWidget">
+   <property name="currentIndex" stdset="0">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="DEBUG_ENTRY">
-    <widget class="QWidget" name="gridLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>180</y>
-       <width>411</width>
-       <height>88</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0">
       <property name="spacing">
-       <number>0</number>
+       <number>10</number>
       </property>
-      <item row="0" column="2" rowspan="2">
-       <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="DirectButton">
+        <property name="text">
+         <string>Direct</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="GroupsButton">
+        <property name="text">
+         <string>Groups</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ServersButton">
+        <property name="text">
+         <string>Servers</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QStackedWidget" name="MainStackedWidget">
+      <widget class="QWidget" name="ConnectionChoicePage">
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <property name="spacing">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QRadioButton" name="NormalSelection">
-          <property name="text">
-           <string>Normal (connect to others)</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="HostSelection">
-          <property name="text">
-           <string>Host (others connect to you)</string>
-          </property>
+        <item row="0" column="0">
+         <widget class="QStackedWidget" name="ConnectionStacked">
+          <widget class="QWidget" name="GroupsChoicePage">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="ServerList" name="GroupsChoiceScrollArea">
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="DirectChoicePage">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="ServerList" name="DirectChoiceScrollArea">
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="DedicatedChoicePage">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="ServerList" name="DedicatedChoiceScrollArea">
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="HostNameText">
-        <property name="text">
-         <string>localhost</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QPushButton" name="HostNameEntry">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Connect</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="HostnameLabel">
-        <property name="text">
-         <string>Hostname: </string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="ServerSelectionPage">
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <layout class="QVBoxLayout" name="ServerSelectionVerticalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="Login">
-    <widget class="QWidget" name="gridLayoutWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>210</y>
-       <width>331</width>
-       <height>121</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <item row="1" column="0" colspan="2">
-       <widget class="QPushButton" name="LoginButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Login</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="LoginTextbox">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="LoginLabel">
-        <property name="text">
-         <string>Username</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLabel" name="LoginErrorLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="Chat">
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>230</y>
-       <width>161</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Add Join/Leave here</string>
-     </property>
-    </widget>
-    <widget class="ChatFeed" name="ChatFeedScroll">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>20</y>
-       <width>670</width>
-       <height>400</height>
-      </rect>
-     </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="ChatLineEdit" name="ChatTextBar">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>420</y>
-       <width>670</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="ClientListPage">
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <layout class="QVBoxLayout" name="ServerSelectionVerticalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="ClientList" name="ClientListScroll">
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
       </widget>
-     </item>
-    </layout>
-   </widget>
+      <widget class="QWidget" name="ChatPage"/>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>ChatFeed</class>
+   <class>ServerList</class>
    <extends>QScrollArea</extends>
-   <header>CustomWidgets\ChatDisplay.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ChatLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>CustomWidgets\ChatLineEdit.hpp</header>
-  </customwidget>
-  <customwidget>
-   <class>ClientList</class>
-   <extends>QScrollArea</extends>
-   <header>CustomWidgets\ClientList.hpp</header>
+   <header>CustomWidgets\ServerList.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

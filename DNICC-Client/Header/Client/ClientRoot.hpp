@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Central/CentralLib.hpp>
+#include "..\ClientManagement\ClientEntry.hpp"
 
 namespace ClientLib
 {
 	namespace Client
 	{
-		static inline CentralLib::ClientInterfacing::StrippedClientTracker* clientObject;
+		static inline ClientLib::ClientEntry* ThisClient;
 	}
 }

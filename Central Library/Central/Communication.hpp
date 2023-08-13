@@ -71,8 +71,8 @@ namespace CentralLib
         public:
             enum class InformationCodes : uint8_t
             {
-                GoingClientPath = 0,
-                GoingHostingPath = 1,
+                RequestServerArray =0,
+                /* Register Server */
                 Ready = 2, /* Message from Client which tells the server that it is ready for the next step */
             };
         protected:

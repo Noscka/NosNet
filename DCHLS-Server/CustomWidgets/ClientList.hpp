@@ -5,7 +5,7 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets\QLabel>
 #include <QPalette>
-#include "Central\CentralLib.hpp"
+#include "..\Header\ServerManager.hpp"
 
 class ClientList : public QScrollArea
 {
@@ -15,9 +15,9 @@ protected:
 	QWidget* ChatFeedWidget;
 
 public slots:
-	void ClientConnected(CentralLib::ClientInterfacing::StrippedClientTracker* client)
+	void AddNewServerEntry(ServerLib::ServerManager* newServerEntry)
 	{
-		AddClient(client);
+		AddServerEntry(newServerEntry);
 	}
 
 public:
@@ -34,7 +34,7 @@ public:
 		QCoreApplication::processEvents();
 	}
 
-	void AddClient(CentralLib::ClientInterfacing::StrippedClientTracker* client)
+	void AddServerEntry(ServerLib::ServerManager* newServerEntry)
 	{
 		/* Create message object */
 		QWidget* clientContainer = new QWidget(this);
@@ -46,18 +46,18 @@ public:
 		clientContainer->setLayout(clientLayout);
 
 		QLabel* username = new QLabel();
-		username->setText(QString::fromStdWString(client->GetUsername()));
+		username->setText(QString::fromStdWString(newServerEntry->GetServerName()));
 		QFont usernameFont = username->font();
 		usernameFont.setPointSize(16);
 		username->setFont(usernameFont);
 		clientLayout->addWidget(username);
 
 		QLabel* userStatus = new QLabel();
-		userStatus->setText(QString::fromStdWString(client->GetUserStatusAsWstring()));
+		userStatus->setText(QString::fromStdWString(L"IMPLEMENT SERVER TYPE AS STRING"));
 		clientLayout->addWidget(userStatus);
 
 		QLabel* ipAddress = new QLabel();
-		ipAddress->setText(QString::fromStdString(client->ReturnIPAddress()));
+		ipAddress->setText(QString::fromStdString(newServerEntry->GetIpAddressAsString()));
 		clientLayout->addWidget(ipAddress);
 		/* Create message object */
 

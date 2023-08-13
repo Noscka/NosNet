@@ -50,7 +50,7 @@ public:
 		messageContainer->setLayout(messageLayout);
 
 		QLabel* username = new QLabel();
-		username->setText(QString::fromStdWString(receivedMessage.GetUserInfo()->GetUsername()));
+		username->setText(QString::fromStdWString(receivedMessage.GetUserInfo()->GetClientName()));
 		QFont usernameFont = username->font();
 		usernameFont.setPointSize(16);
 		username->setFont(usernameFont);

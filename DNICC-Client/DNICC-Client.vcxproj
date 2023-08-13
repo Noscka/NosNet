@@ -143,9 +143,10 @@
   <ItemGroup>
     <QtMoc Include="CustomWidgets\ChatDisplay.hpp" />
     <QtMoc Include="CustomWidgets\ChatLineEdit.hpp" />
-    <QtMoc Include="CustomWidgets\ClientList.hpp" />
-    <ClInclude Include="Header\StartUp.hpp" />
+    <QtMoc Include="CustomWidgets\ServerList.hpp" />
     <QtMoc Include="Header\Client\SendReceive.hpp" />
+    <ClInclude Include="Header\ClientManagement\ClientEntry.hpp" />
+    <ClInclude Include="Header\ClientManagement\ClientManager.hpp" />
     <ClInclude Include="Header\Client\ClientRoot.hpp" />
     <ClInclude Include="Header\Client\Connection.hpp" />
     <ClInclude Include="Header\GlobalRoot.hpp" />

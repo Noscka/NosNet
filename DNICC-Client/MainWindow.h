@@ -9,12 +9,12 @@
 #include <QtWidgets/QLineEdit>
 #include "ui_MainWindow.h"
 
-#include "Central/CentralLib.hpp"
-#include "Central/Logging.hpp"
+#include <Central/CentralLib.hpp>
+#include <Central/Logging.hpp>
+#include <Central/ServerEntry.hpp>
 
-#include "Header/StartUp.hpp"
-#include "Header/Client/Connection.hpp"
-#include "Header/Host/Host.hpp"
+#include "Header/GlobalRoot.hpp"
+#include "Header/Communication.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindowClass; };
@@ -32,66 +32,60 @@ public:
 		GlobalRoot::UI = ui;
 
 		ui->setupUi(this);
-		/* START PAGE */
-		connect(ui->HostNameEntry, &QPushButton::released, this, &MainWindow::ProcessUserInput);
 
-		connect(ui->NormalSelection, &QRadioButton::clicked, this, [&]() { ui->HostNameEntry->setEnabled(true); });
-		connect(ui->HostSelection, &QRadioButton::clicked, this, [&]() { ui->HostNameEntry->setEnabled(true); });
-		/* START PAGE */
+		/*
+		Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
+		Host - Hostname/Ip address
+		Service - Service(Hostname for ports)/Port number
+		*/
+		boost::asio::connect(*GlobalRoot::ConnectionSocket, boost::asio::ip::tcp::resolver(*GlobalRoot::IOContext).resolve(Constants::DefaultHostname, Constants::DefaultPort));
+		CentralLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", false);
 
-		/* LOGIN PAGE */
-		connect(ui->LoginTextbox, &QLineEdit::textChanged, this, [&]()
+		/* receive server array from server to display in menu */
+		ReceiveServerArray();
+
+		/* MAIN PAGE */
+		connect(ui->DirectButton, &QPushButton::released, this, [&]() { ui->MainStackedWidget->setCurrentIndex(1); ui->ConnectionStacked->setCurrentIndex(0); });
+		connect(ui->GroupsButton, &QRadioButton::clicked, this, [&]() { ui->MainStackedWidget->setCurrentIndex(1); ui->ConnectionStacked->setCurrentIndex(1); });
+		connect(ui->ServersButton, &QRadioButton::clicked, this, [&]() { ui->MainStackedWidget->setCurrentIndex(1); ui->ConnectionStacked->setCurrentIndex(2); });
+		/* MAIN PAGE */
+
+		/* FILL DIFFERENT CONNECTION PAGES */
+		for (CentralLib::ServerEntry* entry : CentralLib::ServerEntry::ServerRegistry)
 		{
-			/* if no text or more then 30, blackout box */
-			if (ui->LoginTextbox->text().length() <= 0 || ui->LoginTextbox->text().length() > 30)
+			switch (entry->GetServerType())
 			{
-				ui->LoginButton->setEnabled(false);
-				return;
+			case CentralLib::ServerEntry::enServerType::Direct:
+				ui->DirectChoiceScrollArea->AddServerEntry(entry);
+				break;
+			case CentralLib::ServerEntry::enServerType::Group:
+				ui->GroupsChoiceScrollArea->AddServerEntry(entry);
+				break;
+			case CentralLib::ServerEntry::enServerType::Dedicated:
+				ui->DedicatedChoiceScrollArea->AddServerEntry(entry);
+				break;
 			}
-
-			ui->LoginButton->setEnabled(true);
-		});
-
-		connect(ui->LoginButton, &QPushButton::released, &ClientLib::Client::ValidateUsername);
-		/* LOGIN PAGE */
-
-		/* CHAT PAGE */
-		connect(ui->ChatTextBar, &ChatLineEdit::SentMessage, ui->ChatFeedScroll, &ChatFeed::ReceiveMessage);
-		/* CHAT PAGE */
+		}
+		/* FILL DIFFERENT CONNECTION PAGES */
 	}
 
     ~MainWindow()
 	{
 		delete ui;
 	}
-
 protected:
-	void ProcessUserInput()
+	void ReceiveServerArray()
 	{
-		/*
-		Connects to the function using `resolver` which resolves the address e.g. (Noscka.com -> 123.123.123.123)
-		Host - Hostname/Ip address
-		Service - Service(Hostname for ports)/Port number
-		*/
-		boost::asio::connect((*GlobalRoot::ConnectionSocket), boost::asio::ip::tcp::resolver(*GlobalRoot::IOContext).resolve(ui->HostNameText->text().toStdString(), Constants::DefaultPort));
-		CentralLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", false);
+		/* Aliased with using StrippedClientTracker */
+		using AliasedClientReponse = ClientLib::Communications::ClientResponse;
 
-		switch (ClientLib::StartUp::GatherClientMode(ui))
-		{
-		case ClientLib::StartUp::UserMode::Client:
-		{
-			CentralLib::Logging::CreateLog<wchar_t>(L"User Became Client\n", false);
-			ClientLib::Client::StartClient();
-			break;
-		}
+		/* Tell server which path going down */
+		AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::RequestServerArray, L"requesting server array");
 
-		case ClientLib::StartUp::UserMode::Hosting:
-		{
-			CentralLib::Logging::CreateLog<wchar_t>(L"Client Hosting a Communications server\n", false);
-			ClientLib::Hosting::StartHosting();
-			break;
-		}
-		}
+		/* Receive array */
+		boost::asio::streambuf ContentBuffer;
+		boost::asio::read_until((*GlobalRoot::ConnectionSocket), ContentBuffer, Definition::Delimiter);
+		CentralLib::ServerEntry::DeserializeArray(&ContentBuffer);
 	}
 
 private:

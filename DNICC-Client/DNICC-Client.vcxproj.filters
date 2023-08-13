@@ -48,7 +48,7 @@
     <QtMoc Include="Header\Client\SendReceive.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="CustomWidgets\ClientList.hpp">
+    <QtMoc Include="CustomWidgets\ServerList.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Header\Host\Host.hpp">
@@ -56,9 +56,6 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header\StartUp.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Communication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\Client\ClientRoot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ClientManagement\ClientEntry.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ClientManagement\ClientManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
