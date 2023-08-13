@@ -34,7 +34,7 @@ namespace ServerLib
 			void AddNewServerEntry(ServerLib::ServerManager* connectedClient);
 		private:
 			boost::asio::ip::tcp::socket ConnectionSocket;
-			ServerLib::ServerManager* ServerSessionAttached;
+			ServerLib::ServerManager* ServerManagerAttached = nullptr;
 
 			ClientConnectionHandle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 
@@ -61,13 +61,23 @@ namespace ServerLib
 						ServerLib::Processing::RequestedServerArray(&ConnectionSocket);
 						break;
 
-					//case CentralLib::Communications::CentralizedClientResponse::InformationCodes::GoingHostingPath:
-					//	CentralLib::Logging::CreateLog<wchar_t>(L"DNICC is hosting\n", false);
-					//	ServerLib::Processing::UserHostPath(&ConnectionSocket, ClientTrackerAttached);
-					//	break;
+					case CentralLib::Communications::CentralizedClientResponse::InformationCodes::RegisterDirectServer:
+						CentralLib::Logging::CreateLog<wchar_t>(L"DNICC is registering a direct server\n", false);
+						ServerLib::Processing::RegisterDirectServer(&ConnectionSocket, &ServerManagerAttached, clientReponse.GetAdditionalInformation());
+						emit AddNewServerEntry(ServerManagerAttached);
+						break;
+					case CentralLib::Communications::CentralizedClientResponse::InformationCodes::RegisterGroupServer:
+						CentralLib::Logging::CreateLog<wchar_t>(L"DNICC is registering a group server\n", false);
+						CentralLib::Logging::CreateLog<wchar_t>(L"NOT IMPLEMENTED\n", false);
+						emit AddNewServerEntry(ServerManagerAttached);
+						break;
+					case CentralLib::Communications::CentralizedClientResponse::InformationCodes::RegisterDedicatedServer:
+						CentralLib::Logging::CreateLog<wchar_t>(L"DNICC is registering a Dedicated server\n", false);
+						CentralLib::Logging::CreateLog<wchar_t>(L"NOT IMPLEMENTED\n", false);
+						emit AddNewServerEntry(ServerManagerAttached);
+						break;
 					}
 
-					//emit AddNewServerEntry(ClientTrackerAttached); CHANGE IMPLEMENATION
 				}
 				catch (const std::exception& e)
 				{

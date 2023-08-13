@@ -27,10 +27,10 @@ namespace ServerLib
 			CentralLib::Logging::CreateLog<wchar_t>(L"Sent Server Array\n", false);
 		}
 
-		//inline void UserHostPath(boost::asio::ip::tcp::socket* connectionSocket, AliasedClientTracker*& currentConnectionClientTracker)
-		//{
-		//    currentConnectionClientTracker = AliasedClientTracker::RegisterClient(L"SERVER", CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Hosting, connectionSocket);
-		//}
+		inline void RegisterDirectServer(boost::asio::ip::tcp::socket* connectionSocket, ServerLib::ServerManager** serverManager, const std::wstring& serverName)
+		{
+			(*serverManager) = ServerLib::ServerManager::RegisterServer(serverName, ServerLib::ServerManager::enServerType::Direct, ServerLib::ServerManager::enServerStatus::Online, connectionSocket);
+		}
 	}
 }
 

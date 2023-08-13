@@ -95,6 +95,17 @@ namespace CentralLib
 
             return true;
         }
+
+		/// <summary>
+		/// Validates server name (central so changes are global)
+		/// </summary>
+		/// <param name="username">- username to validate</param>
+		/// <returns>true if valid, False if invalid</returns>
+        inline bool ValidateServerName(const std::wstring& serverName)
+        {
+            /* just use username validation for now */
+            return ValidateUsername(serverName);
+        }
     }
 }
 #endif

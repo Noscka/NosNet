@@ -5,8 +5,11 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets\QLabel>
 #include <QPalette>
-#include "..\Header\Communication.hpp"
 
+#include "..\Header\Communication.hpp"
+#include "..\Header\ClientManagement\ClientManager.hpp"
+
+#include <format>
 
 class ChatFeed : public QScrollArea
 {
@@ -20,6 +23,13 @@ public slots:
 	{
 		NewMessage(receivedMessage);
 	}
+
+	void ClientConnected(ClientLib::ClientManager* connectedClient)
+	{
+		ClientLib::Communications::MessageObject tempMessageObject(connectedClient, std::format(L"{} connected", connectedClient->GetClientName()));
+		NewMessage(tempMessageObject);
+	}
+
 
 public:
 	ChatFeed(QWidget* parent = nullptr) : QScrollArea(parent)
@@ -35,11 +45,8 @@ public:
 		QCoreApplication::processEvents();
 	}
 
-	void NewMessage(/* const */ ClientLib::Communications::MessageObject& receivedMessage)
+	void NewMessage(ClientLib::Communications::MessageObject& receivedMessage)
 	{
-		//QPalette messagePalette;
-		//messagePalette.setColor(QPalette::Window, QColor::fromRgb(10, 10, 10));
-
 		/* Create message object */
 		QWidget* messageContainer = new QWidget(this);
 		messageContainer->setAutoFillBackground(true);

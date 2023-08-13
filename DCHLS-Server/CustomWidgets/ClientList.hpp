@@ -45,19 +45,24 @@ public:
 		clientLayout->setContentsMargins(6, 6, 6, 6);
 		clientContainer->setLayout(clientLayout);
 
+		/* TODO: build qt from source, otherwise there is an error with the character conversion */
+
 		QLabel* username = new QLabel();
-		username->setText(QString::fromStdWString(newServerEntry->GetServerName()));
+		//username->setText(QString::fromStdWString(newServerEntry->GetServerName()));
+		username->setText(QString::fromWCharArray(newServerEntry->GetServerName().c_str()));
 		QFont usernameFont = username->font();
 		usernameFont.setPointSize(16);
 		username->setFont(usernameFont);
 		clientLayout->addWidget(username);
 
 		QLabel* userStatus = new QLabel();
-		userStatus->setText(QString::fromStdWString(L"IMPLEMENT SERVER TYPE AS STRING"));
+		//userStatus->setText(QString::fromStdWString(L"IMPLEMENT SERVER TYPE AS STRING"));
+		userStatus->setText(QString::fromWCharArray(L"IMPLEMENT SERVER TYPE AS STRING"));
 		clientLayout->addWidget(userStatus);
 
 		QLabel* ipAddress = new QLabel();
-		ipAddress->setText(QString::fromStdString(newServerEntry->GetIpAddressAsString()));
+		//ipAddress->setText(QString::fromStdWString(newServerEntry->GetIpAddressAsWString()));
+		ipAddress->setText(QString::fromWCharArray(newServerEntry->GetIpAddressAsWString().c_str()));
 		clientLayout->addWidget(ipAddress);
 		/* Create message object */
 

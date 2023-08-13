@@ -32,6 +32,12 @@ namespace ClientLib
 			ClientRegistry.Append(this);
 		}
 
+		ClientManager(const std::wstring& clientName, const enClientStatus& clientStatus)
+		{
+			ClientName = clientName;
+			ClientStatus = clientStatus;
+		}
+
 	public:
 
 		boost::asio::ip::tcp::socket* GetConnectionSocket()
@@ -45,6 +51,17 @@ namespace ClientLib
 		void ChangeStatus(const enClientStatus& newClientStatus)
 		{
 			ClientStatus = newClientStatus;
+		}
+
+		/// <summary>
+		/// static constructor used to register self, acts different then RegisterClient
+		/// </summary>
+		/// <param name="clientName"></param>
+		/// <param name="clientStatus"></param>
+		/// <returns></returns>
+		static ClientManager* RegisterSelf(const std::wstring& clientName, const enClientStatus& clientStatus)
+		{
+			return new ClientManager(clientName, clientStatus);
 		}
 
 		/// <summary>

@@ -71,9 +71,11 @@ namespace CentralLib
         public:
             enum class InformationCodes : uint8_t
             {
-                RequestServerArray =0,
-                /* Register Server */
-                Ready = 2, /* Message from Client which tells the server that it is ready for the next step */
+                RequestServerArray = 0,
+                RegisterDirectServer = 1,
+                RegisterGroupServer = 2,
+                RegisterDedicatedServer = 3, 
+                Ready = 4, /* Message from Client which tells the server that it is ready for the next step */
             };
         protected:
             friend class boost::serialization::access;

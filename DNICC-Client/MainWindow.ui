@@ -95,6 +95,70 @@
         </property>
         <item row="0" column="0">
          <widget class="QStackedWidget" name="ConnectionStacked">
+          <widget class="QWidget" name="DirectChoicePage">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="DirectConnectionLabel">
+                <property name="text">
+                 <string>Direct Connections</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="DirectJoinDirectButton">
+                <property name="text">
+                 <string>Join with IP</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="DirectCreateButton">
+                <property name="text">
+                 <string>Create</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="ServerList" name="DirectChoiceScrollArea">
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
           <widget class="QWidget" name="GroupsChoicePage">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <property name="spacing">
@@ -114,6 +178,13 @@
             </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="GroupsConnectionLabel">
+                <property name="text">
+                 <string>Group Servers</string>
+                </property>
+               </widget>
+              </item>
               <item>
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">
@@ -152,63 +223,6 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="DirectChoicePage">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
-              <item>
-               <spacer name="horizontalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QPushButton" name="GroupsJoinDirectButton">
-                <property name="text">
-                 <string>Join with IP</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="GroupsCreateButton">
-                <property name="text">
-                 <string>Create</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="ServerList" name="DirectChoiceScrollArea">
-              <property name="widgetResizable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
           <widget class="QWidget" name="DedicatedChoicePage">
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <property name="spacing">
@@ -229,6 +243,13 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
+               <widget class="QLabel" name="DedicatedConnectionLabel">
+                <property name="text">
+                 <string>Dedicated Servers</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer_5">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -242,14 +263,14 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="GroupsJoinDirectButton">
+               <widget class="QPushButton" name="DedicatedJoinDirectButton">
                 <property name="text">
                  <string>Join with IP</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="GroupsCreateButton">
+               <widget class="QPushButton" name="DedicatedCreateButton">
                 <property name="text">
                  <string>Create</string>
                 </property>
@@ -270,7 +291,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="ChatPage">
+      <widget class="QWidget" name="ConnectedPage">
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <property name="spacing">
          <number>0</number>
@@ -288,7 +309,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QStackedWidget" name="stackedWidget">
+         <widget class="QStackedWidget" name="ChatStackedWidget">
           <widget class="QWidget" name="LoginPage">
            <widget class="QWidget" name="gridLayoutWidget_2">
             <property name="geometry">
@@ -320,7 +341,7 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="LoginTextbox">
+              <widget class="QLineEdit" name="LoginLineEdit">
                <property name="text">
                 <string/>
                </property>
@@ -351,6 +372,19 @@
              </item>
             </layout>
            </widget>
+           <widget class="QLabel" name="LoginPageLabel">
+            <property name="geometry">
+             <rect>
+              <x>340</x>
+              <y>70</y>
+              <width>81</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Login Page</string>
+            </property>
+           </widget>
           </widget>
           <widget class="QWidget" name="ChatPage">
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -371,6 +405,13 @@
             </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QLabel" name="ChatLabel">
+                <property name="text">
+                 <string>Chat</string>
+                </property>
+               </widget>
+              </item>
               <item>
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
@@ -431,6 +472,13 @@
                <number>0</number>
               </property>
               <item>
+               <widget class="QLabel" name="ClientListLabel">
+                <property name="text">
+                 <string>Client List</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -466,6 +514,188 @@
              </widget>
             </item>
            </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="CreationPage">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QTabWidget" name="CreationTabWidget">
+          <property name="tabPosition">
+           <enum>QTabWidget::North</enum>
+          </property>
+          <property name="tabShape">
+           <enum>QTabWidget::Triangular</enum>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="CreateDirectTab">
+           <attribute name="title">
+            <string>Create Direct</string>
+           </attribute>
+           <widget class="QWidget" name="gridLayoutWidget_3">
+            <property name="geometry">
+             <rect>
+              <x>230</x>
+              <y>170</y>
+              <width>331</width>
+              <height>121</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item row="1" column="0" colspan="2">
+              <widget class="QPushButton" name="CreateDirectButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Host</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="CreateDirectLineEdit">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QLabel" name="CreateDirectErrorLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="CreateDirectLabel">
+               <property name="text">
+                <string>Direct Name: </string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="CreateGroupTab">
+           <attribute name="title">
+            <string>Create Group</string>
+           </attribute>
+           <widget class="QWidget" name="gridLayoutWidget_4">
+            <property name="geometry">
+             <rect>
+              <x>250</x>
+              <y>160</y>
+              <width>331</width>
+              <height>121</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item row="1" column="0" colspan="2">
+              <widget class="QPushButton" name="CreateGroupButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Host</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="CreateGroupLineEdit">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QLabel" name="CreateGroupErrorLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="CreateGroupLabel">
+               <property name="text">
+                <string>Group Name:</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="CreateServerTab">
+           <attribute name="title">
+            <string>Create Server</string>
+           </attribute>
+           <widget class="QLabel" name="label">
+            <property name="geometry">
+             <rect>
+              <x>200</x>
+              <y>200</y>
+              <width>391</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>IMPLEMENT, Dedicated server will have its own program</string>
+            </property>
+           </widget>
           </widget>
          </widget>
         </item>

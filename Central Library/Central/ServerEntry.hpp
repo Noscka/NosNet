@@ -129,9 +129,9 @@ namespace CentralLib
 		/// Get the current client's ip address as a string
 		/// </summary>
 		/// <returns>the ip address</returns>
-		std::string GetIpAddressAsString()
+		std::wstring GetIpAddressAsWString()
 		{
-			return TargetEndpoint->address().to_v4().to_string();
+			return NosLib::String::ToWstring(TargetEndpoint->address().to_v4().to_string());
 		}
 
 		/// <summary>
@@ -142,10 +142,9 @@ namespace CentralLib
 		static void SerializeArray(std::streambuf* Streambuf, const int& positionToIngore = -1)
 		{
 			boost::archive::binary_oarchive oa(*Streambuf);
-			int clientHostingCount = 0;
 
 			/* Serialize the int containing the amount of entries in array */
-			oa& (clientHostingCount - (positionToIngore != -1 ? 1 : 0));
+			oa& (ServerRegistry.GetItemCount() - (positionToIngore != -1 ? 1 : 0));
 
 			for (int i = 0; i <= ServerRegistry.GetLastArrayIndex(); i++)
 			{

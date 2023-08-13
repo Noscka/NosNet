@@ -21,6 +21,8 @@
 #include "..\ClientManagement\ClientManager.hpp"
 #include "..\GlobalRoot.hpp"
 
+/* NOT YET IMPLEMENT, CLOSEST TO GROUP HOST */
+
 namespace ClientLib
 {
 	namespace Hosting

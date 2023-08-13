@@ -8,7 +8,8 @@
 #include <QKeyEvent>
 
 #include "..\Header\Client\SendReceive.hpp"
-#include "..\Header\Client\ClientRoot.hpp"
+#include "..\Header\GlobalRoot_Int.hpp"
+#include "..\Header\GlobalRoot_Ext.hpp"
 
 class ChatLineEdit : public QLineEdit
 {
@@ -47,7 +48,7 @@ protected:
 			return;
 		}
 
-		ClientLib::Communications::MessageObject messageObject(ClientLib::Client::ThisClient, text().toStdWString());
+		ClientLib::Communications::MessageObject messageObject(GlobalRoot::ThisClient, text().toStdWString());
 
 		/* if enter key, then send the message */
 		emit SentMessage(messageObject);

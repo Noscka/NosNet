@@ -5,9 +5,13 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
+#include <QtWidgets/QApplication>
+
+/* this root contains items which are defined externality, so they won't cause dependency loops */
 
 namespace GlobalRoot
 {
+	inline QApplication* AppPointer = nullptr;
 	inline boost::asio::ip::tcp::socket* ConnectionSocket;
 	inline boost::asio::io_context* IOContext;
 }

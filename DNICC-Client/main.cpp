@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
     GlobalRoot::AppPointer = &a;
-    QApplication::setStyle("Fusion");
+    //QApplication::setStyle("Fusion");
     MainWindow w;
     w.show();
     return a.exec();

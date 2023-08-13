@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QtWidgets/QApplication>
 #include "ui_MainWindow.h"
+
+/* this root contains only the ui, this causes most dependency loops */
 
 namespace GlobalRoot
 {
-	inline QApplication* AppPointer = nullptr;
 	inline Ui::MainWindowClass* UI;
 }

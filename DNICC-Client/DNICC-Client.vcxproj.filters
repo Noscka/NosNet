@@ -51,10 +51,16 @@
     <QtMoc Include="CustomWidgets\ServerList.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Header\Host\Host.hpp">
+    <QtMoc Include="Header\Host\GroupHost.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="CustomWidgets\ClientList.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Header\Host\DirectHost.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CustomWidgets\ServerEntryContainer.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -62,25 +68,28 @@
     <ClInclude Include="Header\Communication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalUIRoot.hpp">
+    <ClInclude Include="Header\GlobalRoot_Int.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Client\Connection.hpp">
+    <ClInclude Include="Header\Client\Connect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalASIORoot.hpp">
+    <ClInclude Include="Header\GlobalRoot_Ext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalRoot.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Client\ClientRoot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\ClientManagement\ClientEntry.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\ClientManagement\ClientManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Host\HostCommunication.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\GlobalRoot_Int_ui.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
