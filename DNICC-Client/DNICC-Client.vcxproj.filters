@@ -39,7 +39,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="CustomWidgets\ChatDisplay.hpp">
+    <QtMoc Include="CustomWidgets\ChatFeed.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="CustomWidgets\ChatLineEdit.hpp">
@@ -52,6 +52,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Header\Host\Host.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CustomWidgets\ClientList.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
