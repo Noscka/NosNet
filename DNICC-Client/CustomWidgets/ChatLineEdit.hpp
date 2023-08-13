@@ -47,7 +47,7 @@ protected:
 			return;
 		}
 
-		ClientLib::Communications::MessageObject messageObject(ClientLib::Client::clientObject, text().toStdWString());
+		ClientLib::Communications::MessageObject messageObject(ClientLib::Client::ThisClient, text().toStdWString());
 
 		/* if enter key, then send the message */
 		emit SentMessage(messageObject);

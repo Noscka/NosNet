@@ -7,6 +7,8 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
+#include <QThread>
+
 #include <NosLib/DynamicArray.hpp>
 #include <NosLib/String.hpp>
 
@@ -16,6 +18,7 @@
 #include "..\DCHLS-Server\Header\Communication.hpp" /* TEMP */
 
 #include "..\Communication.hpp"
+#include "..\ClientManagement\ClientManager.hpp"
 #include "..\GlobalRoot.hpp"
 
 namespace ClientLib
@@ -27,19 +30,19 @@ namespace ClientLib
 			Q_OBJECT
 
 		signals:
-			void ClientConnected(CentralLib::ClientManagement::ClientTracker* receivedMessage);
+			void ClientConnected(ClientLib::ClientManager* connectedClient);
 
 		private:
 			boost::asio::ip::tcp::socket ConnectionSocket;
-			CentralLib::ClientManagement::ClientTracker* ClientTrackerAttached;
+			ClientLib::ClientManager* ClientManagerAttached;
 
 			ClientConnectionHandle(boost::asio::io_context& io_context) : ConnectionSocket(io_context) {}
 
 			void UserDisconnects()
 			{
-				ClientTrackerAttached->ChangeStatus(CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Offline);
+				ClientManagerAttached->ChangeStatus(ClientLib::ClientManager::enClientStatus::Offline);
 
-				ClientLib::Communications::MessageObject tempMessageObject(ClientTrackerAttached, L"Client has left");
+				ClientLib::Communications::MessageObject tempMessageObject(ClientManagerAttached, L"Client has left");
 
 				SendToAll(&tempMessageObject, false);
 			}
@@ -49,14 +52,16 @@ namespace ClientLib
 				boost::asio::streambuf tempStreamBuf;
 				messageObject->SerializeObject(&tempStreamBuf); /* serialize into a buffer, which will be used to send to everyone */
 
-				for (CentralLib::ClientInterfacing::StrippedClientTracker* singleClient : *(ClientTrackerAttached->GetClientArray()))
+				for (ClientLib::ClientEntry* clientEntry_ : ClientLib::ClientEntry::ClientRegistry)
 				{
-					if (singleClient == ClientTrackerAttached && !sendToSelfClient)
+					ClientLib::ClientManager* clientEntry = (ClientLib::ClientManager*)clientEntry_;
+
+					if (clientEntry == ClientManagerAttached && !sendToSelfClient)
 					{
 						continue;
 					}
 
-					CentralLib::Write(((CentralLib::ClientManagement::ClientTracker*)singleClient)->GetConnectionSocket(), tempStreamBuf);
+					CentralLib::Write(clientEntry->GetConnectionSocket(), tempStreamBuf);
 				}
 			}
 
@@ -77,11 +82,10 @@ namespace ClientLib
 
 					std::wstring clientsUsername = CentralLib::streamBufferToWstring(&usernameBuffer, lenght);
 
-
 					if (CentralLib::Validation::ValidateUsername(clientsUsername)) /* username is valid */
 					{
 						/* Create ClientTracker Object and attach it to current session */
-						ClientTrackerAttached = CentralLib::ClientManagement::ClientTracker::RegisterClient(clientsUsername, CentralLib::ClientInterfacing::StrippedClientTracker::UserStatus::Client, &ConnectionSocket);
+						ClientManagerAttached = ClientLib::ClientManager::RegisterClient(clientsUsername, ClientLib::ClientManager::enClientStatus::Online, &ConnectionSocket);
 						initialValidation = false;
 						AliasedServerReponse::CreateSerializeSend(&ConnectionSocket, AliasedServerReponse::InformationCodes::Accepted, L"server accepted username");
 					}
@@ -92,7 +96,7 @@ namespace ClientLib
 				}
 
 				/* user connected and is validated */
-				emit ClientConnected(ClientTrackerAttached);
+				emit ClientConnected(ClientManagerAttached);
 
 				try
 				{
@@ -112,7 +116,7 @@ namespace ClientLib
 							throw boost::system::system_error(error); // Some other error
 						}
 
-						ClientLib::Communications::MessageObject messageObject(ClientTrackerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
+						ClientLib::Communications::MessageObject messageObject(ClientManagerAttached, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
 
 						SendToAll(&messageObject, false);
 					}
@@ -166,7 +170,7 @@ namespace ClientLib
 					if (!error)
 					{
 						newConnectionHandle->start();
-						connect(newConnectionHandle, &ClientConnectionHandle::ClientConnected, GlobalRoot::UI->ClientListScroll, &ClientList::ClientConnected);
+						//connect(newConnectionHandle, &ClientConnectionHandle::ClientConnected, GlobalRoot::UI->ClientListScroll, &ClientList::ClientConnected);
 						connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, newConnectionHandle, &QThread::requestInterruption);
 					}
 				}
@@ -178,7 +182,7 @@ namespace ClientLib
 			using AliasedClientReponse = ClientLib::Communications::ClientResponse;
 
 			/* Tell server which path going down */
-			AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::GoingHostingPath, L"User is Hosting");
+			//AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::GoingHostingPath, L"User is Hosting");
 
 			/* Disconnect from DCHLS server */
 			GlobalRoot::ConnectionSocket->cancel();
@@ -186,7 +190,7 @@ namespace ClientLib
 			ClientListenThread* listenThread = new ClientListenThread;
 			listenThread->start();
 			CentralLib::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", false);
-			GlobalRoot::UI->stackedWidget->setCurrentIndex(4);
+			//GlobalRoot::UI->stackedWidget->setCurrentIndex(4);
 
 			/* connect "AboutToQuit" signal to thread's interrupt signal */
 			QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);

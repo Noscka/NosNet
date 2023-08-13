@@ -12,7 +12,7 @@ namespace ClientLib
 		void serialize(Archive& archive, const unsigned int version)
 		{
 			// serialize base class information
-			archive& boost::serialization::base_object<CentralLib::ClientInterfacing::StrippedClientTracker>(*this);
+			archive& boost::serialization::base_object<ClientLib::ClientEntry>(*this);
 		}
 
 		boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
