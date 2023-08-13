@@ -53,8 +53,7 @@ namespace ClientLib
 
 		inline void SendMessage(const std::wstring& message)
 		{
-			std::string temp = NosLib::String::ToString(message);
-			CentralLib::Write(GlobalRoot::ConnectionSocket, boost::asio::buffer(temp));
+			ClientLib::Communications::MessageObject::CreateSerializeSend(GlobalRoot::ConnectionSocket, GlobalRoot::ThisClient, message);
 		}
 	}
 }
