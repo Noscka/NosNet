@@ -25,5 +25,5 @@ DNICC -> Direct Non-Interfered Communications Client
 
 Qt Build command - JUST SO I REMEMBER HOW TO BUILD STATIC
 ```
-configure.bat -release -opensource -confirm-license -prefix "D:\Libraries\Qt\6.6.0\Build" -nomake examples -nomake tests -skip qtwebengine & cmake --build . --parallel & cmake --install .
+configure.bat -release -prefix "D:\Libraries\Qt\6.6.0\Build" & cmake --build . --parallel & cmake --install .
 ```
