@@ -36,6 +36,6 @@ DNICC -> Direct Non-Interfered Communications Client
 Qt Build command
 ```
 mkdir build && cd build
-..\configure.bat -release -prefix "D:\Libraries\Qt\6.6.0\Build" && cmake --build . --parallel && cmake --install .
+..\configure.bat -prefix "D:\Libraries\Qt\6.6.0\Build" -skip webengine -nomake tests -nomake examples && cmake --build . --parallel && cmake --install .
 ```
 Add Boost Build command (need to find it)
