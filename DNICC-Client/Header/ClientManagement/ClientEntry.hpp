@@ -40,37 +40,25 @@ namespace ClientLib
 		{
 			archive& ClientName;
 			archive& ClientStatus;
-			archive& TargetEndpoint->address().to_string();
-			archive& NosLib::Cast<int>(TargetEndpoint->port());
 		}
 		template<class Archive>
 		void load(Archive& archive, const unsigned int version)
 		{
 			archive& ClientName;
 			archive& ClientStatus;
-
-			std::string ipAddress;
-			int port;
-
-			archive& ipAddress;
-			archive& port;
-
-			TargetEndpoint = new boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ipAddress), port);
 		}
 		BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 		std::wstring ClientName; /* Client's name */
 		enClientStatus ClientStatus; /* Client's status, online or offline */
-		boost::asio::ip::tcp::endpoint* TargetEndpoint; /* Session's ConnectionSocket to get the endpoint from */
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		ClientEntry(const std::wstring& clientName, const enClientStatus& clientStatus, boost::asio::ip::tcp::endpoint* targetEndpoint)
+		ClientEntry(const std::wstring& clientName, const enClientStatus& clientStatus)
 		{
 			ClientName = clientName;
 			ClientStatus = clientStatus;
-			TargetEndpoint = targetEndpoint;
 
 			ClientRegistry.Append(this);
 		}
@@ -81,7 +69,6 @@ namespace ClientLib
 		~ClientEntry() /* on destruction, delete self from Array */
 		{
 			ClientRegistry.ObjectRemove(this, false, false);
-			delete TargetEndpoint;
 		}
 
 		/// <summary>
@@ -96,20 +83,6 @@ namespace ClientLib
 		enClientStatus GetClientStatus()
 		{
 			return ClientStatus;
-		}
-
-		boost::asio::ip::tcp::endpoint* GetEndpoint()
-		{
-			return TargetEndpoint;
-		}
-
-		/// <summary>
-		/// Get the current client's ip address as a string
-		/// </summary>
-		/// <returns>the ip address</returns>
-		std::string GetIpAddressAsString()
-		{
-			return TargetEndpoint->address().to_v4().to_string();
 		}
 
 		/// <summary>

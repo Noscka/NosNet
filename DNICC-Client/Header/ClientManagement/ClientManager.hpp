@@ -29,12 +29,28 @@ namespace ClientLib
 			ClientStatus = clientStatus;
 			SessionConnectionSocket = sessionConnectionSocket;
 
-			boost::asio::ip::tcp::endpoint* tempPointer = new boost::asio::ip::tcp::endpoint(sessionConnectionSocket->remote_endpoint());
-			TargetEndpoint = tempPointer;
-
 			ClientRegistry.Append(this);
 		}
+
+		~ClientManager()
+		{
+			
+		}
 	public:
+
+		boost::asio::ip::tcp::endpoint GetEndpoint()
+		{
+			return SessionConnectionSocket->remote_endpoint();
+		}
+
+		/// <summary>
+		/// Get the current client's ip address as a string
+		/// </summary>
+		/// <returns>the ip address</returns>
+		std::string GetIpAddressAsString()
+		{
+			return SessionConnectionSocket->remote_endpoint().address().to_v4().to_string();
+		}
 
 		boost::asio::ip::tcp::socket* GetConnectionSocket()
 		{
@@ -86,8 +102,6 @@ namespace ClientLib
 			ClientName = clientName;
 			ClientStatus = clientStatus;
 			ClientType = clientType;
-			
-			TargetEndpoint = new boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort));
 		}
 
 	public:
