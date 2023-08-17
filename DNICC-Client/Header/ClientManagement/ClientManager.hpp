@@ -28,12 +28,11 @@ protected:
 
 		ClientRegistry.Append(this);
 	}
-
+public:
 	~ClientManager()
 	{
-			
+
 	}
-public:
 
 	boost::asio::ip::tcp::endpoint GetEndpoint()
 	{

@@ -29,11 +29,16 @@ namespace DirectHost
 		Q_OBJECT
 	signals:
 		void ClientConnected(ClientManager* connectedClient);
+		void ClientDisconnected(ClientManager* disconnectedClient);
 		void ReceivedMessage(Communications::MessageObject receivedMessage);
 
 	public slots:
 		void HostSendMessage(std::wstring message)
 		{
+			if (ConnectedClient->GetClientStatus() != ClientEntry::enClientStatus::Online) /* if anything else than online (offline or anything else I add in the future) */
+			{/* just return */
+				return;
+			}
 			Communications::MessageObject::CreateSerializeSend(ConnectedClient->GetConnectionSocket(), GlobalRoot::ThisClient, message);
 		}
 	protected:
@@ -84,21 +89,31 @@ namespace DirectHost
 				}
 			}
 
+			/* Code before starting the main chat loop */
 			emit ClientConnected(ConnectedClient);
 
-			while (!isInterruptionRequested() && error != boost::asio::error::eof)
+			while (!isInterruptionRequested()) /* chat loop */
 			{
 				boost::asio::streambuf messageBuffer;
-				size_t lenght = boost::asio::read_until((*ConnectedClient->GetConnectionSocket()), messageBuffer, Definition::Delimiter);
+				size_t lenght = boost::asio::read_until((*ConnectedClient->GetConnectionSocket()), messageBuffer, Definition::Delimiter, error);
 
-				if (error)
+				if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset)
 				{
+					break;
+				}
+				else if (error)
+				{
+					Central::Logging::CreateLog<wchar_t>(std::format(L"throwing error: {}", NosLib::String::ToWstring(error.what())), false);
 					throw boost::system::system_error(error); // Some other error
 				}
 
 				Communications::MessageObject messageObject(ConnectedClient, Central::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
 				emit ReceivedMessage(messageObject);
 			}
+
+			/* code after, client disconnected */
+			ConnectedClient->ChangeStatus(ClientManager::enClientStatus::Offline);
+			emit ClientDisconnected(ConnectedClient);
 		}
 	};
 
@@ -123,6 +138,7 @@ namespace DirectHost
 		listenThread->start();
 
 		QObject::connect(listenThread, &ClientListenThread::ClientConnected, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ClientConnected);
+		QObject::connect(listenThread, &ClientListenThread::ClientDisconnected, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ClientDisconnected);
 		QObject::connect(listenThread, &ClientListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
 		QObject::connect(&SendReceive::ChatSend::GetInstance(), &SendReceive::ChatSend::HostSendMessage, listenThread, &ClientListenThread::HostSendMessage);
 		/* connect "AboutToQuit" signal to thread's interrupt signal */

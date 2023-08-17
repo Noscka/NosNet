@@ -18,18 +18,22 @@ protected:
 	QVBoxLayout* ChatFeedLayout;
 	QWidget* ChatFeedWidget;
 
-public slots:
-	void ReceiveMessage(Communications::MessageObject receivedMessage)
-	{
-		NewMessage(receivedMessage);
-	}
-
-	void ClientConnected(ClientManager* connectedClient)
+public slots:void ClientConnected(ClientManager* connectedClient)
 	{
 		Communications::MessageObject tempMessageObject(connectedClient, std::format(L"{} connected", connectedClient->GetClientName()));
 		NewMessage(tempMessageObject);
 	}
 
+	void ClientDisconnected(ClientManager* disconnectedClient)
+	{
+		Communications::MessageObject tempMessageObject(disconnectedClient, std::format(L"{} disconnected", disconnectedClient->GetClientName()));
+		NewMessage(tempMessageObject);
+	}
+
+	void ReceiveMessage(Communications::MessageObject receivedMessage)
+	{
+		NewMessage(receivedMessage);
+	}
 
 public:
 	ChatFeed(QWidget* parent = nullptr) : QScrollArea(parent)

@@ -17,6 +17,7 @@
 #include "Header/Communication.hpp"
 #include "Header/Host/DirectHost.hpp"
 #include "Header/Client/Connect.hpp"
+#include "Header/Disconnect.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindowClass; };
@@ -47,9 +48,9 @@ public:
 		ReceiveServerArray();
 
 		/* MAIN PAGE */
-		connect(ui->DirectButton, &QPushButton::released, this, [&]() { ui->MainStackedWidget->setCurrentIndex(0); ui->ConnectionStacked->setCurrentIndex(0); });
-		connect(ui->GroupsButton, &QPushButton::released, this, [&]() { ui->MainStackedWidget->setCurrentIndex(0); ui->ConnectionStacked->setCurrentIndex(1); });
-		connect(ui->ServersButton, &QPushButton::released, this, [&]() { ui->MainStackedWidget->setCurrentIndex(0); ui->ConnectionStacked->setCurrentIndex(2); });
+		connect(ui->DirectButton, &QPushButton::released, this, [&]() { ui->MainStackedWidget->setCurrentIndex(0); ui->ConnectionStacked->setCurrentIndex(0); Disconnect::DisconnectFromServer(); });
+		connect(ui->GroupsButton, &QPushButton::released, this, [&]() { ui->MainStackedWidget->setCurrentIndex(0); ui->ConnectionStacked->setCurrentIndex(1); Disconnect::DisconnectFromServer(); });
+		connect(ui->ServersButton, &QPushButton::released, this, [&]() { ui->MainStackedWidget->setCurrentIndex(0); ui->ConnectionStacked->setCurrentIndex(2); Disconnect::DisconnectFromServer(); });
 		/* MAIN PAGE */
 
 		/* CONNECTION PAGES */
