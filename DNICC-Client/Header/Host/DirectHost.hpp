@@ -32,6 +32,13 @@ namespace ClientLib
 			Q_OBJECT
 		signals:
 			void ClientConnected(ClientLib::ClientManager* connectedClient);
+			void ReceivedMessage(ClientLib::Communications::MessageObject receivedMessage);
+
+		public slots:
+			void HostSendMessage(std::wstring message)
+			{
+				ClientLib::Communications::MessageObject::CreateSerializeSend(ConnectedClient->GetConnectionSocket(), GlobalRoot::ThisClient, message);
+			}
 		protected:
 			void run() override
 			{
@@ -49,6 +56,7 @@ namespace ClientLib
 
 				/* accept incoming connection and assigned it to the tcp_connection_handle object socket */
 				(*GlobalRoot::ConnectionSocket) = acceptor.accept(error);
+
 
 				/* if there is errors */
 				if (error)
@@ -71,23 +79,29 @@ namespace ClientLib
 						/* Create ClientTracker Object and attach it to current session */
 						ConnectedClient = ClientLib::ClientManager::RegisterClient(clientsUsername, ClientLib::ClientManager::enClientStatus::Online, GlobalRoot::ConnectionSocket);
 						initialValidation = false;
-						AliasedHostResponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedHostResponse::InformationCodes::Accepted, L"Direct server accepted username");
+						AliasedHostResponse::CreateSerializeSend(ConnectedClient->GetConnectionSocket(), AliasedHostResponse::InformationCodes::Accepted, L"Direct server accepted username");
 					}
 					else /* username isn't valid */
 					{
-						AliasedHostResponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedHostResponse::InformationCodes::NotAccepted, L"Direct server didn't accept username");
+						AliasedHostResponse::CreateSerializeSend(ConnectedClient->GetConnectionSocket(), AliasedHostResponse::InformationCodes::NotAccepted, L"Direct server didn't accept username");
 					}
 				}
 
 				emit ClientConnected(ConnectedClient);
 
-				/* Create and start the listen thread, create using "new" since it will run along side the program */
-				ClientLib::Client::ChatListenThread* listenThread = new ClientLib::Client::ChatListenThread;
-				CentralLib::Logging::CreateLog<wchar_t>(L"Created and started chat listen thread\n", false);
-				listenThread->start();
-				QObject::connect(listenThread, &ClientLib::Client::ChatListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
-				/* connect "AboutToQuit" signal to thread's interrupt signal */
-				QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);
+				while (!isInterruptionRequested() && error != boost::asio::error::eof)
+				{
+					boost::asio::streambuf messageBuffer;
+					size_t lenght = boost::asio::read_until((*ConnectedClient->GetConnectionSocket()), messageBuffer, Definition::Delimiter);
+
+					if (error)
+					{
+						throw boost::system::system_error(error); // Some other error
+					}
+
+					ClientLib::Communications::MessageObject messageObject(ConnectedClient, CentralLib::streamBufferToWstring(&messageBuffer, lenght)); /* Create message object */
+					emit ReceivedMessage(messageObject);
+				}
 			}
 		};
 
@@ -112,6 +126,8 @@ namespace ClientLib
 			listenThread->start();
 
 			QObject::connect(listenThread, &ClientListenThread::ClientConnected, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ClientConnected);
+			QObject::connect(listenThread, &ClientListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
+			QObject::connect(&ChatSend::GetInstance(), &ChatSend::HostSendMessage, listenThread, &ClientListenThread::HostSendMessage);
 			/* connect "AboutToQuit" signal to thread's interrupt signal */
 			QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);
 		}
@@ -125,7 +141,7 @@ namespace ClientLib
 				return;
 			}
 
-			GlobalRoot::ThisClient = ClientLib::ClientManager::RegisterSelf(GlobalRoot::UI->LoginLineEdit->text().toStdWString(), ClientLib::ClientManager::enClientStatus::Online);
+			GlobalRoot::ThisClient = ClientLib::SelfClient::RegisterSelf(GlobalRoot::UI->LoginLineEdit->text().toStdWString(), ClientLib::ClientManager::enClientStatus::Online, ClientLib::SelfClient::enClientType::Host);
 			GlobalRoot::UI->ChatStackedWidget->setCurrentIndex(1);
 			StartDirectHosting();
 		}

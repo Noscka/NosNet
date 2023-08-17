@@ -1,12 +1,13 @@
 #pragma once
 
+#include <Central\CentralLib.hpp>
 #include "ClientEntry.hpp"
 
 namespace ClientLib
 {
 	class ClientManager : public ClientLib::ClientEntry
 	{
-	private:
+	protected:
 		friend boost::serialization::access;
 		template<class Archive>
 		void serialize(Archive& archive, const unsigned int version)
@@ -16,6 +17,8 @@ namespace ClientLib
 		}
 
 		boost::asio::ip::tcp::socket* SessionConnectionSocket; /* Session's ConnectionSocket to get the endpoint from */
+
+		ClientManager(){}
 
 		/// <summary>
 		/// Constructor
@@ -31,13 +34,6 @@ namespace ClientLib
 
 			ClientRegistry.Append(this);
 		}
-
-		ClientManager(const std::wstring& clientName, const enClientStatus& clientStatus)
-		{
-			ClientName = clientName;
-			ClientStatus = clientStatus;
-		}
-
 	public:
 
 		boost::asio::ip::tcp::socket* GetConnectionSocket()
@@ -54,17 +50,6 @@ namespace ClientLib
 		}
 
 		/// <summary>
-		/// static constructor used to register self, acts different then RegisterClient
-		/// </summary>
-		/// <param name="clientName"></param>
-		/// <param name="clientStatus"></param>
-		/// <returns></returns>
-		static ClientManager* RegisterSelf(const std::wstring& clientName, const enClientStatus& clientStatus)
-		{
-			return new ClientManager(clientName, clientStatus);
-		}
-
-		/// <summary>
 		/// Static contructor as the created object *NEED* to be created with the "new" keyword to stay alive
 		/// </summary>
 		/// <param name="clientName">- Client's name</param>
@@ -74,6 +59,53 @@ namespace ClientLib
 		static ClientManager* RegisterClient(const std::wstring& clientName, const enClientStatus& clientStatus, boost::asio::ip::tcp::socket* sessionConnectionSocket)
 		{
 			return new ClientManager(clientName, clientStatus, sessionConnectionSocket);
+		}
+	};
+
+	class SelfClient : public ClientManager
+	{
+	public:
+		enum class enClientType : uint8_t
+		{
+			Client,
+			Host,
+		};
+	protected:
+		friend boost::serialization::access;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version)
+		{
+			// serialize base class information
+			archive& boost::serialization::base_object<ClientManager>(*this);
+		}
+
+		enClientType ClientType;
+
+		SelfClient(const std::wstring& clientName, const enClientStatus& clientStatus, const enClientType& clientType)
+		{
+			ClientName = clientName;
+			ClientStatus = clientStatus;
+			ClientType = clientType;
+			
+			TargetEndpoint = new boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort));
+		}
+
+	public:
+		enClientType GetClientType()
+		{
+			return ClientType;
+		}
+
+		/// <summary>
+		/// static constructor used to register self, acts different then RegisterClient
+		/// </summary>
+		/// <param name="clientName"></param>
+		/// <param name="clientStatus"></param>
+		/// <param name="clientType"></param>
+		/// <returns></returns>
+		static SelfClient* RegisterSelf(const std::wstring& clientName, const enClientStatus& clientStatus, const enClientType& clientType)
+		{
+			return new SelfClient(clientName, clientStatus, clientType);
 		}
 	};
 }

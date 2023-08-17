@@ -32,7 +32,7 @@ namespace ClientLib
 			Online = 1,
 		};
 
-	private:
+	protected:
 		friend boost::serialization::access;
 
 		template<class Archive>
@@ -59,7 +59,6 @@ namespace ClientLib
 		}
 		BOOST_SERIALIZATION_SPLIT_MEMBER()
 
-	protected:
 		std::wstring ClientName; /* Client's name */
 		enClientStatus ClientStatus; /* Client's status, online or offline */
 		boost::asio::ip::tcp::endpoint* TargetEndpoint; /* Session's ConnectionSocket to get the endpoint from */

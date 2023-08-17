@@ -18,43 +18,66 @@
 
 namespace ClientLib
 {
-	namespace Client
+	class ChatListenThread : public QThread
 	{
-		class ChatListenThread : public QThread
+		Q_OBJECT
+
+	signals:
+		void ReceivedMessage(ClientLib::Communications::MessageObject receivedMessage);
+
+	protected:
+		void run() override
 		{
-			Q_OBJECT
+			boost::system::error_code errorCode;
 
-		signals:
-			void ReceivedMessage(ClientLib::Communications::MessageObject receivedMessage);
-
-		protected:
-			void run() override
+			while (!isInterruptionRequested() && errorCode != boost::asio::error::eof)
 			{
-				boost::system::error_code errorCode;
+				boost::asio::streambuf MessageBuffer;
+				boost::asio::read_until((*GlobalRoot::ConnectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
 
-				while (!isInterruptionRequested() && errorCode != boost::asio::error::eof)
-				{
-					boost::asio::streambuf MessageBuffer;
-					boost::asio::read_until((*GlobalRoot::ConnectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
+				ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
 
-					ClientLib::Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
-
-					emit ReceivedMessage(messageObject);
-				}
-
-				if (errorCode == boost::asio::error::eof)
-				{
-					CentralLib::Logging::CreateLog<wchar_t>(L"listen thread quit, reason: end of file\n", false);
-				}
-
-				/* send some closing message */
+				emit ReceivedMessage(messageObject);
 			}
-		};
 
-		inline void SendMessage(const std::wstring& message)
-		{
-			ClientLib::Communications::MessageObject::CreateSerializeSend(GlobalRoot::ConnectionSocket, GlobalRoot::ThisClient, message);
+			if (errorCode == boost::asio::error::eof)
+			{
+				CentralLib::Logging::CreateLog<wchar_t>(L"listen thread quit, reason: end of file\n", false);
+			}
+
+			/* send some closing message */
 		}
-	}
+	};
+
+	class ChatSend : public QObject
+	{
+		Q_OBJECT
+
+	signals:
+		void HostSendMessage(std::wstring message);
+
+	protected:
+		ChatSend(){}
+	public:
+		static ChatSend& GetInstance()
+		{
+			static ChatSend instance;
+			return instance;
+		}
+
+		static inline void SendMessage(const std::wstring& message)
+		{
+			/* if is host, send message directly to self using signals */
+			if (GlobalRoot::ThisClient->GetClientType() == ClientLib::SelfClient::enClientType::Host)
+			{
+				emit GetInstance().HostSendMessage(message);
+				return;
+			}
+			/* else, just send message normally */
+
+			std::string temp = NosLib::String::ToString(message);
+			CentralLib::Write(GlobalRoot::ConnectionSocket, boost::asio::buffer(temp));
+		}
+	};
 }
 #endif /* _CLIENT_SENDRECEIVE_NOSNET_ */

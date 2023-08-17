@@ -52,7 +52,7 @@ protected:
 
 		/* if enter key, then send the message */
 		emit SentMessage(messageObject);
-		ClientLib::Client::SendMessage(messageObject.GetMessage());
+		ClientLib::ChatSend::SendMessage(messageObject.GetMessage());
 
 		setText(QStringLiteral(""));
 	}

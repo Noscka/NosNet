@@ -62,13 +62,7 @@ public:
 		connect(ui->CreateDirectButton, &QPushButton::released, &ClientLib::DirectHost::InitializeDirectHosting);
 		connect(ui->CreateDirectLineEdit, &QLineEdit::textChanged, this, [&]()
 		{
-			std::wstring username;
-
-			GlobalRoot::UI->CreateDirectLineEdit->text().toStdWString();
-
-			bool validation = CentralLib::Validation::ValidateUsername(username);
-
-			ui->CreateDirectButton->setEnabled(validation);
+			ui->CreateDirectButton->setEnabled(CentralLib::Validation::ValidateUsername(GlobalRoot::UI->CreateDirectLineEdit->text().toStdWString()));
 		});
 
 		connect(ui->CreateGroupButton, &QPushButton::released, this, [&]() {/* implement */ });

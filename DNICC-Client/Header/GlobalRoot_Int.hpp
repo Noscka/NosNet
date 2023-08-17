@@ -6,5 +6,5 @@
 
 namespace GlobalRoot
 {
-	inline ClientLib::ClientManager* ThisClient;
+	inline ClientLib::SelfClient* ThisClient;
 }

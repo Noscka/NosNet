@@ -30,8 +30,8 @@ namespace ClientLib
 		inline void FinishJoiningHost()
 		{
 			/* Create and start the listen thread, create using "new" since it will run along side the program */
-			ClientLib::Client::ChatListenThread* listenThread = new ClientLib::Client::ChatListenThread;
-			QObject::connect(listenThread, &ClientLib::Client::ChatListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
+			ChatListenThread* listenThread = new ChatListenThread;
+			QObject::connect(listenThread, &ChatListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
 			listenThread->start();
 			CentralLib::Logging::CreateLog<wchar_t>(L"Created and started Listen Thread\n", false);
 
@@ -79,7 +79,7 @@ namespace ClientLib
 				return;
 			}
 
-			GlobalRoot::ThisClient = ClientLib::ClientManager::RegisterSelf(NosLib::String::ToWstring(username), ClientLib::ClientManager::enClientStatus::Online);
+			GlobalRoot::ThisClient = ClientLib::SelfClient::RegisterSelf(NosLib::String::ToWstring(username), ClientLib::ClientManager::enClientStatus::Online, ClientLib::SelfClient::enClientType::Client);
 
 			/* go to chat page */
 			GlobalRoot::UI->ChatStackedWidget->setCurrentIndex(1);
