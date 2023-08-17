@@ -12,7 +12,7 @@
 
 #include <Central/Misc.hpp>
 #include <Central/Communication.hpp>
-#include <Central/Logging.hpp>
+#include <NosLib/Logging.hpp>
 //#include "..\DCHLS-Server\Header\Communication.hpp" /* TEMP */
 
 #include "..\Communication.hpp"
@@ -67,9 +67,9 @@ namespace Hosting
 		{
 			//using AliasedServerReponse = ServerLib::Communications::ServerResponse;
 
-			Central::Logging::CreateLog<wchar_t>(std::format(L"Client Connected from {}\n", Central::ReturnAddress(ConnectionSocket.remote_endpoint())), false);
+			NosLib::Logging::CreateLog<wchar_t>(std::format(L"Client Connected from {}\n", Central::ReturnAddress(ConnectionSocket.remote_endpoint())), NosLib::Logging::Severity::Info, false);
 
-			Central::Logging::CreateLog<wchar_t>(L"Creating profile and adding to array\n", false);
+			NosLib::Logging::CreateLog<wchar_t>(L"Creating profile and adding to array\n", NosLib::Logging::Severity::Info, false);
 
 			bool initialValidation = true;
 			while (initialValidation)
@@ -121,7 +121,7 @@ namespace Hosting
 			}
 			catch (const std::exception& e)
 			{
-				Central::Logging::CreateLog<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), true);
+				NosLib::Logging::CreateLog<wchar_t>(NosLib::String::ConvertString<wchar_t, char>(e.what()), NosLib::Logging::Severity::Fatal, true);
 				std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
 			}
 		}
@@ -152,7 +152,7 @@ namespace Hosting
 
 			SetConsoleTitle(std::format(L"DNICC hosting Server - {}", Central::ReturnAddress(acceptor.local_endpoint())).c_str());
 
-			Central::Logging::CreateLog<wchar_t>(L"Client Server started\n", true);
+			NosLib::Logging::CreateLog<wchar_t>(L"Client Server started\n", NosLib::Logging::Severity::Info, true);
 
 			while (true)
 			{
@@ -187,7 +187,7 @@ namespace Hosting
 
 		ClientListenThread* listenThread = new ClientListenThread;
 		listenThread->start();
-		Central::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", NosLib::Logging::Severity::Info, false);
 		//GlobalRoot::UI->stackedWidget->setCurrentIndex(4);
 
 		/* connect "AboutToQuit" signal to thread's interrupt signal */

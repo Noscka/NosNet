@@ -100,7 +100,6 @@
     <ClInclude Include="Central\DefinitionsConstants.hpp" />
     <ClInclude Include="Central\ServerEntry.hpp" />
     <ClInclude Include="Central\Communication.hpp" />
-    <ClInclude Include="Central\Logging.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,7 +8,7 @@
 #include <QThread>
 
 #include <Central/Misc.hpp>
-#include <Central/Logging.hpp>
+#include <NosLib/Logging.hpp>
 
 #include "..\Communication.hpp"
 #include "..\GlobalRoot\GlobalRoot_Int.hpp"
@@ -26,22 +26,19 @@ namespace SendReceive
 	protected:
 		void run() override
 		{
-			boost::system::error_code errorCode;
+			boost::system::error_code error;
 
-			while (!isInterruptionRequested() && errorCode != boost::asio::error::eof)
+			while (!isInterruptionRequested() && error != boost::asio::error::eof)
 			{
 				boost::asio::streambuf MessageBuffer;
-				boost::asio::read_until((*GlobalRoot::ConnectionSocket), MessageBuffer, Definition::Delimiter, errorCode);
+				boost::asio::read_until((*GlobalRoot::ConnectionSocket), MessageBuffer, Definition::Delimiter, error);
 
 				Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
 
 				emit ReceivedMessage(messageObject);
 			}
 
-			if (errorCode == boost::asio::error::eof)
-			{
-				Central::Logging::CreateLog<wchar_t>(L"listen thread quit, reason: end of file\n", false);
-			}
+			NosLib::Logging::CreateLog<wchar_t>(std::format(L"{}", NosLib::String::ToWstring(error.what())), NosLib::Logging::Severity::Error, false);
 
 			/* send some closing message */
 		}

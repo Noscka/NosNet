@@ -6,7 +6,7 @@
 #include <boost/asio/io_context.hpp>
 
 #include <Central/Misc.hpp>
-#include <Central/Logging.hpp>
+#include <NosLib/Logging.hpp>
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -20,6 +20,7 @@
 #include "..\ClientManagement\ClientManager.hpp"
 #include "..\Communication.hpp"
 #include "SendReceive.hpp"
+#include "..\Disconnect.hpp"
 
 namespace Connect
 {
@@ -29,10 +30,12 @@ namespace Connect
 		SendReceive::ChatListenThread* listenThread = new SendReceive::ChatListenThread;
 		QObject::connect(listenThread, &SendReceive::ChatListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
 		listenThread->start();
-		Central::Logging::CreateLog<wchar_t>(L"Created and started Listen Thread\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Created and started Listen Thread\n", NosLib::Logging::Severity::Info, false);
 
 		/* connect "AboutToQuit" signal to thread's interrupt signal */
 		QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);
+
+		Disconnect::listenThread = listenThread;
 	}
 
 	inline void ValidateUsername()
@@ -41,7 +44,7 @@ namespace Connect
 
 		if (!Central::Validation::ValidateUsername(NosLib::String::ConvertString<wchar_t, char>(username)))
 		{ /* if username didn't pass username requirements */
-			Central::Logging::CreateLog<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", false);
+			NosLib::Logging::CreateLog<wchar_t>(L"Username cannot be empty and cannot be longer then 30 characters\n", NosLib::Logging::Severity::Warning, false);
 			GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(L"Username cannot be empty and cannot be longer then 30 characters"));
 			return;
 		}
@@ -56,18 +59,18 @@ namespace Connect
 
 		if (serverReponse.GetInformationCode() == InternalCommunication::InternalHostResponse::InformationCodes::Accepted) /* if server accepts username too, continue as normal */
 		{
-			Central::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
+			NosLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), NosLib::Logging::Severity::Info, false);
 			GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
 		}
 		else if (serverReponse.GetInformationCode() == InternalCommunication::InternalHostResponse::InformationCodes::NotAccepted) /* if server doesn't accept username, return */
 		{
-			Central::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), false);
+			NosLib::Logging::CreateLog<wchar_t>((serverReponse.GetAdditionalInformation() + L"\n"), NosLib::Logging::Severity::Info, false);
 			GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(serverReponse.GetAdditionalInformation()));
 			return;
 		}
 		else /* if server sends an unexpected response, exit because client and server are out of sync */
 		{
-			Central::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\tExiting...\n", false);
+			NosLib::Logging::CreateLog<wchar_t>(L"server sent an unexpected response\tExiting...\n", NosLib::Logging::Severity::Fatal, false);
 			GlobalRoot::UI->LoginErrorLabel->setText(QString::fromStdWString(L"server sent an unexpected response\nExiting..."));
 			Sleep(1000);
 			QApplication::exit(EXIT_FAILURE);
@@ -86,7 +89,7 @@ namespace Connect
 	{
 		/* Connect to the Client Server (DNICC not DCHLS) */
 		boost::asio::connect((*GlobalRoot::ConnectionSocket), boost::asio::ip::tcp::resolver((*GlobalRoot::IOContext)).resolve(NosLib::String::ToString(server->GetIpAddressAsWString()), Constants::DefaultClientHostPort));
-		Central::Logging::CreateLog<wchar_t>(L"Connected to DNICC Server\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Connected to DNICC Server\n", NosLib::Logging::Severity::Info, false);
 
 		/* Go to login page so user creates a user object */
 		GlobalRoot::UI->MainStackedWidget->setCurrentIndex(1);

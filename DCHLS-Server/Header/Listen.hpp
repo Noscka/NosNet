@@ -13,7 +13,7 @@
 
 #include <Central/Misc.hpp>
 #include <Central/Communication.hpp>
-#include <Central/Logging.hpp>
+#include <NosLib/Logging.hpp>
 #include <Central/ServerEntry.hpp>
 
 #include "Communication.hpp"
@@ -41,7 +41,7 @@ namespace Listen
 
 		void StartImp()
 		{
-			Central::Logging::CreateLog<wchar_t>(std::format(L"Connection from {}\n", Central::ReturnAddress(ConnectionSocket.remote_endpoint())), false);
+			NosLib::Logging::CreateLog<wchar_t>(std::format(L"Connection from {}\n", Central::ReturnAddress(ConnectionSocket.remote_endpoint())), NosLib::Logging::Severity::Info, false);
 
 			try
 			{
@@ -54,23 +54,23 @@ namespace Listen
 				switch (clientReponse.GetInformationCode())
 				{
 				case Central::Communications::CentralizedClientResponse::InformationCodes::RequestServerArray:
-					Central::Logging::CreateLog<wchar_t>(L"DNICC requested server array\n", false);
+					NosLib::Logging::CreateLog<wchar_t>(L"DNICC requested server array\n", NosLib::Logging::Severity::Info, false);
 					Processing::RequestedServerArray(&ConnectionSocket);
 					break;
 
 				case Central::Communications::CentralizedClientResponse::InformationCodes::RegisterDirectServer:
-					Central::Logging::CreateLog<wchar_t>(L"DNICC is registering a direct server\n", false);
+					NosLib::Logging::CreateLog<wchar_t>(L"DNICC is registering a direct server\n", NosLib::Logging::Severity::Info, false);
 					Processing::RegisterDirectServer(&ConnectionSocket, &ServerManagerAttached, clientReponse.GetAdditionalInformation());
 					emit AddNewServerEntry(ServerManagerAttached);
 					break;
 				case Central::Communications::CentralizedClientResponse::InformationCodes::RegisterGroupServer:
-					Central::Logging::CreateLog<wchar_t>(L"DNICC is registering a group server\n", false);
-					Central::Logging::CreateLog<wchar_t>(L"NOT IMPLEMENTED\n", false);
+					NosLib::Logging::CreateLog<wchar_t>(L"DNICC is registering a group server\n", NosLib::Logging::Severity::Info, false);
+					NosLib::Logging::CreateLog<wchar_t>(L"NOT IMPLEMENTED\n", NosLib::Logging::Severity::Fatal, false);
 					emit AddNewServerEntry(ServerManagerAttached);
 					break;
 				case Central::Communications::CentralizedClientResponse::InformationCodes::RegisterDedicatedServer:
-					Central::Logging::CreateLog<wchar_t>(L"DNICC is registering a Dedicated server\n", false);
-					Central::Logging::CreateLog<wchar_t>(L"NOT IMPLEMENTED\n", false);
+					NosLib::Logging::CreateLog<wchar_t>(L"DNICC is registering a Dedicated server\n", NosLib::Logging::Severity::Info, false);
+					NosLib::Logging::CreateLog<wchar_t>(L"NOT IMPLEMENTED\n", NosLib::Logging::Severity::Fatal, false);
 					emit AddNewServerEntry(ServerManagerAttached);
 					break;
 				}
@@ -78,11 +78,11 @@ namespace Listen
 			}
 			catch (const std::exception& e)
 			{
-				Central::Logging::CreateLog<char>(e.what(), false);
+				NosLib::Logging::CreateLog<char>(e.what(), NosLib::Logging::Severity::Fatal, false);
 				std::wcerr << NosLib::String::ConvertString<wchar_t, char>(e.what()) << std::endl;
 			}
 
-			Central::Logging::CreateLog<wchar_t>(std::format(L"Connection with {} Terminated\n", Central::ReturnAddress(ConnectionSocket.remote_endpoint())), false);
+			NosLib::Logging::CreateLog<wchar_t>(std::format(L"Connection with {} Terminated\n", Central::ReturnAddress(ConnectionSocket.remote_endpoint())), NosLib::Logging::Severity::Info, false);
 		}
 	public:
 		static ClientConnectionHandle* create(boost::asio::io_context& io_context) { return new ClientConnectionHandle(io_context); }
@@ -110,7 +110,7 @@ namespace Listen
 
 			SetConsoleTitle(std::format(L"DCHLS hosting Server - {}", Central::ReturnAddress(acceptor.local_endpoint())).c_str());
 
-			Central::Logging::CreateLog<wchar_t>(L"Server started\n", false);
+			NosLib::Logging::CreateLog<wchar_t>(L"Server started\n", NosLib::Logging::Severity::Info, false);
 
 			while (true)
 			{
@@ -136,7 +136,7 @@ namespace Listen
 	inline void StartDCHLS()
 	{
 		ClientListenThread* listenThread = new ClientListenThread;
-		Central::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Created and started Client Listen Thread\n", NosLib::Logging::Severity::Info, false);
 		listenThread->start();
 
 		/* connect "AboutToQuit" signal to thread's interrupt signal */

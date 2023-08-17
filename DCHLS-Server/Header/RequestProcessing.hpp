@@ -7,7 +7,7 @@
 
 #include <Central/Misc.hpp>
 #include <Central/Communication.hpp>
-#include <Central/Logging.hpp>
+#include <NosLib/Logging.hpp>
 
 #include "ServerManager.hpp"
 
@@ -20,7 +20,7 @@ namespace Processing
 
 		Central::Write(connectionSocket, streamBuffer);
 
-		Central::Logging::CreateLog<wchar_t>(L"Sent Server Array\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Sent Server Array\n", NosLib::Logging::Severity::Info, false);
 	}
 
 	inline void RegisterDirectServer(boost::asio::ip::tcp::socket* connectionSocket, ServerManager** serverManager, const std::wstring& serverName)

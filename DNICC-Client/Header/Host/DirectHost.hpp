@@ -12,7 +12,7 @@
 
 #include <Central/Misc.hpp>
 #include <Central/Communication.hpp>
-#include <Central/Logging.hpp>
+#include <NosLib/Logging.hpp>
 
 #include "..\Communication.hpp"
 #include "..\ClientManagement\ClientManager.hpp"
@@ -49,7 +49,7 @@ namespace DirectHost
 			/* Create TCP Acceptor on client host port */
 			boost::asio::ip::tcp::acceptor acceptor((*GlobalRoot::IOContext), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
 
-			Central::Logging::CreateLog<wchar_t>(L"Direct Server Started, waiting for a user to join\n", true);
+			NosLib::Logging::CreateLog<wchar_t>(L"Direct Server Started, waiting for a user to join\n", NosLib::Logging::Severity::Info, true);
 
 			boost::system::error_code error;
 
@@ -63,7 +63,7 @@ namespace DirectHost
 			/* if there is errors */
 			if (error)
 			{
-				Central::Logging::CreateLog<wchar_t>(L"Error when user was direct connecting\n", false);
+				NosLib::Logging::CreateLog<wchar_t>(L"Error when user was direct connecting\n", NosLib::Logging::Severity::Error, false);
 				return;
 			}
 
@@ -103,7 +103,7 @@ namespace DirectHost
 				}
 				else if (error)
 				{
-					Central::Logging::CreateLog<wchar_t>(std::format(L"throwing error: {}", NosLib::String::ToWstring(error.what())), false);
+					NosLib::Logging::CreateLog<wchar_t>(std::format(L"throwing error: {}", NosLib::String::ToWstring(error.what())), NosLib::Logging::Severity::Fatal, false);
 					throw boost::system::system_error(error); // Some other error
 				}
 
@@ -121,7 +121,7 @@ namespace DirectHost
 	{
 		/* Connect to DCHLS to register server */
 		boost::asio::connect(*GlobalRoot::ConnectionSocket, boost::asio::ip::tcp::resolver(*GlobalRoot::IOContext).resolve(Constants::DefaultHostname, Constants::DefaultPort));
-		Central::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server to register Direct Server\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server to register Direct Server\n", NosLib::Logging::Severity::Info, false);
 
 		using AliasedClientReponse = Communications::ClientResponse;
 
@@ -131,10 +131,10 @@ namespace DirectHost
 
 		/* Disconnect from DCHLS server */
 		GlobalRoot::ConnectionSocket->cancel();
-		Central::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", NosLib::Logging::Severity::Info, false);
 
 		ClientListenThread* listenThread = new ClientListenThread;
-		Central::Logging::CreateLog<wchar_t>(L"Created Listen thread\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Created Listen thread\n", NosLib::Logging::Severity::Info, false);
 		listenThread->start();
 
 		QObject::connect(listenThread, &ClientListenThread::ClientConnected, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ClientConnected);

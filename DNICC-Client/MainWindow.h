@@ -10,7 +10,7 @@
 #include "ui_MainWindow.h"
 
 #include <Central/Misc.hpp>
-#include <Central/Logging.hpp>
+#include <NosLib/Logging.hpp>
 #include <Central/ServerEntry.hpp>
 
 #include "Header/GlobalRoot.hpp"
@@ -42,7 +42,7 @@ public:
 		Service - Service(Hostname for ports)/Port number
 		*/
 		boost::asio::connect(*GlobalRoot::ConnectionSocket, boost::asio::ip::tcp::resolver(*GlobalRoot::IOContext).resolve(Constants::DefaultHostname, Constants::DefaultPort));
-		Central::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", NosLib::Logging::Severity::Info, false);
 
 		/* receive server array from server to display in menu */
 		ReceiveServerArray();
@@ -122,11 +122,11 @@ protected:
 		boost::asio::streambuf ContentBuffer;
 		boost::asio::read_until((*GlobalRoot::ConnectionSocket), ContentBuffer, Definition::Delimiter);
 		Central::ServerEntry::DeserializeArray(&ContentBuffer);
-		Central::Logging::CreateLog<wchar_t>(L"Received Server Registry from DCHLS\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Received Server Registry from DCHLS\n", NosLib::Logging::Severity::Info, false);
 
 		/* Disconnect from DCHLS server */
 		GlobalRoot::ConnectionSocket->cancel();
-		Central::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", false);
+		NosLib::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", NosLib::Logging::Severity::Info, false);
 	}
 
 private:

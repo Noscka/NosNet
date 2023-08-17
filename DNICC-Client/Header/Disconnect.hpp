@@ -5,9 +5,13 @@
 
 namespace Disconnect
 {
+	inline QThread* listenThread;
+
 	inline void DisconnectFromServer()
 	{
-		GlobalRoot::ConnectionSocket->cancel();
+		listenThread->requestInterruption();
+		listenThread->deleteLater();
+		GlobalRoot::ConnectionSocket->close();
 		//delete GlobalRoot::ThisClient;
 	}
 }
