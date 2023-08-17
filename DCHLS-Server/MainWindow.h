@@ -21,7 +21,7 @@ public:
 		GlobalRoot::UI = ui;
 
 		ui->setupUi(this);
-		ServerLib::Listen::StartDCHLS();
+		Listen::StartDCHLS();
 	}
 
 	~MainWindow()

@@ -10,16 +10,16 @@ class ServerEntryContainer : public QWidget
 {
 	Q_OBJECT
 signals:
-	void MouseReleased(CentralLib::ServerEntry* server);
+	void MouseReleased(Central::ServerEntry* server);
 protected:
 	QHBoxLayout* serverContainerLayout;
 	QLabel* ServerName;
 	QLabel* ServerStatus;
 	QLabel* ServerIPAddress;
 
-	CentralLib::ServerEntry* Server;
+	Central::ServerEntry* Server;
 public:
-	ServerEntryContainer(CentralLib::ServerEntry* server, QWidget* parent = nullptr) : QWidget(parent)
+	ServerEntryContainer(Central::ServerEntry* server, QWidget* parent = nullptr) : QWidget(parent)
 	{
 		Server = server;
 

@@ -146,7 +146,7 @@
     <QtMoc Include="CustomWidgets\ServerEntryContainer.hpp" />
     <ClInclude Include="Header\Disconnect.hpp" />
     <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int_ui.hpp" />
-    <ClInclude Include="Header\Host\HostCommunication.hpp" />
+    <ClInclude Include="Header\Host\InternalCommunication.hpp" />
     <QtMoc Include="Header\Host\DirectHost.hpp" />
     <QtMoc Include="CustomWidgets\ChatFeed.hpp" />
     <QtMoc Include="CustomWidgets\ChatLineEdit.hpp" />

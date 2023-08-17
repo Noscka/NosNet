@@ -1,5 +1,4 @@
 #pragma once
-
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
 
@@ -9,7 +8,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/serialization.hpp>
 
-namespace CentralLib
+namespace Central
 {
     namespace Communications
     {
@@ -120,4 +119,4 @@ namespace CentralLib
             }
         };
     }
-}
+} 

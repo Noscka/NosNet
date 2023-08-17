@@ -94,9 +94,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Central\CentralLib.hpp" />
+    <ClCompile Include="Central\Misc.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Central\DefinitionsConstants.hpp" />
     <ClInclude Include="Central\ServerEntry.hpp" />
     <ClInclude Include="Central\Communication.hpp" />
     <ClInclude Include="Central\Logging.hpp" />

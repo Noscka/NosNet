@@ -19,14 +19,14 @@ protected:
 	QWidget* ChatFeedWidget;
 
 public slots:
-	void ReceiveMessage(ClientLib::Communications::MessageObject receivedMessage)
+	void ReceiveMessage(Communications::MessageObject receivedMessage)
 	{
 		NewMessage(receivedMessage);
 	}
 
-	void ClientConnected(ClientLib::ClientManager* connectedClient)
+	void ClientConnected(ClientManager* connectedClient)
 	{
-		ClientLib::Communications::MessageObject tempMessageObject(connectedClient, std::format(L"{} connected", connectedClient->GetClientName()));
+		Communications::MessageObject tempMessageObject(connectedClient, std::format(L"{} connected", connectedClient->GetClientName()));
 		NewMessage(tempMessageObject);
 	}
 
@@ -45,7 +45,7 @@ public:
 		QCoreApplication::processEvents();
 	}
 
-	void NewMessage(ClientLib::Communications::MessageObject& receivedMessage)
+	void NewMessage(Communications::MessageObject& receivedMessage)
 	{
 		/* Create message object */
 		QWidget* messageContainer = new QWidget(this);

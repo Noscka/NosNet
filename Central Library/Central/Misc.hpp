@@ -1,15 +1,8 @@
-#ifndef _CENTRAL_LIBRARY_NOSNET_HPP_
-#define _CENTRAL_LIBRARY_NOSNET_HPP_
-
+#pragma once
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
 
-#include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/serialization.hpp>
 
 #include <NosLib/String.hpp>
 #include <NosLib/Cast.hpp>
@@ -19,27 +12,9 @@
 #include <iostream>
 #include <fstream>
 
-namespace Definition
-{
-	const std::string Delimiter = "\n\r\n\r\n\013\x4\n";
-	typedef unsigned char byte;
-}
+#include "DefinitionsConstants.hpp"
 
-namespace Constants
-{
-    /* Default Connection info */
-    inline const std::string DefaultPort = "58233";
-    inline const std::string DefaultHostname = "192.168.0.15"; /* my private ip */
-
-    /* Connection info for update service */
-    inline const std::string UpdateServiceHostName = DefaultHostname;
-    inline const std::string UpdateServicePort = DefaultPort;
-
-    /* Default Client host info */
-    inline const std::string DefaultClientHostPort = "58234";
-}
-
-namespace CentralLib
+namespace Central
 {
 	inline std::wstring ReturnAddress(const boost::asio::ip::tcp::endpoint& Endpoint)
 	{
@@ -108,4 +83,3 @@ namespace CentralLib
         }
     }
 }
-#endif

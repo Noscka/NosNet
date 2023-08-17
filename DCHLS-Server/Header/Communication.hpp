@@ -1,9 +1,6 @@
-#ifndef _SERVER_LIBRARY_NOSNET_HPP_
-#define _SERVER_LIBRARY_NOSNET_HPP_
-
+#pragma once
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
-#include <string.h>
 #include <string>
 
 #include <boost/asio.hpp>
@@ -17,25 +14,21 @@
 
 #include <Central/Communication.hpp>
 
-namespace ServerLib
+namespace Communications
 {
-	namespace Communications
+	class ServerResponse : public Central::Communications::CentralizedServerResponse
 	{
-		class ServerResponse : public CentralLib::Communications::CentralizedServerResponse
+	public:
+		ServerResponse(const InformationCodes& informationCode, const std::wstring& additionalInformation)
 		{
-		public:
-			ServerResponse(const InformationCodes& informationCode, const std::wstring& additionalInformation)
-			{
-				InformationCode = informationCode;
-				AdditionalInformation = additionalInformation;
-			}
+			InformationCode = informationCode;
+			AdditionalInformation = additionalInformation;
+		}
 
-			static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, const InformationCodes& informationCode, const std::wstring& additionalInformation)
-			{
-				boost::asio::streambuf tempBuf;
-				CentralLib::Write(connectionSocket, *(ServerResponse(informationCode, additionalInformation).SerializeObject(&tempBuf)));
-			}
-		};
-	}
+		static void CreateSerializeSend(boost::asio::ip::tcp::socket* connectionSocket, const InformationCodes& informationCode, const std::wstring& additionalInformation)
+		{
+			boost::asio::streambuf tempBuf;
+			Central::Write(connectionSocket, *(ServerResponse(informationCode, additionalInformation).SerializeObject(&tempBuf)));
+		}
+	};
 }
-#endif

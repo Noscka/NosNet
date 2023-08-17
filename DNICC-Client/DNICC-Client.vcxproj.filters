@@ -86,7 +86,7 @@
     <ClInclude Include="Header\ClientManagement\ClientManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Host\HostCommunication.hpp">
+    <ClInclude Include="Header\Host\InternalCommunication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int_ui.hpp">

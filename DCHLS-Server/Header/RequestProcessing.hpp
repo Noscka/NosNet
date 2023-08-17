@@ -1,37 +1,30 @@
-#ifndef _SERVER_CONNECTIONPROCESSING_NOSNET_HPP_
-#define _SERVER_CONNECTIONPROCESSING_NOSNET_HPP_
-
+#pragma once
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
 
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
 
-#include <Central/CentralLib.hpp>
+#include <Central/Misc.hpp>
 #include <Central/Communication.hpp>
 #include <Central/Logging.hpp>
 
 #include "ServerManager.hpp"
 
-namespace ServerLib
+namespace Processing
 {
-	namespace Processing
+	inline void RequestedServerArray(boost::asio::ip::tcp::socket* connectionSocket)
 	{
-		inline void RequestedServerArray(boost::asio::ip::tcp::socket* connectionSocket)
-		{
-			boost::asio::streambuf streamBuffer;
-			CentralLib::ServerEntry::SerializeArray(&streamBuffer);
+		boost::asio::streambuf streamBuffer;
+		Central::ServerEntry::SerializeArray(&streamBuffer);
 
-			CentralLib::Write(connectionSocket, streamBuffer);
+		Central::Write(connectionSocket, streamBuffer);
 
-			CentralLib::Logging::CreateLog<wchar_t>(L"Sent Server Array\n", false);
-		}
+		Central::Logging::CreateLog<wchar_t>(L"Sent Server Array\n", false);
+	}
 
-		inline void RegisterDirectServer(boost::asio::ip::tcp::socket* connectionSocket, ServerLib::ServerManager** serverManager, const std::wstring& serverName)
-		{
-			(*serverManager) = ServerLib::ServerManager::RegisterServer(serverName, ServerLib::ServerManager::enServerType::Direct, ServerLib::ServerManager::enServerStatus::Online, connectionSocket);
-		}
+	inline void RegisterDirectServer(boost::asio::ip::tcp::socket* connectionSocket, ServerManager** serverManager, const std::wstring& serverName)
+	{
+		(*serverManager) = ServerManager::RegisterServer(serverName, ServerManager::enServerType::Direct, ServerManager::enServerStatus::Online, connectionSocket);
 	}
 }
-
-#endif

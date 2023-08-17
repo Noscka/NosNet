@@ -1,6 +1,4 @@
-#ifndef _CENTRAL_LOGGING_NOSNET_HPP_
-#define _CENTRAL_LOGGING_NOSNET_HPP_
-
+#pragma once
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
 
@@ -9,7 +7,7 @@
 
 #include <chrono>
 
-namespace CentralLib
+namespace Central
 {
 	class Logging
 	{
@@ -54,5 +52,3 @@ namespace CentralLib
 		}
 	};
 }
-
-#endif /* _CENTRAL_LOGGING_NOSNET_HPP_ */

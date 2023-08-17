@@ -9,7 +9,7 @@
 #include <QtWidgets/QLineEdit>
 #include "ui_MainWindow.h"
 
-#include <Central/CentralLib.hpp>
+#include <Central/Misc.hpp>
 #include <Central/Logging.hpp>
 #include <Central/ServerEntry.hpp>
 
@@ -41,7 +41,7 @@ public:
 		Service - Service(Hostname for ports)/Port number
 		*/
 		boost::asio::connect(*GlobalRoot::ConnectionSocket, boost::asio::ip::tcp::resolver(*GlobalRoot::IOContext).resolve(Constants::DefaultHostname, Constants::DefaultPort));
-		CentralLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", false);
+		Central::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server\n", false);
 
 		/* receive server array from server to display in menu */
 		ReceiveServerArray();
@@ -59,16 +59,16 @@ public:
 		/* CONNECTION PAGES */
 
 		/* CREATION PAGES */
-		connect(ui->CreateDirectButton, &QPushButton::released, &ClientLib::DirectHost::InitializeDirectHosting);
+		connect(ui->CreateDirectButton, &QPushButton::released, &DirectHost::InitializeDirectHosting);
 		connect(ui->CreateDirectLineEdit, &QLineEdit::textChanged, this, [&]()
 		{
-			ui->CreateDirectButton->setEnabled(CentralLib::Validation::ValidateUsername(GlobalRoot::UI->CreateDirectLineEdit->text().toStdWString()));
+			ui->CreateDirectButton->setEnabled(Central::Validation::ValidateUsername(GlobalRoot::UI->CreateDirectLineEdit->text().toStdWString()));
 		});
 
 		connect(ui->CreateGroupButton, &QPushButton::released, this, [&]() {/* implement */ });
 		connect(ui->CreateGroupLineEdit, &QLineEdit::textChanged, this, [&]()
 		{
-			ui->CreateGroupButton->setEnabled(CentralLib::Validation::ValidateUsername(GlobalRoot::UI->CreateGroupLineEdit->text().toStdWString()));
+			ui->CreateGroupButton->setEnabled(Central::Validation::ValidateUsername(GlobalRoot::UI->CreateGroupLineEdit->text().toStdWString()));
 		});
 		/* CREATION PAGES */
 
@@ -77,7 +77,7 @@ public:
 		connect(ui->LoginLineEdit, &QLineEdit::textChanged, this, [&]()
 		{
 			/* validate username using text from line edit, enable the login button depending on if the username is valid */
-			ui->LoginButton->setEnabled(CentralLib::Validation::ValidateUsername(GlobalRoot::UI->LoginLineEdit->text().toStdWString()));
+			ui->LoginButton->setEnabled(Central::Validation::ValidateUsername(GlobalRoot::UI->LoginLineEdit->text().toStdWString()));
 		});
 		/* CHAT LOGIN PAGE */
 
@@ -86,18 +86,18 @@ public:
 		/* CHAT PAGE */
 
 		/* FILL DIFFERENT CONNECTION PAGES */
-		for (CentralLib::ServerEntry* entry : CentralLib::ServerEntry::ServerRegistry)
+		for (Central::ServerEntry* entry : Central::ServerEntry::ServerRegistry)
 		{
 			switch (entry->GetServerType())
 			{
-			case CentralLib::ServerEntry::enServerType::Direct:
-				ui->DirectChoiceScrollArea->AddServerEntry(entry, &ClientLib::Connect::ServerConnect);
+			case Central::ServerEntry::enServerType::Direct:
+				ui->DirectChoiceScrollArea->AddServerEntry(entry, &Connect::ServerConnect);
 				break;
-			case CentralLib::ServerEntry::enServerType::Group:
-				ui->GroupsChoiceScrollArea->AddServerEntry(entry, &ClientLib::Connect::ServerConnect);
+			case Central::ServerEntry::enServerType::Group:
+				ui->GroupsChoiceScrollArea->AddServerEntry(entry, &Connect::ServerConnect);
 				break;
-			case CentralLib::ServerEntry::enServerType::Dedicated:
-				ui->DedicatedChoiceScrollArea->AddServerEntry(entry, &ClientLib::Connect::ServerConnect);
+			case Central::ServerEntry::enServerType::Dedicated:
+				ui->DedicatedChoiceScrollArea->AddServerEntry(entry, &Connect::ServerConnect);
 				break;
 			}
 		}
@@ -112,7 +112,7 @@ protected:
 	void ReceiveServerArray()
 	{
 		/* Aliased with using StrippedClientTracker */
-		using AliasedClientReponse = ClientLib::Communications::ClientResponse;
+		using AliasedClientReponse = Communications::ClientResponse;
 
 		/* Tell server which path going down */
 		AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::RequestServerArray, L"requesting server array");
@@ -120,12 +120,12 @@ protected:
 		/* Receive array */
 		boost::asio::streambuf ContentBuffer;
 		boost::asio::read_until((*GlobalRoot::ConnectionSocket), ContentBuffer, Definition::Delimiter);
-		CentralLib::ServerEntry::DeserializeArray(&ContentBuffer);
-		CentralLib::Logging::CreateLog<wchar_t>(L"Received Server Registry from DCHLS\n", false);
+		Central::ServerEntry::DeserializeArray(&ContentBuffer);
+		Central::Logging::CreateLog<wchar_t>(L"Received Server Registry from DCHLS\n", false);
 
 		/* Disconnect from DCHLS server */
 		GlobalRoot::ConnectionSocket->cancel();
-		CentralLib::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", false);
+		Central::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", false);
 	}
 
 private:

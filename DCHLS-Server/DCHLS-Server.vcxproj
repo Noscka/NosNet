@@ -136,9 +136,9 @@
     <ClInclude Include="Header\ServerManager.hpp" />
     <QtMoc Include="Header\Listen.hpp" />
     <QtMoc Include="CustomWidgets\ClientList.hpp" />
-    <ClInclude Include="Header\GlobalASIORoot.hpp" />
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Ext.hpp" />
     <ClInclude Include="Header\GlobalRoot.hpp" />
-    <ClInclude Include="Header\GlobalUIRoot.hpp" />
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int_ui.hpp" />
     <ClInclude Include="Header\RequestProcessing.hpp" />
     <ClInclude Include="Header\Communication.hpp" />
   </ItemGroup>

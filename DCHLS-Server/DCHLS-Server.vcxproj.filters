@@ -45,10 +45,10 @@
     <ClInclude Include="Header\Communication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalUIRoot.hpp">
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int_ui.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalASIORoot.hpp">
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Ext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalRoot.hpp">

@@ -1,4 +1,3 @@
 #pragma once
-
-#include "GlobalASIORoot.hpp"
-#include "GlobalUIRoot.hpp"
+#include "GlobalRoot\GlobalRoot_Ext.hpp"
+#include "GlobalRoot\GlobalRoot_Int_ui.hpp"

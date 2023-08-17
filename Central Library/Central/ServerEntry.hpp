@@ -1,5 +1,4 @@
 #pragma once
-
 #define WIN32_LEAN_AND_MEAN 
 #include <sdkddkver.h>
 
@@ -19,7 +18,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace CentralLib
+namespace Central
 {
 	class ServerEntry : public NosLib::ArrayPositionTrack::PositionTrack
 	{

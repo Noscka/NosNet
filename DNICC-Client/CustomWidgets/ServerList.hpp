@@ -30,7 +30,7 @@ public:
 	}
 
 	template <typename ConnectFunc>
-	void AddServerEntry(CentralLib::ServerEntry* server, ConnectFunc&& slot)
+	void AddServerEntry(Central::ServerEntry* server, ConnectFunc&& slot)
 	{
 		ServerEntryContainer* newServerEntryContainer = new ServerEntryContainer(server, this);
 		connect(newServerEntryContainer, &ServerEntryContainer::MouseReleased, slot);

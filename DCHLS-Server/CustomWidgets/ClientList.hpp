@@ -15,7 +15,7 @@ protected:
 	QWidget* ChatFeedWidget;
 
 public slots:
-	void AddNewServerEntry(ServerLib::ServerManager* newServerEntry)
+	void AddNewServerEntry(ServerManager* newServerEntry)
 	{
 		AddServerEntry(newServerEntry);
 	}
@@ -34,7 +34,7 @@ public:
 		QCoreApplication::processEvents();
 	}
 
-	void AddServerEntry(ServerLib::ServerManager* newServerEntry)
+	void AddServerEntry(ServerManager* newServerEntry)
 	{
 		/* Create message object */
 		QWidget* clientContainer = new QWidget(this);

@@ -15,7 +15,7 @@ class ChatLineEdit : public QLineEdit
 {
 	Q_OBJECT
 signals:
-	void SentMessage(ClientLib::Communications::MessageObject sentMessage);
+	void SentMessage(Communications::MessageObject sentMessage);
 
 public:
 	ChatLineEdit(QWidget* parent = nullptr) : QLineEdit(parent)
@@ -48,11 +48,11 @@ protected:
 			return;
 		}
 
-		ClientLib::Communications::MessageObject messageObject(GlobalRoot::ThisClient, text().toStdWString());
+		Communications::MessageObject messageObject(GlobalRoot::ThisClient, text().toStdWString());
 
 		/* if enter key, then send the message */
 		emit SentMessage(messageObject);
-		ClientLib::ChatSend::SendMessage(messageObject.GetMessage());
+		SendReceive::ChatSend::SendMessage(messageObject.GetMessage());
 
 		setText(QStringLiteral(""));
 	}

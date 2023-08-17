@@ -11,7 +11,7 @@ class ClientList : public QScrollArea
 {
 	Q_OBJECT
 public slots:
-	void ClientConnected(ClientLib::ClientManager* connectedClient)
+	void ClientConnected(ClientManager* connectedClient)
 	{
 		AddClientEntry(connectedClient);
 	}
@@ -34,7 +34,7 @@ public:
 		QCoreApplication::processEvents();
 	}
 
-	void AddClientEntry(ClientLib::ClientManager* client)
+	void AddClientEntry(ClientManager* client)
 	{
 		/* Create message object */
 		QWidget* clientContainer = new QWidget(this);
