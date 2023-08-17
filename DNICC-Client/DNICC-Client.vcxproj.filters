@@ -68,13 +68,13 @@
     <ClInclude Include="Header\Communication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalRoot_Int.hpp">
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\Client\Connect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalRoot_Ext.hpp">
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Ext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\GlobalRoot.hpp">
@@ -89,7 +89,10 @@
     <ClInclude Include="Header\Host\HostCommunication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\GlobalRoot_Int_ui.hpp">
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int_ui.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Disconnect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

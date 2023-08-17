@@ -8,8 +8,8 @@
 #include <QKeyEvent>
 
 #include "..\Header\Client\SendReceive.hpp"
-#include "..\Header\GlobalRoot_Int.hpp"
-#include "..\Header\GlobalRoot_Ext.hpp"
+#include "..\Header\GlobalRoot\GlobalRoot_Int.hpp"
+#include "..\Header\GlobalRoot\GlobalRoot_Ext.hpp"
 
 class ChatLineEdit : public QLineEdit
 {

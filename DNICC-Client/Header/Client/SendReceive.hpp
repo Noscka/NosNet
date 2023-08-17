@@ -13,8 +13,8 @@
 #include <Central/Logging.hpp>
 
 #include "..\Communication.hpp"
-#include "..\GlobalRoot_Int.hpp"
-#include "..\GlobalRoot_Ext.hpp"
+#include "..\GlobalRoot\GlobalRoot_Int.hpp"
+#include "..\GlobalRoot\GlobalRoot_Ext.hpp"
 
 namespace ClientLib
 {

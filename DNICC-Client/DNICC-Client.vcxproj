@@ -144,7 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CustomWidgets\ServerEntryContainer.hpp" />
-    <ClInclude Include="Header\GlobalRoot_Int_ui.hpp" />
+    <ClInclude Include="Header\Disconnect.hpp" />
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int_ui.hpp" />
     <ClInclude Include="Header\Host\HostCommunication.hpp" />
     <QtMoc Include="Header\Host\DirectHost.hpp" />
     <QtMoc Include="CustomWidgets\ChatFeed.hpp" />
@@ -157,8 +158,8 @@
     <ClInclude Include="Header\Client\Connect.hpp" />
     <ClInclude Include="Header\GlobalRoot.hpp" />
     <ClInclude Include="Header\Communication.hpp" />
-    <ClInclude Include="Header\GlobalRoot_Ext.hpp" />
-    <ClInclude Include="Header\GlobalRoot_Int.hpp" />
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Ext.hpp" />
+    <ClInclude Include="Header\GlobalRoot\GlobalRoot_Int.hpp" />
     <QtMoc Include="Header\Host\GroupHost.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
