@@ -44,12 +44,14 @@ namespace DirectHost
 	protected:
 		void run() override
 		{
+		Start:
+
 			using AliasedHostResponse = InternalCommunication::HostResponse;
 
 			/* Create TCP Acceptor on client host port */
 			boost::asio::ip::tcp::acceptor acceptor((*GlobalRoot::IOContext), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), std::stoi(Constants::DefaultClientHostPort)));
 
-			NosLib::Logging::CreateLog<wchar_t>(L"Direct Server Started, waiting for a user to join\n", NosLib::Logging::Severity::Info, true);
+			NosLib::Logging::CreateLog<wchar_t>(L"Direct Server Started, waiting for a user to join", NosLib::Logging::Severity::Info, true);
 
 			boost::system::error_code error;
 
@@ -58,7 +60,7 @@ namespace DirectHost
 
 			/* accept incoming connection and assigned it to the tcp_connection_handle object socket */
 			(*GlobalRoot::ConnectionSocket) = acceptor.accept(error);
-
+			NosLib::Logging::CreateLog<wchar_t>(L"User joined", NosLib::Logging::Severity::Info, true);
 
 			/* if there is errors */
 			if (error)
@@ -82,13 +84,16 @@ namespace DirectHost
 					ConnectedClient = ClientManager::RegisterClient(clientsUsername, ClientManager::enClientStatus::Online, GlobalRoot::ConnectionSocket);
 					initialValidation = false;
 					AliasedHostResponse::CreateSerializeSend(ConnectedClient->GetConnectionSocket(), AliasedHostResponse::InformationCodes::Accepted, L"Direct server accepted username");
+					NosLib::Logging::CreateLog<wchar_t>(L"Accepted User's username", NosLib::Logging::Severity::Info, true);
 				}
 				else /* username isn't valid */
 				{
 					AliasedHostResponse::CreateSerializeSend(ConnectedClient->GetConnectionSocket(), AliasedHostResponse::InformationCodes::NotAccepted, L"Direct server didn't accept username");
+					NosLib::Logging::CreateLog<wchar_t>(L"Rejected User's username", NosLib::Logging::Severity::Info, true);
 				}
 			}
 
+			NosLib::Logging::CreateLog<wchar_t>(L"User fully connected", NosLib::Logging::Severity::Info, true);
 			/* Code before starting the main chat loop */
 			emit ClientConnected(ConnectedClient);
 
@@ -111,9 +116,13 @@ namespace DirectHost
 				emit ReceivedMessage(messageObject);
 			}
 
+			NosLib::Logging::CreateLog<wchar_t>(L"User Disconnected", NosLib::Logging::Severity::Info, true);
 			/* code after, client disconnected */
 			ConnectedClient->ChangeStatus(ClientManager::enClientStatus::Offline);
 			emit ClientDisconnected(ConnectedClient);
+
+			NosLib::Logging::CreateLog<wchar_t>(L"Going back to start", NosLib::Logging::Severity::Info, true);
+			goto Start; /* go back to start */
 		}
 	};
 

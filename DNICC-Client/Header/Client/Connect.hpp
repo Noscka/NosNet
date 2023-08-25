@@ -81,6 +81,7 @@ namespace Connect
 		GlobalRoot::ThisClient = SelfClient::RegisterSelf(NosLib::String::ToWstring(username), ClientManager::enClientStatus::Online, SelfClient::enClientType::Client);
 
 		/* go to chat page */
+		GlobalRoot::UI->MainStackedWidget->setCurrentIndex(1);
 		GlobalRoot::UI->ChatStackedWidget->setCurrentIndex(1);
 		FinishJoiningHost();
 	}
