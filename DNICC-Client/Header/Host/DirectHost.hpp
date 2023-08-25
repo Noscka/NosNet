@@ -32,6 +32,8 @@ namespace DirectHost
 		void ClientDisconnected(ClientManager* disconnectedClient);
 		void ReceivedMessage(Communications::MessageObject receivedMessage);
 
+		void Exit();
+
 	public slots:
 		void HostSendMessage(std::wstring message)
 		{
@@ -44,8 +46,6 @@ namespace DirectHost
 	protected:
 		void run() override
 		{
-		Start:
-
 			using AliasedHostResponse = InternalCommunication::HostResponse;
 
 			/* Create TCP Acceptor on client host port */
@@ -121,10 +121,36 @@ namespace DirectHost
 			ConnectedClient->ChangeStatus(ClientManager::enClientStatus::Offline);
 			emit ClientDisconnected(ConnectedClient);
 
-			NosLib::Logging::CreateLog<wchar_t>(L"Going back to start", NosLib::Logging::Severity::Info, true);
-			goto Start; /* go back to start */
+			/* just exit */
+			emit Exit();
 		}
 	};
+
+	inline void Exit()
+	{
+		GlobalRoot::ConnectionSocket->cancel();
+		GlobalRoot::ConnectionSocket->close();
+		NosLib::Logging::CreateLog<wchar_t>(L"destroying from server", NosLib::Logging::Severity::Info, false);
+
+		delete ConnectedClient;
+
+		/* Connect to DCHLS to register server */
+		boost::asio::connect(*GlobalRoot::ConnectionSocket, boost::asio::ip::tcp::resolver(*GlobalRoot::IOContext).resolve(Constants::DefaultHostname, Constants::DefaultPort));
+		NosLib::Logging::CreateLog<wchar_t>(L"Connected to DCHLS server to remove Direct Server\n", NosLib::Logging::Severity::Info, false);
+
+		using AliasedClientReponse = Communications::ClientResponse;
+
+		/* Tell server which path going down */
+		AliasedClientReponse::CreateSerializeSend(GlobalRoot::ConnectionSocket, AliasedClientReponse::InformationCodes::CloseServer, GlobalRoot::UI->CreateDirectLineEdit->text().toStdWString());
+
+		/* Disconnect from DCHLS server */
+		GlobalRoot::ConnectionSocket->cancel();
+		GlobalRoot::ConnectionSocket->close();
+		NosLib::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", NosLib::Logging::Severity::Info, false);
+
+		GlobalRoot::UI->MainStackedWidget->setCurrentIndex(0);
+		GlobalRoot::UI->ChatStackedWidget->setCurrentIndex(1);
+	}
 
 	inline void StartDirectHosting()
 	{
@@ -147,9 +173,12 @@ namespace DirectHost
 		NosLib::Logging::CreateLog<wchar_t>(L"Created Listen thread\n", NosLib::Logging::Severity::Info, false);
 		listenThread->start();
 
+		//Disconnect::listenThread = listenThread;
+
 		QObject::connect(listenThread, &ClientListenThread::ClientConnected, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ClientConnected);
 		QObject::connect(listenThread, &ClientListenThread::ClientDisconnected, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ClientDisconnected);
 		QObject::connect(listenThread, &ClientListenThread::ReceivedMessage, GlobalRoot::UI->ChatFeedScroll, &ChatFeed::ReceiveMessage);
+		QObject::connect(listenThread, &ClientListenThread::Exit, &Exit);
 		QObject::connect(&SendReceive::ChatSend::GetInstance(), &SendReceive::ChatSend::HostSendMessage, listenThread, &ClientListenThread::HostSendMessage);
 		/* connect "AboutToQuit" signal to thread's interrupt signal */
 		QObject::connect(GlobalRoot::AppPointer, &QCoreApplication::aboutToQuit, listenThread, &QThread::requestInterruption);

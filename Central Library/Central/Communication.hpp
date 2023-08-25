@@ -74,7 +74,8 @@ namespace Central
                 RegisterDirectServer = 1,
                 RegisterGroupServer = 2,
                 RegisterDedicatedServer = 3, 
-                Ready = 4, /* Message from Client which tells the server that it is ready for the next step */
+                CloseServer =4,
+                Ready = 5, /* Message from Client which tells the server that it is ready for the next step */
             };
         protected:
             friend class boost::serialization::access;

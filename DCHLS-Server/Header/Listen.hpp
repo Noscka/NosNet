@@ -29,6 +29,7 @@ namespace Listen
 
 	signals:
 		void AddNewServerEntry(ServerManager* connectedClient);
+		void RemoveServerEntry(ServerManager* connectedClient);
 	private:
 		boost::asio::ip::tcp::socket ConnectionSocket;
 		ServerManager* ServerManagerAttached = nullptr;
@@ -72,6 +73,11 @@ namespace Listen
 					NosLib::Logging::CreateLog<wchar_t>(L"DNICC is registering a Dedicated server\n", NosLib::Logging::Severity::Info, false);
 					NosLib::Logging::CreateLog<wchar_t>(L"NOT IMPLEMENTED\n", NosLib::Logging::Severity::Fatal, false);
 					emit AddNewServerEntry(ServerManagerAttached);
+					break;
+				case Central::Communications::CentralizedClientResponse::InformationCodes::CloseServer:
+					NosLib::Logging::CreateLog<wchar_t>(L"DNICC is closing server\n", NosLib::Logging::Severity::Info, false);
+					Processing::RemoveServer(&ConnectionSocket, &ServerManagerAttached);
+					emit RemoveServerEntry(ServerManagerAttached);
 					break;
 				}
 

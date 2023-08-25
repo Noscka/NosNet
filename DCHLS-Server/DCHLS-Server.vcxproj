@@ -133,6 +133,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="CustomWidgets\ServerEntryContainer.hpp" />
     <ClInclude Include="Header\ServerManager.hpp" />
     <QtMoc Include="Header\Listen.hpp" />
     <QtMoc Include="CustomWidgets\ClientList.hpp" />

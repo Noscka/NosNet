@@ -11,7 +11,7 @@
 
 #include <Central/ServerEntry.hpp>
 
-#include <string.h>
+#include <string>
 #include <format>
 #include <iostream>
 #include <fstream>
@@ -71,5 +71,26 @@ public:
 	static ServerManager* RegisterServer(const std::wstring& serverName, const enServerType& serverType, const enServerStatus& serverStatus, boost::asio::ip::tcp::socket* sessionConnectionSocket)
 	{
 		return new ServerManager(serverName, serverType, serverStatus, sessionConnectionSocket);
+	}
+
+	/// <summary>
+	/// static deconstructor
+	/// </summary>
+	/// <param name="sessionConnectionSocket">- currently takes in connection socket to find entry, will need to change later</param>
+	/// <returns>pointer to ServerManager if found and removed, nullptr if didn't find anything</returns>
+	static ServerManager* RemoveServer(boost::asio::ip::tcp::socket* sessionConnectionSocket)
+	{
+		for (int i = 0; i <= ServerRegistry.GetLastArrayIndex(); i++)
+		{
+			ServerManager* entry = (ServerManager*)ServerRegistry[i];
+
+			if (entry->GetConnectionSocket() == sessionConnectionSocket)
+			{
+				ServerRegistry.Remove(i);
+				return entry;
+			}
+		}
+
+		return nullptr;
 	}
 };

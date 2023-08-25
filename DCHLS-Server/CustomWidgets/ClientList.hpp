@@ -6,11 +6,14 @@
 #include <QtWidgets\QLabel>
 #include <QPalette>
 #include "..\Header\ServerManager.hpp"
+#include "ServerEntryContainer.hpp"
 
 class ClientList : public QScrollArea
 {
 	Q_OBJECT
 protected:
+	static inline NosLib::DynamicArray<ServerEntryContainer*> serverEntryWidgetArray;
+
 	QVBoxLayout* ChatFeedLayout;
 	QWidget* ChatFeedWidget;
 
@@ -18,6 +21,23 @@ public slots:
 	void AddNewServerEntry(ServerManager* newServerEntry)
 	{
 		AddServerEntry(newServerEntry);
+	}
+
+	void RemoveServerEntry(ServerManager* serverEntry)
+	{
+		for (int i = 0; i <= serverEntryWidgetArray.GetLastArrayIndex(); i++)
+		{
+			if (serverEntry != serverEntryWidgetArray[i]->Server)
+			{
+				continue;
+			}
+
+			this->widget()->layout()->removeWidget(serverEntryWidgetArray[i]);
+			serverEntryWidgetArray.Remove(i);
+			break;
+		}
+		this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
+		QCoreApplication::processEvents();
 	}
 
 public:
@@ -36,32 +56,22 @@ public:
 
 	void AddServerEntry(ServerManager* newServerEntry)
 	{
-		/* Create message object */
-		QWidget* clientContainer = new QWidget(this);
-		clientContainer->setAutoFillBackground(true);
-		clientContainer->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+		ServerEntryContainer* newServerEntryContainer = new ServerEntryContainer(newServerEntry, this);
+		serverEntryWidgetArray.Append(newServerEntryContainer);
+		this->widget()->layout()->addWidget(newServerEntryContainer);
 
-		QHBoxLayout* clientLayout = new QHBoxLayout();
-		clientLayout->setContentsMargins(6, 6, 6, 6);
-		clientContainer->setLayout(clientLayout);
+		this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
+		QCoreApplication::processEvents();
+	}
 
-		QLabel* username = new QLabel();
-		username->setText(QString::fromStdWString(newServerEntry->GetServerName()));
-		QFont usernameFont = username->font();
-		usernameFont.setPointSize(16);
-		username->setFont(usernameFont);
-		clientLayout->addWidget(username);
+	template <typename ConnectFunc>
+	void AddServerEntry(ServerManager* newServerEntry, ConnectFunc&& slot)
+	{
+		ServerEntryContainer* newServerEntryContainer = new ServerEntryContainer(newServerEntry, this);
+		connect(newServerEntryContainer, &ServerEntryContainer::MouseReleased, slot);
 
-		QLabel* userStatus = new QLabel();
-		userStatus->setText(QString::fromStdWString(L"IMPLEMENT SERVER TYPE AS STRING"));
-		clientLayout->addWidget(userStatus);
-
-		QLabel* ipAddress = new QLabel();
-		ipAddress->setText(QString::fromStdWString(newServerEntry->GetIpAddressAsWString()));
-		clientLayout->addWidget(ipAddress);
-		/* Create message object */
-
-		this->widget()->layout()->addWidget(clientContainer);
+		serverEntryWidgetArray.Append(newServerEntryContainer);
+		this->widget()->layout()->addWidget(newServerEntryContainer);
 
 		this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
 		QCoreApplication::processEvents();

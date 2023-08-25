@@ -65,5 +65,8 @@
     <QtMoc Include="Header\Listen.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="CustomWidgets\ServerEntryContainer.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

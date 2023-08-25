@@ -27,4 +27,9 @@ namespace Processing
 	{
 		(*serverManager) = ServerManager::RegisterServer(serverName, ServerManager::enServerType::Direct, ServerManager::enServerStatus::Online, connectionSocket);
 	}
+
+	inline void RemoveServer(boost::asio::ip::tcp::socket* connectionSocket, ServerManager** serverManager)
+	{
+		(*serverManager) = ServerManager::RemoveServer(connectionSocket);
+	}
 }
