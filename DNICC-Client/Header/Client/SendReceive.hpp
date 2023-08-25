@@ -28,19 +28,22 @@ namespace SendReceive
 		{
 			boost::system::error_code error;
 
-			while (!isInterruptionRequested() && error != boost::asio::error::eof)
+			while (!isInterruptionRequested() && !error)
 			{
 				boost::asio::streambuf MessageBuffer;
 				boost::asio::read_until((*GlobalRoot::ConnectionSocket), MessageBuffer, Definition::Delimiter, error);
+
+				if (error)
+				{
+					NosLib::Logging::CreateLog<wchar_t>(std::format(L"{}", NosLib::String::ToWstring(error.what())), NosLib::Logging::Severity::Error, false);
+					break;
+				}
 
 				Communications::MessageObject messageObject(&MessageBuffer); /* Create message object */
 
 				emit ReceivedMessage(messageObject);
 			}
-
-			NosLib::Logging::CreateLog<wchar_t>(std::format(L"{}", NosLib::String::ToWstring(error.what())), NosLib::Logging::Severity::Error, false);
-
-			/* send some closing message */
+			NosLib::Logging::CreateLog<wchar_t>(L"Exiting Listen Thread Loop", NosLib::Logging::Severity::Info, false);
 		}
 	};
 

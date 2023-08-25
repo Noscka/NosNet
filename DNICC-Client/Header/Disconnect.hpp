@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QThread>
+#include <format>
 #include "GlobalRoot.hpp"
 
 namespace Disconnect
@@ -9,9 +10,18 @@ namespace Disconnect
 
 	inline void DisconnectFromServer()
 	{
+		NosLib::Logging::CreateLog<wchar_t>(L"Disconnecting from server", NosLib::Logging::Severity::Info, false);
+
+		listenThread->exit();
 		listenThread->requestInterruption();
-		listenThread->deleteLater();
+		NosLib::Logging::CreateLog<wchar_t>(L"Interrupted and set listen thread up for deletion", NosLib::Logging::Severity::Info, false);
+		
+		//GlobalRoot::ConnectionSocket->shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+		GlobalRoot::ConnectionSocket->cancel();
 		GlobalRoot::ConnectionSocket->close();
-		//delete GlobalRoot::ThisClient;
+		NosLib::Logging::CreateLog<wchar_t>(L"Disconnected from server", NosLib::Logging::Severity::Info, false);
+		listenThread->wait();
+		//delete GlobalRoot::ConnectionSocket;
+		delete GlobalRoot::ThisClient;
 	}
 }

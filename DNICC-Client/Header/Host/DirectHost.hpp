@@ -131,6 +131,7 @@ namespace DirectHost
 
 		/* Disconnect from DCHLS server */
 		GlobalRoot::ConnectionSocket->cancel();
+		GlobalRoot::ConnectionSocket->close();
 		NosLib::Logging::CreateLog<wchar_t>(L"Disconnected from DCHLS\n", NosLib::Logging::Severity::Info, false);
 
 		ClientListenThread* listenThread = new ClientListenThread;
